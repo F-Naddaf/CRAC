@@ -1,9 +1,19 @@
 <template>
-  <nav>
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
-  </nav>
-  <router-view />
+  <div class="flex flex-col justify-center items-center m-auto">
+    <p class="text-gray-500 text-lg mb-5">Welcome to</p>
+    <img class="w-48" src="../public/img/logo.png" alt="logo" />
+    <router-link
+      class="flex justify-center items-center mt-24 bg-blue-500 w-full h-9 rounded-md"
+      to="/"
+      ><h1 class="text-xl font-semibold text-gray-300">Login</h1></router-link
+    >
+    <router-link
+      class="flex justify-center items-center mt-3 bg-blue-500 w-full h-9 rounded-md"
+      to="/about"
+      ><h1 class="text-xl font-semibold text-gray-300">SignUp</h1></router-link
+    >
+    <!-- <router-view /> -->
+  </div>
 </template>
 
 <style>
