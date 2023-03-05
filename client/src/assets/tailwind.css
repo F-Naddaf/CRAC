@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.primaryLink {
+  @apply flex justify-center items-center bg-primary-100 w-full h-9 rounded-md
+}
+.primaryLinkHover {
+  @apply flex justify-center items-center bg-primary-200 w-full h-9 rounded-md
+}
+.secondaryLink {
+  @apply flex justify-center items-center bg-secondary-100 w-full h-9 rounded-md
+}
+.secondaryLinkHover {
+  @apply flex justify-center items-center bg-secondary-200 w-full h-9 rounded-md
+}
