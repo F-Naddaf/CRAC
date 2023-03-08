@@ -1,19 +1,21 @@
 <template>
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="authForm">
-      <h1 class="mb-5 text-3xl font-bold text-gray-200">Login</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder"/>
-      <button class="secondaryLink rounded-lg text-white font-semibold mt-4">Login</button>
+      <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
+      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :error="input.error"/>
+      <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
       <span class="text-sm mt-3 text-gray-300">Don't have an account?
-        <router-link class="pl-2 text-md text-secondary-100 font-semibold" to="/">SignUp</router-link>
+        <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/">SignUp</router-link>
       </span>
       <div class="flex items-center justify-between w-full mt-5">
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
         <p class="font-bold p-3 text-gray-300">OR</p>
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
-      <h1>initialized: {{ Vue3GoogleOauth.isInit }}</h1>
-      <button @click="handelSignIn">Sign in with google</button>
+      <button @click="handelSignIn" class="googleButton mt-3 mb-2">
+        <img src="../../public/img/google.png" alt="google" class="h-full p-1.5"/>
+        <span class="pl-4 text-sm font-semibold">Login with google</span>
+      </button>
     </form>
   </div>
 </template>
@@ -30,13 +32,16 @@ name: "LoginPage",
       id: 1,
       name: 'username',
       type: 'text',
-      placeholder: 'Username'
+      placeholder: 'Username',
+      pattern: "^[A-Za-z0-9]{3-16}$",
+      error: "Username should be 3-16 characters and shouldn't include any special character"
     },
     {
       id: 2,
       name: 'password',
-      type: 'text',
-      placeholder: 'Password'
+      type: 'password',
+      placeholder: 'Password',
+      error: "Incorrect Password"
     }]
     return {
       inputs,
