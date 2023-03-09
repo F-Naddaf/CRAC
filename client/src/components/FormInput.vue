@@ -1,5 +1,6 @@
 <template>
     <input :placeholder="placeholder"
+          :type="type"
            required
            @blur="validate"
            class="placeholder"
@@ -11,7 +12,7 @@
 <script>
 export default {
   name: "FormInput",
-  props: ["placeholder", "error", "pattern"],
+  props: ["placeholder", "error", "pattern", "type"],
   data() {
     return {
       invalid: false,
