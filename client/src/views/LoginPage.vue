@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
-    <form class="authForm">
+    <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
       <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :error="input.error"/>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
@@ -65,7 +65,7 @@ name: "LoginPage",
             return null
           } else {
             this.user = googleUser.getBasicProfile().getEmail()
-            router.push('/');
+            router.push('/phone');
             console.log("google user", googleUser);
           }
         });
