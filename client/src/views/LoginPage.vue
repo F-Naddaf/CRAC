@@ -2,7 +2,7 @@
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :error="input.error"/>
+      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event.target.value"/>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
       <span class="text-sm mt-3 text-gray-300">Don't have an account?
         <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/">SignUp</router-link>
@@ -33,7 +33,9 @@ name: "LoginPage",
       name: 'username',
       type: 'text',
       placeholder: 'Username',
-      pattern: "^[A-Za-z0-9]{3-16}$",
+      pattern: "^[A-Za-z0-9]{3,16}$",
+      value: '',
+      valid: null,
       error: "Username should be 3-16 characters and shouldn't include any special character"
     },
     {
@@ -41,6 +43,8 @@ name: "LoginPage",
       name: 'password',
       type: 'password',
       placeholder: 'Password',
+      value: '',
+      valid: null,
       error: "Incorrect Password"
     }]
     return {
