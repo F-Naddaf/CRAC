@@ -1,7 +1,7 @@
 <template>
   <div class="card">
     <h1 class="text-lg font-semibold mb-10 mt-3 text-secondary-200">Conform your phone number</h1>
-    <FormInput :key="input.id" :type="input.number" :placeholder="input.placeholder" />
+    <FormInput :key="input.id" :type="input.type" :placeholder="input.placeholder" />
     <button class="LoginButton rounded-lg text-white font-semibold mt-4">Submit </button>
   </div>
 </template>
