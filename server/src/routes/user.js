@@ -4,3 +4,5 @@ const userRouter = express.Router();
 
 userRouter.post("/phone", getUserPhone);
 userRouter.post("/verify", verifyCode);
+
+export default userRouter

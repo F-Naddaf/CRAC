@@ -1,4 +1,4 @@
-import OTP from "../models/User.js"
+import { OTP } from "../models/User.js"
 
 export const verifyCode = async (req, res) => {
   const code = req.body.code

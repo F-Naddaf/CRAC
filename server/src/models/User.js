@@ -5,6 +5,3 @@ export const userSchema = new mongoose.Schema({
 })
 
 export const OTP = mongoose.model("OTP", userSchema)
-
-
-
