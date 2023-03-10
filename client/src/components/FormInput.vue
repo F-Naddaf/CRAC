@@ -12,7 +12,21 @@
 <script>
 export default {
   name: "FormInput",
-  props: ["placeholder", "error", "pattern", "type"],
+  props: {
+    placeholder: String,
+    error: String,
+    pattern: String,
+    type: String,
+    valid: {
+      type: Boolean,
+      default: null
+    },
+    value: {
+    type: String,
+    default: ''
+    }
+  },
+  // props: ["placeholder", "error", "pattern", "type"],
   data() {
     return {
       invalid: false,
@@ -21,6 +35,7 @@ export default {
   },
   methods: {
     validate() {
+      console.log("ref before",this.$refs.input)
       const regex = new RegExp(this.pattern);
       this.touched = true;
       if (!regex.test(this.$refs.input.value)) {
@@ -28,6 +43,7 @@ export default {
       } else {
         this.invalid = false;
       }
+      console.log("ref after",this.$refs.input)
     },
   },
 }
