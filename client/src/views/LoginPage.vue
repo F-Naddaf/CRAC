@@ -2,7 +2,7 @@
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event.target.value"/>
+      <FormInput v-for="input in inputs" :key="input.id" :placeholder="input.placeholder" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event"/>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
       <span class="text-sm mt-3 text-gray-300">Don't have an account?
         <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/">SignUp</router-link>
@@ -13,7 +13,7 @@
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
       <button @click="handelSignIn" class="googleButton mt-3 mb-2">
-        <img src="../../public/img/google.png" alt="google" class="h-full p-1.5"/>
+        <img src="../../public/img/google.png" alt="Google logo" class="h-full p-1.5"/>
         <span class="pl-4 text-sm font-semibold">Login with google</span>
       </button>
     </form>

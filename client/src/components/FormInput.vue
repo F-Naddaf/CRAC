@@ -12,13 +12,27 @@
 <script>
 export default {
   name: "FormInput",
-  props: ["placeholder", "error", "pattern", "type"],
+  props: {
+    placeholder: String,
+    error: String,
+    pattern: String,
+    type: String,
+    valid: {
+      type: Boolean,
+      default: null
+    },
+    value: {
+    type: String,
+    default: ''
+    }
+  },
   data() {
     return {
       invalid: false,
       touched: false,
     }
   },
+  emits: ['input'],
   methods: {
     validate() {
       const regex = new RegExp(this.pattern);
@@ -29,6 +43,9 @@ export default {
         this.invalid = false;
       }
     },
+    emitInput(event) {
+      this.$emit('input', event.target.value);
+    }
   },
 }
 </script>
