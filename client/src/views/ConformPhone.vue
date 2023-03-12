@@ -41,12 +41,16 @@ export default {
     return {
       phoneInput,
       codeInput,
-      phone: ''
+      phone: '',
+      code: ''
     }
   },
   computed: {
     isPhoneValid() {
       return this.phone.length === 12;
+    },
+    isCodeValid() {
+      return this.phone.length === 6;
     }
   },
 }

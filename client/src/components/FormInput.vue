@@ -26,16 +26,15 @@ export default {
     default: ''
     }
   },
-  // props: ["placeholder", "error", "pattern", "type"],
   data() {
     return {
       invalid: false,
       touched: false,
     }
   },
+  emits: ['input'],
   methods: {
     validate() {
-      console.log("ref before",this.$refs.input)
       const regex = new RegExp(this.pattern);
       this.touched = true;
       if (!regex.test(this.$refs.input.value)) {
@@ -43,8 +42,10 @@ export default {
       } else {
         this.invalid = false;
       }
-      console.log("ref after",this.$refs.input)
     },
+    emitInput(event) {
+      this.$emit('input', event.target.value);
+    }
   },
 }
 </script>

@@ -52,22 +52,29 @@ const router = createRouter({
 router.beforeEach((to,from,next)=>{
   const requiresAuth = to.matched.some(record=>record.meta.requiresAuth)
   const isAuthenticated = auth.currentUser;
-  if(requiresAuth && !isAuthenticated)
-  {
-    next('/login')
+  if (requiresAuth && !isAuthenticated) {
+    next('/login');
+  } else if (!requiresAuth && isAuthenticated) {
+    next('/home');
+  } else {
+    next();
   }
-  else
-  {
-    next()
-  }
-  if(!requiresAuth && isAuthenticated)
-  {
-    next('/home')
-  }
-  else
-  {
-    next()
-  }
+  // if(requiresAuth && !isAuthenticated)
+  // {
+  //   next('/login')
+  // }
+  // else
+  // {
+  //   next()
+  // }
+  // if(!requiresAuth && isAuthenticated)
+  // {
+  //   next('/home')
+  // }
+  // else
+  // {
+  //   next()
+  // }
 })
 
 export default router;
