@@ -59,22 +59,6 @@ router.beforeEach((to,from,next)=>{
   } else {
     next();
   }
-  // if(requiresAuth && !isAuthenticated)
-  // {
-  //   next('/login')
-  // }
-  // else
-  // {
-  //   next()
-  // }
-  // if(!requiresAuth && isAuthenticated)
-  // {
-  //   next('/home')
-  // }
-  // else
-  // {
-  //   next()
-  // }
 })
 
 export default router;
