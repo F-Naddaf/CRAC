@@ -11,7 +11,9 @@ module.exports = {
       secondary: {
         100: '#167199',
         200: '#28BFD2',
-      }
+      },
+      background: "#51555e",
+      label: "#86aebf"
     },
     },
   },
