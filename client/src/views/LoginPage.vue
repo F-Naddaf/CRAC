@@ -36,7 +36,6 @@ name: "LoginPage",
       pattern: "^[A-Za-z0-9]{3,16}$",
       value: '',
       valid: null,
-      // error: "Username should be 3-16 characters and shouldn't include any special character"
       error: "Incorrect Email address"
     },
     {
