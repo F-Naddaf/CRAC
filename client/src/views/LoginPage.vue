@@ -5,7 +5,7 @@
       <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event"/>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
       <span class="text-sm mt-3 text-gray-300">Don't have an account?
-        <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/">SignUp</router-link>
+        <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/register">SignUp</router-link>
       </span>
       <div class="flex items-center justify-between w-full mt-5">
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
@@ -36,7 +36,6 @@ name: "LoginPage",
       pattern: "^[A-Za-z0-9]{3,16}$",
       value: '',
       valid: null,
-      // error: "Username should be 3-16 characters and shouldn't include any special character"
       error: "Incorrect Email address"
     },
     {
