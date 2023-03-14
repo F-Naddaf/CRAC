@@ -1,0 +1,28 @@
+{
+  "name": "cutcast",
+  "version": "1.0.0",
+  "description": "```\r npm install\r ```",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run dev",
+    "setup": "npm run setup:client && npm run setup:server",
+    "setup:server": "cd server && npm run setup && cd ..",
+    "setup:client": "cd client && npm run setup && cd ..",
+    "dev:client": "cd client && npm run serve && cd ..",
+    "dev:server": "cd server && npm run start && cd ..",
+    "build:server": "cd server && npm run start && cd ..",
+    "build:client": "cd client && npm run build && cd ..",
+    "dev": "concurrently \"npm run dev:client\" \"npm run dev:server\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/F-Naddaf/cutcast.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/F-Naddaf/cutcast/issues"
+  },
+  "homepage": "https://github.com/F-Naddaf/cutcast#readme"
+}
