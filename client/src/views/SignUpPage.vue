@@ -3,10 +3,12 @@
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Register</h1>
       <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event.target.value"/>
-      <button type="submit" class="LoginButton rounded-lg text-white font-semibold mt-4">Register</button>
-      <span class="text-sm mt-4 mb-2 text-gray-300">Already have an account?
-        <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/login">SignIn</router-link>
-      </span>
+      <button type="submit" class="LoginButton rounded-lg text-white font-semibold mt-4">Submit</button>  
+      <div class="flex w-full ml-5">
+        <span class="text-sm mt-4 mb-2 text-gray-300">Already have an account?
+          <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/login">LogIn</router-link>
+        </span>
+      </div>
     </form>
   </div>
 </template>
@@ -31,7 +33,7 @@ export default {
       name: 'first',
       type: 'text',
       label: 'First Name',
-      pattern: /^[a-zA-Z]{3,8}$/,
+      pattern: "^[a-zA-Z]{3,8}$",
       value: '',
       valid: null,
       error: "First name should be 3-8 characters"
@@ -41,7 +43,7 @@ export default {
       name: 'last',
       type: 'text',
       label: 'Last Name',
-      pattern: /^[a-zA-Z]{3,8}$/,
+      pattern: "^[a-zA-Z]{3,8}$",
       value: '',
       valid: null,
       error: "Last name should be 3-8 characters"
