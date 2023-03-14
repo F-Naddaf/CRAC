@@ -6,7 +6,7 @@
       required
       @blur="validate"
       @input="inputValue = $event.target.value"
-      class="relative text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
+      class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
       :class="{'invalid': invalid}"
       ref="input" />
 
@@ -88,7 +88,7 @@ export default {
   right: 10px;
   color: rgb(133, 133, 133);
   z-index: 10;
-  font-size: 15px;
+  font-size: 14px;
   cursor: pointer;
 }
 </style>
