@@ -1,8 +1,8 @@
 import { OTP } from "../models/User.js"
-import twilio from 'twilio';
-import { accountSid, authToken } from "../config.js"
+// import twilio from 'twilio';
+// import { accountSid, authToken } from "../config.js"
 
-const client = twilio(accountSid, authToken);
+// const client = twilio(accountSid, authToken);
 
 export const verifyCode = async (req, res) => {
   const code = req.body.code
