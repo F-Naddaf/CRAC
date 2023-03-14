@@ -1,18 +1,25 @@
 <template>
   <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
     <input
-    :id="label"
-    :type="type"
-    required
-    @blur="validate"
-    @input="inputValue = $event.target.value"
-    class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
-    :class="{'invalid': invalid}"
-    ref="input" />
+      :id="label"
+      :type="!inputType ? type === 'password' : type"
+      required
+      @blur="validate"
+      @input="inputValue = $event.target.value"
+      class="relative text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
+      :class="{'invalid': invalid}"
+      ref="input" />
+
     <label :for="label"
-    class="absolute text-sm left-2 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-gray-100 peer-focus:font-semibold peer-focus:left-0 peer-focus:text-sm"
-    :class="{'active': inputValue !== ''}">
-    {{ label }}</label>  
+      class="absolute text-sm left-2 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-gray-100 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
+      :class="{'active': inputValue !== ''}">
+      {{ label }}
+    </label> 
+
+    <i v-if="type === 'password'"
+      :class="['fa-sharp', 'fa-solid', showPassword ? 'fa-eye-slash' : 'fa-eye']"
+      @click="showPassword  = !showPassword "></i>
+
     <p v-if="touched && invalid" class="validationMessage">{{ error }}</p>
   </div>
 </template>
@@ -30,8 +37,8 @@ export default {
       default: null
     },
     value: {
-    type: String,
-    default: ''
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -39,9 +46,19 @@ export default {
       invalid: false,
       touched: false,
       inputValue: '',
+      showPassword : false,
     }
   },
   emits: ['update:value'],
+  computed: {
+    inputType() {
+      if(this.type === "password" && this.showPassword) {
+        return this.type === 'text'
+      } else {
+        return 'password'
+      }
+    },
+  },
   methods: {
     validate() {
       const regex = new RegExp(this.pattern);
@@ -62,7 +79,16 @@ export default {
   top: -0.5rem;
   font-size: 0.88rem;
   font-weight: 600;
-  left: 0;
+  left: 0.25rem;
   color: rgb(243 244 246);
+}
+.fa-solid {
+  position: absolute;
+  top: 20px;
+  right: 10px;
+  color: rgb(133, 133, 133);
+  z-index: 10;
+  font-size: 15px;
+  cursor: pointer;
 }
 </style>

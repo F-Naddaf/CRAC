@@ -2,11 +2,22 @@
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event"/>
+      <FormInput
+        v-for="input in inputs"
+        :key="input.id"
+        :label="input.label"
+        :type="input.type"
+        :valid="input.valid"
+        :error="input.error"
+        :pattern="input.pattern"
+        :value="input.value"
+        @input="(event) => { input.value = event.target.value }"/>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
-      <span class="text-sm mt-3 text-gray-300">Don't have an account?
-        <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/register">SignUp</router-link>
-      </span>
+      <div class="flex w-full ml-5">
+        <span class="text-sm mt-4 text-gray-300">Don't have an account?
+          <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/register">Register</router-link>
+        </span>
+      </div>
       <div class="flex items-center justify-between w-full mt-5">
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
         <p class="font-bold p-3 text-gray-300">OR</p>
