@@ -1,5 +1,5 @@
 <template>
-  <nav class="flex justify-evenly h-fit w-screen mb-2">
+  <nav class="flex justify-evenly h-2/12 w-screen mb-2">
     <button class="iconCard">
       <i class="fa-solid fa-house"></i>
       <p class="iconTitle">Home</p>
