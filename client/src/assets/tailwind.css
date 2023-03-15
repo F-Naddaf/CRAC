@@ -36,3 +36,21 @@
 .verifyPhoneInput {
   @apply text-sm font-medium p-1 w-full border border-secondary-100
 }
+.iconTitle {
+  @apply text-gray-300 text-xs font-light md:pt-1 sm:pt-0 m-0
+}
+.iconCard {
+  @apply flex flex-col items-center m-auto
+}
+.cameraButton {
+  @apply flex flex-col items-center relative mr-auto ml-auto pl-9 mt-0
+}
+.cameraButtonColor {
+  @apply absolute w-8 h-6 top-0 left-0 bg-gray-300 rounded-md z-30
+}
+.cameraShadowPrimary {
+  @apply absolute w-8 h-6 top-1 -left-1 bg-primary-100 rounded-md z-0 blur-sm
+}
+.cameraShadowSecondary {
+  @apply absolute w-8 h-6 -top-1 left-1 bg-secondary-100 rounded-md z-0 blur-sm
+}
