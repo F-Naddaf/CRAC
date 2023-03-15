@@ -6,7 +6,7 @@ import "./assets/tailwind.css";
 import gAuthPlugin from 'vue3-google-oauth2'
 
 const gauthOption = {
-  clientId: '830401754547-pk8426v0d7gp0ss0pd3vs2ou40vqnfmh.apps.googleusercontent.com',
+  clientId: `${process.env.VUE_APP_GOOGLE_CLIENT_ID}`,
   scope: 'profile email',
   prompt: 'consent',
   fetch_basic_profile: true
