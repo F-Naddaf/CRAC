@@ -36,13 +36,16 @@ const routes = [
   },
 ];
 
+const firebaseApiKey = process.env.VUE_APP_FIREBASE_API_KEY
+const firebaseAppId = process.env.VUE_APP_FIREBASE_APP_ID
+
 const firebaseConfig = {
-  apiKey: "AIzaSyDclSISlD6slKrOQ_nDud1l4pZwcO1BDwA",
+  apiKey: `${firebaseApiKey}`,
   authDomain: "login-auth-731a0.firebaseapp.com",
   projectId: "login-auth-731a0",
   storageBucket: "login-auth-731a0.appspot.com",
   messagingSenderId: "353417788507",
-  appId: "1:353417788507:web:4d50a0e3237feba8b0d37e",
+  appId: `${firebaseAppId}`,
   measurementId: "G-33G2P77KLE"
 };
 
