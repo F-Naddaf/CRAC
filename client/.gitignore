@@ -5,6 +5,8 @@ node_modules
 .vscode
 
 # local env files
+.env
+.vscode
 .env.local
 .env.*.local
 
