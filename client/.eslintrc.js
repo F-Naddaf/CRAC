@@ -4,16 +4,16 @@ module.exports = {
     node: true,
   },
   extends: [
-    "plugin:vue/vue3-essential",
-    "eslint:recommended",
-    "plugin:prettier/recommended",
+    'plugin:vue/vue3-essential',
+    'eslint:recommended',
+    'plugin:prettier/recommended',
   ],
+  parser: 'babel-eslint',
   parserOptions: {
-    parser: "@babel/eslint-parser",
+    requireConfigFile: true,
   },
   rules: {
-    "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-    "prettier/prettier": 0,
+    'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
+    'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
   },
 };
