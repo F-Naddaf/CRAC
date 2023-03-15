@@ -36,8 +36,6 @@ const routes = [
   },
 ];
 
-//hello world
-
 const firebaseApiKey = process.env.VUE_APP_FIREBASE_API_KEY
 const firebaseAppId = process.env.VUE_APP_FIREBASE_APP_ID
 
