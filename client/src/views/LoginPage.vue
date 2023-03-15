@@ -2,16 +2,9 @@
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
-      <FormInput
-        v-for="input in inputs"
-        :key="input.id"
-        :label="input.label"
-        :type="input.type"
-        :valid="input.valid"
-        :error="input.error"
-        :pattern="input.pattern"
-        :value="input.value"
-        @input="(event) => { input.value = event.target.value }"/>
+      <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid"
+        :error="input.error" :pattern="input.pattern" :value="input.value"
+        @input="(event) => { input.value = event.target.value }" />
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
       <div class="flex w-full ml-5">
         <span class="text-sm mt-4 text-gray-300">Don't have an account?
@@ -24,7 +17,7 @@
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
       <button @click="handelSignIn" class="googleButton mt-3 mb-2">
-        <img src="../../public/img/google.png" alt="Google logo" class="h-full p-1.5"/>
+        <img src="../../public/img/google.png" alt="Google logo" class="h-full p-1.5" />
         <span class="pl-4 text-sm font-semibold">Login with google</span>
       </button>
     </form>
@@ -37,7 +30,7 @@ import { gapi } from 'gapi-script';
 import router from '../router'
 import { inject } from 'vue'
 export default {
-name: "LoginPage",
+  name: "LoginPage",
   data() {
     const inputs = [{
       id: 1,
@@ -76,7 +69,7 @@ name: "LoginPage",
         gapi.load('auth2', async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
           const googleUser = await googleAuth.signIn();
-          if(!googleUser) {
+          if (!googleUser) {
             return null
           } else {
             this.user = googleUser.getBasicProfile().getEmail()
@@ -100,9 +93,11 @@ name: "LoginPage",
   width: 100%;
   position: relative !important;
 }
+
 .g-signin2 div {
   width: 100% !important;
 }
+
 .g-signin2 span {
   margin-left: -50%;
 }

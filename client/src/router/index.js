@@ -32,8 +32,13 @@ const routes = [
     path: '/home',
     name: 'HomePage',
     component: HomePage,
-    meta: { requiresAuth: true },
   },
+  // {
+  //   path: '/home',
+  //   name: 'HomePage',
+  //   component: HomePage,
+  //   meta: { requiresAuth: true },
+  // },
 ];
 
 const firebaseApiKey = process.env.VUE_APP_FIREBASE_API_KEY;

@@ -2,8 +2,9 @@
   <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Register</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid" :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event.target.value"/>
-      <button type="submit" class="LoginButton rounded-lg text-white font-semibold mt-4">Submit</button>  
+      <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid"
+        :error="input.error" :pattern="input.pattern" :value="input.value" @input="input.value = $event.target.value" />
+      <button type="submit" class="LoginButton rounded-lg text-white font-semibold mt-4">Submit</button>
       <div class="flex w-full ml-5">
         <span class="text-sm mt-4 mb-2 text-gray-300">Already have an account?
           <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/login">LogIn</router-link>
@@ -77,15 +78,15 @@ export default {
       valid: null,
       error: "Password is not match!",
       validate() {
-      const passwordInput = this.$root.inputs.find(input => input.name === 'password')
-      if (this.value === passwordInput.value) {
-        this.valid = true
-        this.error = null
-      } else {
-        this.valid = false
-        this.error = "Password does not match!"
+        const passwordInput = this.$root.inputs.find(input => input.name === 'password')
+        if (this.value === passwordInput.value) {
+          this.valid = true
+          this.error = null
+        } else {
+          this.valid = false
+          this.error = "Password does not match!"
+        }
       }
-    }
     }]
     return {
       inputs,
@@ -97,6 +98,3 @@ export default {
   }
 }
 </script>
-<style>
-
-</style>

@@ -1,15 +1,18 @@
 <template>
   <div>
-    Hello world
+    <NavBar class="absolute bottom-0" />
   </div>
 </template>
 
 <script>
+import NavBar from "../components/NavBar.vue"
+
 export default {
-  name: "HomePage"
+  name: "HomePage",
+  components: {
+    NavBar
+  }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
