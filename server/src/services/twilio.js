@@ -1,4 +1,3 @@
-// import { logInfo } from '../../util/logging.js';
 import twilio from 'twilio';
 import dotenv from 'dotenv';
 dotenv.config();
