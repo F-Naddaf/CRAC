@@ -4,7 +4,7 @@ import { OTP } from '../models/User.js';
 
 // const client = twilio(accountSid, authToken);
 
-export const getUserPhone = async (req, res) => {
+export const addUserPhone = async (req, res) => {
   const phone = req.body.phone;
   let randomNum = Math.floor(Math.random() * 90000) + 10000;
 

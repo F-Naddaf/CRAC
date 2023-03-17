@@ -1,8 +1,8 @@
-import express from "express";
-import { getUserPhone, verifyCode } from "../controllers/user.js"
+import express from 'express';
+import { addUserPhone, verifyCode } from '../controllers/user.js';
 const userRouter = express.Router();
 
-userRouter.post("/phone", getUserPhone);
-userRouter.post("/verify", verifyCode);
+userRouter.post('/phone', addUserPhone);
+userRouter.post('/phone/verify', verifyCode);
 
-export default userRouter
+export default userRouter;
