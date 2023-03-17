@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const userSchema = new mongoose.Schema({
-  users: Number  
-})
+  numberForCheck: Number,
+});
 
-export const OTP = mongoose.model("OTP", userSchema)
+export const OTP = mongoose.model('OTP', userSchema);
