@@ -7,11 +7,12 @@
       </p>
       <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
         <input :id="phoneInput.id" :type="phoneInput.type" :pattern="phoneInput.pattern" v-model="phone"
+          @input="phoneInputValue = $event.target.value"
           class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
           :class="{ 'invalid': invalid }" />
         <label :for="phoneInput.id"
           class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-          :class="{ 'active': inputValue !== '' }">Phone</label>
+          :class="{ 'active': phoneInputValue !== '' }">Phone</label>
       </div>
       <button @click="handelPhone" :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']" :disabled="!isPhoneValid">
         Submit
@@ -24,11 +25,12 @@
       </p>
       <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
         <input :id="codeInput.id" :type="codeInput.type" :pattern="codeInput.pattern" v-model="code"
+          @input="codeInputValue = $event.target.value"
           class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
           :class="{ 'invalid': invalid }" />
         <label :for="codeInput.id"
           class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-          :class="{ 'active': inputValue !== '' }">Code</label>
+          :class="{ 'active': codeInputValue !== '' }">Code</label>
       </div>
       <button @click="handelVerify" :class="[isCodeValid ? 'enabledButton' : 'disabledButton']" :disabled="!isCodeValid">
         Verify
@@ -45,7 +47,8 @@ export default {
   name: "ConformPhone",
   setup() {
     const invalid = false
-    const inputValue = ''
+    const phoneInputValue = ''
+    const codeInputValue = ''
     const phoneInput = {
       id: 'num1',
       name: 'phone',
@@ -105,7 +108,8 @@ export default {
 
     return {
       phoneInput,
-      inputValue,
+      phoneInputValue,
+      codeInputValue,
       invalid,
       codeInput,
       phone,
