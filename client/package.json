@@ -13,7 +13,6 @@
     "autoprefixer": "^10",
     "babel-loader": "^9.1.2",
     "core-js": "^3.8.3",
-    "firebase": "^9.17.2",
     "gapi-script": "^1.2.0",
     "postcss": "^8",
     "vue": "^3.2.13",
