@@ -1,11 +1,11 @@
 <template>
   <div class="card">
-    <h1 class="text-lg font-semibold mb-10 mt-3 text-secondary-200">Verification</h1>
+    <h1 class="phonePageHeader">Phone</h1>
     <div class="w-full flex flex-col items-center mb-8">
-      <p class="text-xs text-gray-300 mb-3 w-10/12 text-center">
-        Enter your phone number preceded by your country code Example: +15017122661
+      <p class="infoMessage" v-show="showPhoneInfo">
+        Enter your phone number preceded by +31 and without any spaces or other characters. Example: +31612345678
       </p>
-      <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
+      <div class="inputContainer">
         <input :id="phoneInput.id" :type="phoneInput.type" :pattern="phoneInput.pattern" v-model="phone"
           @input="phoneInputValue = $event.target.value"
           class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
@@ -13,17 +13,21 @@
         <label :for="phoneInput.id"
           class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
           :class="{ 'active': phoneInputValue !== '' }">Phone</label>
+        <button class="info" @click="showPhoneInfo = !showPhoneInfo">
+          <i class="fa-solid fa-circle-question"></i>
+        </button>
       </div>
       <button @click="handelPhone" :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']" :disabled="!isPhoneValid">
         Submit
       </button>
     </div>
-    <span class="w-full h-px bg-gray-100 mt-2 mb-6"></span>
+    <span class="lineDivider"></span>
     <div class="w-full flex flex-col items-center mb-2">
-      <p class="text-xs text-gray-300 mb-3 w-10/12 text-center">
+      <h1 class="phonePageHeader">Code</h1>
+      <p class="infoMessage" v-show="showCodeInfo">
         Enter the code you have received via SMS
       </p>
-      <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
+      <div class="inputContainer">
         <input :id="codeInput.id" :type="codeInput.type" :pattern="codeInput.pattern" v-model="code"
           @input="codeInputValue = $event.target.value"
           class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
@@ -31,6 +35,9 @@
         <label :for="codeInput.id"
           class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
           :class="{ 'active': codeInputValue !== '' }">Code</label>
+        <button class="info" @click="showCodeInfo = !showCodeInfo">
+          <i class="fa-solid fa-circle-question"></i>
+        </button>
       </div>
       <button @click="handelVerify" :class="[isCodeValid ? 'enabledButton' : 'disabledButton']" :disabled="!isCodeValid">
         Verify
@@ -65,6 +72,14 @@ export default {
     }
     const phone = ref('');
     const code = ref('');
+    const showPhoneInfo = ref(false);
+    const showCodeInfo = ref(false);
+    const phoneToggleInfo = () => {
+      showPhoneInfo.value = !showPhoneInfo.value;
+    };
+    const codeToggleInfo = () => {
+      showCodeInfo.value = !showCodeInfo.value;
+    };
 
     const handelPhone = async () => {
       try {
@@ -81,7 +96,6 @@ export default {
         console.error(error)
       }
     }
-
     const router = useRouter()
     const handelVerify = async () => {
       const serviceId = localStorage.getItem("serviceId")
@@ -118,6 +132,10 @@ export default {
       handelVerify,
       isPhoneValid,
       isCodeValid,
+      showPhoneInfo,
+      showCodeInfo,
+      phoneToggleInfo,
+      codeToggleInfo
     }
   }
 }
@@ -130,5 +148,20 @@ export default {
   font-weight: 600;
   left: 0.25rem;
   color: rgb(243 244 246);
+}
+
+.info {
+  cursor: pointer;
+}
+
+.fa-solid {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 18px;
+  right: 4px;
+  font-size: 16px;
+  color: rgb(189, 189, 189);
 }
 </style>

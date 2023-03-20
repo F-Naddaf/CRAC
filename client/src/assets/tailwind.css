@@ -31,7 +31,7 @@
   @apply flex justify-center items-center bg-secondary-200 w-full h-9 rounded-md text-white font-semibold mt-4
 }
 .disabledButton {
-  @apply flex justify-center items-center bg-gray-500 w-full h-9 rounded-md text-white font-semibold mt-4
+  @apply flex justify-center items-center bg-gray-500 w-full h-9 rounded-md text-white font-semibold
 }
 .verifyPhoneInput {
   @apply text-sm font-medium p-1 w-full border border-secondary-100
@@ -53,4 +53,16 @@
 }
 .cameraShadowSecondary {
   @apply absolute w-8 h-6 -top-1 left-1 bg-secondary-100 rounded-md z-0 blur-sm
+}
+.phonePageHeader {
+  @apply text-lg font-semibold mt-3 text-secondary-200
+}
+.lineDivider {
+  @apply w-full h-px bg-gray-100 mt-2 mb-6
+}
+.infoMessage {
+  @apply text-xs text-gray-300 mt-4 mb-3 w-10/12 text-center
+}
+.inputContainer {
+  @apply flex flex-col justify-center items-center w-full relative m-0 p-0
 }
