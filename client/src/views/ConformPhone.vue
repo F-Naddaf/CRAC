@@ -1,47 +1,60 @@
 <template>
-  <div class="card">
-    <h1 class="phonePageHeader">Phone</h1>
-    <div class="w-full flex flex-col items-center mb-8">
-      <p class="infoMessage" v-show="showPhoneInfo">
-        Enter your phone number preceded by +31 and without any spaces or other characters. Example: +31612345678
-      </p>
-      <div class="inputContainer">
-        <input :id="phoneInput.id" :type="phoneInput.type" :pattern="phoneInput.pattern" v-model="phone"
-          @input="phoneInputValue = $event.target.value"
-          class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
-          :class="{ 'invalid': invalid }" />
-        <label :for="phoneInput.id"
-          class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-          :class="{ 'active': phoneInputValue !== '' }">Phone</label>
-        <button class="info" @click="showPhoneInfo = !showPhoneInfo">
-          <i class="fa-solid fa-circle-question"></i>
+  <div class="container">
+    <div class="card">
+      <h1 class="phonePageHeader">Phone</h1>
+      <div class="w-full flex flex-col items-center mb-8">
+        <div class="inputContainer" id="phone-number">
+          <input :id="phoneInput.id" :type="phoneInput.type" :pattern="phoneInput.pattern" v-model="phone"
+            @input="phoneInputValue = $event.target.value"
+            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
+            :class="{ 'invalid': invalid }" />
+          <label :for="phoneInput.id"
+            class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
+            :class="{ 'active': phoneInputValue !== '' }">Phone</label>
+          <button class="info" @click="showPhoneInfo = !showPhoneInfo">
+            <i class="fa-solid fa-circle-question"></i>
+            <div class="input-info-container" v-show="showPhoneInfo">
+              <div class="input-popup-info">
+                <p class="infoMessage">
+                  Enter your phone number preceded by +31 and without any spaces or other characters. Example:
+                  +31612345678
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+        <button @click="handelPhone" :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']"
+          :disabled="!isPhoneValid">
+          Send
         </button>
       </div>
-      <button @click="handelPhone" :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']" :disabled="!isPhoneValid">
-        Submit
-      </button>
-    </div>
-    <span class="lineDivider"></span>
-    <div class="w-full flex flex-col items-center mb-2">
-      <h1 class="phonePageHeader">Code</h1>
-      <p class="infoMessage" v-show="showCodeInfo">
-        Enter the code you have received via SMS
-      </p>
-      <div class="inputContainer">
-        <input :id="codeInput.id" :type="codeInput.type" :pattern="codeInput.pattern" v-model="code"
-          @input="codeInputValue = $event.target.value"
-          class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
-          :class="{ 'invalid': invalid }" />
-        <label :for="codeInput.id"
-          class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-          :class="{ 'active': codeInputValue !== '' }">Code</label>
-        <button class="info" @click="showCodeInfo = !showCodeInfo">
-          <i class="fa-solid fa-circle-question"></i>
+      <span class="lineDivider"></span>
+      <div class="w-full flex flex-col items-center mb-2">
+        <h1 class="phonePageHeader">Code</h1>
+        <div class="inputContainer" id="sms-code">
+          <input :id="codeInput.id" :type="codeInput.type" :pattern="codeInput.pattern" v-model="code"
+            @input="codeInputValue = $event.target.value"
+            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
+            :class="{ 'invalid': invalid }" />
+          <label :for="codeInput.id"
+            class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
+            :class="{ 'active': codeInputValue !== '' }">Code</label>
+          <button class="info" @click="showCodeInfo = !showCodeInfo">
+            <i class="fa-solid fa-circle-question"></i>
+            <div class="input-info-container" v-show="showCodeInfo">
+              <div class="input-popup-info">
+                <p class="infoMessage">
+                  Enter the code you have received via SMS
+                </p>
+              </div>
+            </div>
+          </button>
+        </div>
+        <button @click="handelVerify" :class="[isCodeValid ? 'enabledButton' : 'disabledButton']"
+          :disabled="!isCodeValid">
+          Verify
         </button>
       </div>
-      <button @click="handelVerify" :class="[isCodeValid ? 'enabledButton' : 'disabledButton']" :disabled="!isCodeValid">
-        Verify
-      </button>
     </div>
   </div>
 </template>
@@ -142,6 +155,57 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  background-image: url("../../public/img/background-new.png");
+  background-repeat: no-repeat, repeat;
+  background-size: cover;
+  background-position: center;
+}
+
+#phone-number .input-info-container {
+  position: absolute;
+  width: 90%;
+  right: 5px;
+  top: -3rem;
+}
+
+#sms-code .input-info-container {
+  position: absolute;
+  width: 90%;
+  right: 5px;
+  top: -2rem;
+}
+
+.input-popup-info {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: fit-content;
+  position: relative;
+  background-color: rgb(243, 247, 149);
+  border-radius: 10px 10px 0 10px;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+
+}
+
+.input-popup-info::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: -12px;
+  width: 0;
+  height: 0;
+  border-right: 6px solid transparent;
+  border-top: 12px solid rgb(243, 247, 149);
+  border-left: 6px solid transparent;
+}
+
 .active {
   top: -0.5rem;
   font-size: 0.88rem;
