@@ -24,5 +24,8 @@
   "bugs": {
     "url": "https://github.com/F-Naddaf/cutcast/issues"
   },
-  "homepage": "https://github.com/F-Naddaf/cutcast#readme"
+  "homepage": "https://github.com/F-Naddaf/cutcast#readme",
+  "dependencies": {
+    "concurrently": "^7.6.0"
+  }
 }

@@ -8,7 +8,7 @@
       <i class="fa-solid fa-user-group"></i>
       <p class="iconTitle">Friends</p>
     </button>
-    <button class="cameraButton">
+    <button class="cameraButton" @click="openCamera">
       <span class="cameraButtonColor">
         <i class="fa-solid fa-plus"></i>
       </span>
@@ -27,9 +27,16 @@
 </template>
 
 <script>
+import router from "../router";
+
 export default {
-  name: "NavBar"
-}
+  name: "NavBar",
+  methods: {
+    openCamera() {
+      router.push("/camera");
+    },
+  },
+};
 </script>
 
 <style scoped>
