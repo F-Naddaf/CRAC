@@ -1,5 +1,7 @@
 <template>
-  <div class="flex flex-col justify-center items-center w-full relative m-0 p-0 ">
+  <div
+    class="flex flex-col justify-center items-center w-full relative m-0 p-0"
+  >
     <input
       :id="label"
       :type="!inputType ? type === 'password' : type"
@@ -7,19 +9,23 @@
       @blur="validate"
       @input="inputValue = $event.target.value"
       class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
-      :class="{'invalid': invalid}"
-      ref="input" />
+      :class="{ invalid: invalid }"
+      ref="input"
+    />
 
-    <label :for="label"
-      class="absolute text-sm left-2 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-gray-100 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-      :class="{'active': inputValue !== ''}">
+    <label
+      :for="label"
+      class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:left-1 peer-focus:text-sm"
+      :class="{ active: inputValue !== '' }"
+    >
       {{ label }}
-    </label> 
+    </label>
 
-    <i v-if="type === 'password'"
-      :class="['fa-sharp', 'fa-solid', showPassword ? 'fa-eye-slash' : 'fa-eye']"
-      @click="showPassword  = !showPassword "></i>
-
+    <i
+      v-if="type === 'password'"
+      :class="['fa-regular', showPassword ? 'fa-eye' : 'fa-eye-slash']"
+      @click="showPassword = !showPassword"
+    ></i>
     <p v-if="touched && invalid" class="validationMessage">{{ error }}</p>
   </div>
 </template>
@@ -34,28 +40,28 @@ export default {
     type: String,
     valid: {
       type: Boolean,
-      default: null
+      default: null,
     },
     value: {
       type: String,
-      default: ''
-    }
+      default: "",
+    },
   },
   data() {
     return {
       invalid: false,
       touched: false,
-      inputValue: '',
-      showPassword : false,
-    }
+      inputValue: "",
+      showPassword: false,
+    };
   },
-  emits: ['update:value'],
+  emits: ["update:value"],
   computed: {
     inputType() {
-      if(this.type === "password" && this.showPassword) {
-        return this.type === 'text'
+      if (this.type === "password" && this.showPassword) {
+        return this.type === "text";
       } else {
-        return 'password'
+        return "password";
       }
     },
   },
@@ -68,9 +74,9 @@ export default {
       } else {
         this.invalid = false;
       }
-      this.$emit('update:value', this.inputValue);
-    }
-  }
+      this.$emit("update:value", this.inputValue);
+    },
+  },
 };
 </script>
 
@@ -78,11 +84,10 @@ export default {
 .active {
   top: -0.5rem;
   font-size: 0.88rem;
-  font-weight: 600;
   left: 0.25rem;
   color: rgb(243 244 246);
 }
-.fa-solid {
+.fa-regular {
   position: absolute;
   top: 20px;
   right: 10px;

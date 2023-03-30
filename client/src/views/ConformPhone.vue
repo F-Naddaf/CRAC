@@ -4,27 +4,39 @@
       <h1 class="phonePageHeader">Phone</h1>
       <div class="w-full flex flex-col items-center mb-8">
         <div class="inputContainer" id="phone-number">
-          <input :id="phoneInput.id" :type="phoneInput.type" :pattern="phoneInput.pattern" v-model="phone"
+          <input
+            :id="phoneInput.id"
+            :type="phoneInput.type"
+            :pattern="phoneInput.pattern"
+            v-model="phone"
             @input="phoneInputValue = $event.target.value"
-            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
-            :class="{ 'invalid': invalid }" />
-          <label :for="phoneInput.id"
+            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
+            ref="input"
+            :class="{ invalid: invalid }"
+          />
+          <label
+            :for="phoneInput.id"
             class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-            :class="{ 'active': phoneInputValue !== '' }">Phone</label>
+            :class="{ active: phoneInputValue !== '' }"
+            >Phone</label
+          >
           <button class="info" @click="showPhoneInfo = !showPhoneInfo">
             <i class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showPhoneInfo">
               <div class="input-popup-info">
                 <p class="infoMessage">
-                  Enter your phone number preceded by +31 and without any spaces or other characters. Example:
-                  +31612345678
+                  Enter your phone number preceded by +31 and without any spaces
+                  or other characters. Example: +31612345678
                 </p>
               </div>
             </div>
           </button>
         </div>
-        <button @click="handelPhone" :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']"
-          :disabled="!isPhoneValid">
+        <button
+          @click="handelPhone"
+          :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']"
+          :disabled="!isPhoneValid"
+        >
           Send
         </button>
       </div>
@@ -32,13 +44,22 @@
       <div class="w-full flex flex-col items-center mb-2">
         <h1 class="phonePageHeader">Code</h1>
         <div class="inputContainer" id="sms-code">
-          <input :id="codeInput.id" :type="codeInput.type" :pattern="codeInput.pattern" v-model="code"
+          <input
+            :id="codeInput.id"
+            :type="codeInput.type"
+            :pattern="codeInput.pattern"
+            v-model="code"
             @input="codeInputValue = $event.target.value"
-            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer" ref="input"
-            :class="{ 'invalid': invalid }" />
-          <label :for="codeInput.id"
+            class="text-sm font-medium p-1 m-3 w-full border border-secondary-100 focus:outline-none peer"
+            ref="input"
+            :class="{ invalid: invalid }"
+          />
+          <label
+            :for="codeInput.id"
             class="absolute text-sm left-1 top-4 text-gray-400 cursor-text transition-all peer-focus:-top-2 peer-focus:text-primary-200 peer-focus:font-semibold peer-focus:left-1 peer-focus:text-sm"
-            :class="{ 'active': codeInputValue !== '' }">Code</label>
+            :class="{ active: codeInputValue !== '' }"
+            >Code</label
+          >
           <button class="info" @click="showCodeInfo = !showCodeInfo">
             <i class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showCodeInfo">
@@ -50,8 +71,11 @@
             </div>
           </button>
         </div>
-        <button @click="handelVerify" :class="[isCodeValid ? 'enabledButton' : 'disabledButton']"
-          :disabled="!isCodeValid">
+        <button
+          @click="handelVerify"
+          :class="[isCodeValid ? 'enabledButton' : 'disabledButton']"
+          :disabled="!isCodeValid"
+        >
           Verify
         </button>
       </div>
@@ -60,31 +84,31 @@
 </template>
 
 <script>
-import { useRouter } from 'vue-router';
-import { ref, computed } from 'vue';
+import { useRouter } from "vue-router";
+import { ref, computed } from "vue";
 
 export default {
   name: "ConformPhone",
   setup() {
-    const invalid = false
-    const phoneInputValue = ''
-    const codeInputValue = ''
+    const invalid = false;
+    const phoneInputValue = "";
+    const codeInputValue = "";
     const phoneInput = {
-      id: 'num1',
-      name: 'phone',
-      type: 'text',
-      placeholder: 'Enter your phone number +31 number',
-      pattern: '^[0-9]{12}$',
-    }
+      id: "num1",
+      name: "phone",
+      type: "text",
+      placeholder: "Enter your phone number +31 number",
+      pattern: "^[0-9]{12}$",
+    };
     const codeInput = {
-      id: 'num2',
-      name: 'code',
-      type: 'text',
-      placeholder: 'Enter the code you received via SMS ',
-      pattern: '^[0-9]{5}$',
-    }
-    const phone = ref('');
-    const code = ref('');
+      id: "num2",
+      name: "code",
+      type: "text",
+      placeholder: "Enter the code you received via SMS ",
+      pattern: "^[0-9]{5}$",
+    };
+    const phone = ref("");
+    const code = ref("");
     const showPhoneInfo = ref(false);
     const showCodeInfo = ref(false);
     const phoneToggleInfo = () => {
@@ -97,38 +121,45 @@ export default {
     const handelPhone = async () => {
       try {
         const response = await fetch("http://localhost:5500/api/users/phone", {
-          method: 'POST',
+          method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone: phone.value })
-        })
-        const json = await response.json()
-        localStorage.setItem("serviceId", json.service)
+          body: JSON.stringify({ phone: phone.value }),
+        });
+        const json = await response.json();
+        localStorage.setItem("serviceId", json.service);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
-    const router = useRouter()
+    };
+    const router = useRouter();
     const handelVerify = async () => {
-      const serviceId = localStorage.getItem("serviceId")
+      const serviceId = localStorage.getItem("serviceId");
       try {
-        const response = await fetch("http://localhost:5500/api/users/phone/verify", {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ code: code.value, phone: phone.value, serviceSid: serviceId })
-        })
-        const json = await response.json()
+        const response = await fetch(
+          "http://localhost:5500/api/users/phone/verify",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              code: code.value,
+              phone: phone.value,
+              serviceSid: serviceId,
+            }),
+          }
+        );
+        const json = await response.json();
         if (json.success) {
-          localStorage.removeItem("serviceId")
-          router.push('/home');
+          localStorage.removeItem("serviceId");
+          router.push("/home");
         }
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
-    }
+    };
 
     const isPhoneValid = computed(() => phone.value.length === 12);
     const isCodeValid = computed(() => code.value.length === 5);
@@ -148,10 +179,10 @@ export default {
       showPhoneInfo,
       showCodeInfo,
       phoneToggleInfo,
-      codeToggleInfo
-    }
-  }
-}
+      codeToggleInfo,
+    };
+  },
+};
 </script>
 
 <style scoped>
@@ -161,24 +192,13 @@ export default {
   align-items: center;
   width: 100%;
   height: 100%;
-  background-image: url("../../public/img/background-new.png");
-  background-repeat: no-repeat, repeat;
-  background-size: cover;
-  background-position: center;
 }
 
-#phone-number .input-info-container {
+.input-info-container {
   position: absolute;
   width: 90%;
   right: 5px;
-  top: -3rem;
-}
-
-#sms-code .input-info-container {
-  position: absolute;
-  width: 90%;
-  right: 5px;
-  top: -2rem;
+  bottom: 48px;
 }
 
 .input-popup-info {
@@ -189,21 +209,20 @@ export default {
   height: fit-content;
   position: relative;
   background-color: rgb(243, 247, 149);
-  border-radius: 10px 10px 0 10px;
+  border-radius: 10px;
   box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-
 }
 
 .input-popup-info::before {
   content: "";
   position: absolute;
-  right: 0;
-  bottom: -12px;
+  right: 10px;
+  bottom: -6px;
   width: 0;
   height: 0;
-  border-right: 6px solid transparent;
-  border-top: 12px solid rgb(243, 247, 149);
-  border-left: 6px solid transparent;
+  border-right: 12px solid rgb(243, 247, 149);
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
 }
 
 .active {
