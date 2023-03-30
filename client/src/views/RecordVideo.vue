@@ -1,5 +1,6 @@
 <template>
   <div>
+    <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
     <video
       v-if="toggleCamera"
       class="w-screen h-screen"
@@ -10,16 +11,20 @@
       type="button"
       id="startRecord"
       v-if="cameraEnabled"
-      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-red-900"
+      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-primary-100"
       @click="recordVideo"
-    ><span class="bg-red-900 w-7 h-7 rounded-full"></span></button>
+    >
+      <span class="bg-primary-100 w-7 h-7 rounded-full"></span>
+    </button>
     <button
       type="button"
       id="stopRecord"
       v-else
       class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-yellow-600"
       @click="stopRecording"
-    ><span class="bg-yellow-600 w-6 h-6"></span></button>
+    >
+      <span class="bg-yellow-600 w-6 h-6"></span>
+    </button>
     <p class="recording" v-if="recording">Recording...</p>
   </div>
 </template>
@@ -40,6 +45,9 @@ export default {
     this.toggleCamera();
   },
   methods: {
+    goBack() {
+      this.$router.push({ name: "HomePage" });
+    },
     async toggleCamera() {
       try {
         this.videoStream = await navigator.mediaDevices.getUserMedia({
@@ -79,6 +87,14 @@ export default {
 </script>
 
 <style scoped>
+.fa-circle-xmark {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #51555e;
+  font-size: 20px;
+  z-index: 10;
+}
 video {
   position: absolute;
   top: 0;
