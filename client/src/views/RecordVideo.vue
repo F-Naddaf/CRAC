@@ -10,16 +10,16 @@
       type="button"
       id="startRecord"
       v-if="cameraEnabled"
-      class="w-12 h-12 rounded-full bg-red-900"
+      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-red-900"
       @click="recordVideo"
-    ></button>
+    ><span class="bg-red-900 w-7 h-7 rounded-full"></span></button>
     <button
       type="button"
       id="stopRecord"
       v-else
-      class="w-12 h-12 rounded-full bg-yellow-300"
+      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-yellow-600"
       @click="stopRecording"
-    ></button>
+    ><span class="bg-yellow-600 w-6 h-6"></span></button>
     <p class="recording" v-if="recording">Recording...</p>
   </div>
 </template>
