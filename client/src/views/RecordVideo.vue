@@ -1,10 +1,20 @@
 <template>
   <div>
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
+    <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
     <div class="time-container">
-      <button class="time-btn" @click="selectedTime = 30">30 Sec</button>
-      <button class="time-btn" @click="selectedTime = 60">60 Sec</button>
-      <button class="time-btn" @click="selectedTime = 90">90 Sec</button>
+      <button class="time-btn" @click="selectedTime = 30">
+        30 Sec
+        <span v-if="selectedTime === 30" class="under-line"></span>
+      </button>
+      <button class="time-btn" @click="selectedTime = 60">
+        60 Sec
+        <span v-if="selectedTime === 60" class="under-line"></span>
+      </button>
+      <button class="time-btn" @click="selectedTime = 90">
+        90 Sec
+        <span v-if="selectedTime === 90" class="under-line"></span>
+      </button>
     </div>
     <video
       v-if="toggleCamera"
@@ -30,7 +40,6 @@
     >
       <span class="bg-yellow-600 w-6 h-6"></span>
     </button>
-    <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
   </div>
 </template>
 
@@ -85,12 +94,11 @@ export default {
       if (this.mediaRecorder.state === "recording") {
         this.mediaRecorder.stop();
       }
-      // this.mediaRecorder.stop();
       const blob = new Blob(this.blob, { type: "video/mp4" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "recording.mp4";
+      a.download = "Video.mp4";
       a.click();
       this.cameraEnabled = true;
       this.recording = false;
@@ -147,6 +155,7 @@ video {
   z-index: 20;
 }
 .time-btn {
+  position: relative;
   color: white;
   cursor: pointer;
   margin-left: 15px;
@@ -155,6 +164,16 @@ video {
 }
 .time-btn:hover {
   background-color: rgba(255, 255, 255, 0.3);
+}
+.under-line {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%);
+  height: 2px;
+  width: 50%;
+  background-color: white;
+  z-index: 100;
 }
 #startRecord,
 #stopRecord {
@@ -169,13 +188,6 @@ video {
   left: 50%;
   transform: translate(-50%);
   font-size: 12px;
-  color: red;
-}
-.timer {
-  position: absolute;
-  top: 20px;
-  right: 20px;
-  font-size: 24px;
   color: red;
 }
 </style>
