@@ -1,28 +1,38 @@
 <template>
-  <nav class="flex justify-evenly h-2/12 w-screen mb-2">
-    <button class="iconCard">
-      <i class="fa-solid fa-house"></i>
-      <p class="iconTitle">Home</p>
-    </button>
-    <button class="iconCard">
-      <i class="fa-solid fa-user-group"></i>
-      <p class="iconTitle">Friends</p>
-    </button>
-    <button class="cameraButton" @click="openCamera">
-      <span class="cameraButtonColor">
-        <i class="fa-solid fa-plus"></i>
-      </span>
-      <span class="cameraShadowPrimary"></span>
-      <span class="cameraShadowSecondary"></span>
-    </button>
-    <button class="iconCard">
-      <i class="fa-solid fa-message"></i>
-      <p class="iconTitle">Inbox</p>
-    </button>
-    <button class="iconCard">
-      <i class="fa-solid fa-user"></i>
-      <p class="iconTitle">Profile</p>
-    </button>
+  <nav>
+    <ul class="flex justify-around items-center w-full h-full">
+      <li>
+        <button class="iconCard">
+          <i class="fa-solid fa-house"></i>
+          <p class="iconTitle">Home</p>
+        </button>
+      </li>
+      <li>
+        <button class="iconCard">
+          <i class="fa-solid fa-user-group"></i>
+          <p class="iconTitle">Friends</p>
+        </button>
+      </li>
+      <li>
+        <button class="cameraBtn" @click="openCamera">
+          <i class="fa-solid fa-plus"></i>
+        </button>
+        <span class="cameraShadowPrimary"></span>
+        <span class="cameraShadowSecondary"></span>
+      </li>
+      <li>
+        <button class="iconCard">
+          <i class="fa-solid fa-message"></i>
+          <p class="iconTitle">Inbox</p>
+        </button>
+      </li>
+      <li>
+        <button class="iconCard">
+          <i class="fa-solid fa-user"></i>
+          <p class="iconTitle">Profile</p>
+        </button>
+      </li>
+    </ul>
   </nav>
 </template>
 
@@ -40,6 +50,28 @@ export default {
 </script>
 
 <style scoped>
+nav {
+  height: 50px;
+  width: 100vw;
+  border-top: 1px solid white;
+  margin-bottom: 5px;
+}
+li {
+  position: relative;
+  width: 2rem;
+  height: 1.5rem;
+}
+.cameraBtn {
+  position: relative;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  width: 2rem;
+  height: 1.5rem;
+  border-radius: 6px;
+  z-index: 10;
+}
 .fa-solid {
   color: rgb(209 213 219);
   z-index: 40;
@@ -47,5 +79,6 @@ export default {
 
 .fa-plus {
   color: black;
+  z-index: 15;
 }
 </style>

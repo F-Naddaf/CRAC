@@ -1,30 +1,38 @@
 <template>
   <div class="w-screen h-screen">
-    <div class="video-section"></div>
-    <SideNav class="absolute right-0 bottom-28" />
-    <NavBar class="absolute bottom-0" />
+    <div class="vedio-section">
+      <img src="../../public/img/people.jpg" alt="prople" />
+    </div>
+    <div class="absolute right-0 bottom-28 z-30">
+      <SideNav />
+    </div>
+    <div class="absolute bottom-0 z-30">
+      <NavBar />
+    </div>
   </div>
 </template>
 
 <script>
-import NavBar from "../components/NavBar.vue"
-import SideNav from "../components/SideNav.vue"
+import NavBar from "../components/NavBar.vue";
+import SideNav from "../components/SideNav.vue";
 
 export default {
   name: "HomePage",
   components: {
     NavBar,
-    SideNav
-  }
-}
+    SideNav,
+  },
+};
 </script>
 
 <style scoped>
-.video-section {
+.vedio-section {
+  display: flex;
   margin-left: 2%;
-  margin-top: 2%;
-  background-color: white;
+  position: absolute;
+  background-color: rgb(214, 214, 214);
+  bottom: 54px;
   width: 85%;
-  height: 92%;
+  height: 88%;
 }
 </style>
