@@ -82,7 +82,10 @@ export default {
       this.timeoutID = setTimeout(this.stopRecording, this.selectedTime * 1000);
     },
     stopRecording() {
-      this.mediaRecorder.stop();
+      if (this.mediaRecorder.state === "recording") {
+        this.mediaRecorder.stop();
+      }
+      // this.mediaRecorder.stop();
       const blob = new Blob(this.blob, { type: "video/mp4" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
@@ -101,14 +104,17 @@ export default {
         if (remainingTime === 0) {
           clearInterval(timerId);
           this.mediaRecorder.stop();
-          const blob = new Blob(this.blob, { type: "video/mp4" });
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement("a");
-          a.href = url;
-          a.download = "recording.mp4";
-          a.click();
-          this.cameraEnabled = true;
-          this.recording = false;
+          if (this.mediaRecorder.state === "recording") {
+            this.mediaRecorder.stop();
+            const blob = new Blob(this.blob, { type: "video/mp4" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "recording.mp4";
+            a.click();
+            this.cameraEnabled = true;
+            this.recording = false;
+          }
         }
       }, 1000);
     },
