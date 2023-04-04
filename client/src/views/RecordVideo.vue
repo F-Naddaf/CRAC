@@ -26,19 +26,19 @@
       type="button"
       id="startRecord"
       v-if="cameraEnabled"
-      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-primary-100"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-red-700"
       @click="startRecording"
     >
-      <span class="bg-primary-100 w-7 h-7 rounded-full"></span>
+      <span class="bg-red-700 w-6 h-6 rounded-full"></span>
     </button>
     <button
       type="button"
       id="stopRecord"
       v-else
-      class="flex items-center justify-center w-12 h-12 rounded-full border-4 border-yellow-600"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-red-700"
       @click="stopRecording"
     >
-      <span class="bg-yellow-600 w-6 h-6"></span>
+      <span class="bg-gray-400 w-5 h-5 rounded-sm"></span>
     </button>
   </div>
 </template>
@@ -89,6 +89,16 @@ export default {
       this.recording = true;
       this.timeRemaining = this.selectedTime;
       this.timeoutID = setTimeout(this.stopRecording, this.selectedTime * 1000);
+      let remainingTime = this.selectedTime;
+
+      const timerId = setInterval(() => {
+        remainingTime -= 1;
+        this.timeRemaining = remainingTime;
+
+        if (remainingTime === 0) {
+          clearInterval(timerId);
+        }
+      }, 1000);
     },
     stopRecording() {
       if (this.mediaRecorder.state === "recording") {
@@ -102,29 +112,6 @@ export default {
       a.click();
       this.cameraEnabled = true;
       this.recording = false;
-
-      let remainingTime = this.selectedTime;
-
-      const timerId = setInterval(() => {
-        remainingTime -= 1;
-        this.timeRemaining = remainingTime;
-
-        if (remainingTime === 0) {
-          clearInterval(timerId);
-          this.mediaRecorder.stop();
-          if (this.mediaRecorder.state === "recording") {
-            this.mediaRecorder.stop();
-            const blob = new Blob(this.blob, { type: "video/mp4" });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement("a");
-            a.href = url;
-            a.download = "recording.mp4";
-            a.click();
-            this.cameraEnabled = true;
-            this.recording = false;
-          }
-        }
-      }, 1000);
     },
   },
 };
@@ -138,6 +125,9 @@ export default {
   color: #51555e;
   font-size: 20px;
   z-index: 10;
+}
+.fa-circle-xmark:hover {
+  cursor: pointer;
 }
 video {
   position: absolute;
@@ -156,14 +146,11 @@ video {
 }
 .time-btn {
   position: relative;
-  color: white;
+  color: rgb(156 163 175);
   cursor: pointer;
   margin-left: 15px;
   padding: 5px;
   font-size: 12px;
-}
-.time-btn:hover {
-  background-color: rgba(255, 255, 255, 0.3);
 }
 .under-line {
   position: absolute;
@@ -172,7 +159,7 @@ video {
   transform: translate(-50%);
   height: 2px;
   width: 50%;
-  background-color: white;
+  background-color: rgb(156 163 175);
   z-index: 100;
 }
 #startRecord,
@@ -189,5 +176,6 @@ video {
   transform: translate(-50%);
   font-size: 12px;
   color: red;
+  z-index: 1;
 }
 </style>
