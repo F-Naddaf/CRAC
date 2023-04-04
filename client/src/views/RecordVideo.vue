@@ -88,17 +88,20 @@ export default {
       this.cameraEnabled = false;
       this.recording = true;
       this.timeRemaining = this.selectedTime;
-      this.timeoutID = setTimeout(this.stopRecording, this.selectedTime * 1000);
-      let remainingTime = this.selectedTime;
-
-      const timerId = setInterval(() => {
-        remainingTime -= 1;
-        this.timeRemaining = remainingTime;
-
-        if (remainingTime === 0) {
-          clearInterval(timerId);
-        }
-      }, 1000);
+      if (this.mediaRecorder.state === "recording") {
+        this.timeoutID = setTimeout(
+          this.stopRecording,
+          this.selectedTime * 1000
+        );
+        let remainingTime = this.selectedTime;
+        const timerId = setInterval(() => {
+          remainingTime -= 1;
+          this.timeRemaining = remainingTime;
+          if (remainingTime === 0) {
+            clearInterval(timerId);
+          }
+        }, 1000);
+      }
     },
     stopRecording() {
       if (this.mediaRecorder.state === "recording") {
