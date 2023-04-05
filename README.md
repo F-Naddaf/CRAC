@@ -4,7 +4,7 @@
 
 First, to setup all the directories run the following in the main directory:
 
-To install dependencies individually, run the `npm install` command in the server, client, and main root directories.<br> Alternatively, you can run the `npm run setup` command in the main root directory to install all dependencies in every directory.
+You need to run the command `npm install` at the main root, then run `npm run setup` to install all the dependencies in the server and client.
 
 To run the app in dev mode you can run the following command in the main directory:
 
