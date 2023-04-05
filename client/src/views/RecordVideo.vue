@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="relative w-full h-full">
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
     <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
     <div class="time-container">
@@ -18,7 +18,7 @@
     </div>
     <video
       v-if="toggleCamera"
-      class="w-screen h-screen"
+      class="max-w-md h-screen m-auto"
       id="video"
       autoplay
     ></video>
@@ -88,23 +88,20 @@ export default {
       this.cameraEnabled = false;
       this.recording = true;
       this.timeRemaining = this.selectedTime;
-      if (this.mediaRecorder.state === "recording") {
-        this.timeoutID = setTimeout(
-          this.stopRecording,
-          this.selectedTime * 1000
-        );
-        let remainingTime = this.selectedTime;
-        const timerId = setInterval(() => {
-          remainingTime -= 1;
-          this.timeRemaining = remainingTime;
-          if (remainingTime === 0) {
-            clearInterval(timerId);
-          }
-        }, 1000);
-      }
+      this.timeoutID = setTimeout(this.stopRecording, this.selectedTime * 1000);
+      let remainingTime = this.selectedTime;
+      const timerId = setInterval(() => {
+        remainingTime -= 1;
+        this.timeRemaining = remainingTime;
+        if (remainingTime === 0) {
+          clearInterval(timerId);
+        }
+      }, 1000);
     },
     stopRecording() {
       if (this.mediaRecorder.state === "recording") {
+        clearTimeout(this.timeoutID);
+        this.timeoutID = null;
         this.mediaRecorder.stop();
       }
       const blob = new Blob(this.blob, { type: "video/mp4" });

@@ -1,5 +1,5 @@
 <template>
-  <aside class="flex flex-col mr-1 justify-center h-fit w-10">
+  <aside class="flex flex-col mr-1 ml-1 justify-center h-fit w-10">
     <button
       class="iconCard bg-gray-700 rounded-full w-8 h-8 justify-center border-2 border-gray-200"
     >
