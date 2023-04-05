@@ -109,7 +109,6 @@ export default {
   bottom: 56px;
   width: 100%;
   height: 88%;
-  /* border-top: 2px solid rgb(209 213 219); */
 }
 .vedio-section {
   margin-left: 10px;
