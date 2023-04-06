@@ -14,7 +14,7 @@
     <button class="iconCard pt-12">
       <i class="fa-solid fa-bookmark text-2xl"></i>
     </button>
-    <button class="iconCard pt-12">
+    <button class="iconCard pt-12" @click="toggleShareContainer">
       <i class="fa-solid fa-share text-2xl"></i>
     </button>
   </aside>
@@ -23,6 +23,17 @@
 <script>
 export default {
   name: "SideNav",
+  props: {
+    isShareContainerOpen: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  methods: {
+    toggleShareContainer() {
+      this.$emit("toggle-share-container");
+    },
+  },
 };
 </script>
 

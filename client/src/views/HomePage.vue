@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen relative">
+  <div class="w-full h-screen relative overflow-hidden">
     <div class="flex w-full h-8.5 justify-between items-center">
       <div class="input-container">
         <input type="search" class="search-input" />
@@ -21,11 +21,17 @@
         <img class="image" src="../../public/img/people.jpg" alt="prople" />
       </div>
       <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
-        <SideNav />
+        <SideNav
+          :isShareContainerOpen="isShareContainerOpen"
+          @toggle-share-container="toggleShareContainer"
+        />
       </div>
     </div>
     <div class="nav-container">
       <NavBar />
+    </div>
+    <div v-if="openShareMedia" class="open-social-media">
+      <SocialMedia :isClosed="!isShareContainerOpen" />
     </div>
   </div>
 </template>
@@ -33,12 +39,25 @@
 <script>
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
+import SocialMedia from "../components/SocialMedia.vue";
 
 export default {
   name: "HomePage",
   components: {
     NavBar,
     SideNav,
+    SocialMedia,
+  },
+  data() {
+    return {
+      isShareContainerOpen: false,
+    };
+  },
+  methods: {
+    toggleShareContainer() {
+      this.isShareContainerOpen = !this.isShareContainerOpen;
+      this.openShareMedia = !this.openShareMedia;
+    },
   },
 };
 </script>
@@ -125,5 +144,13 @@ export default {
   bottom: 0;
   width: 100%;
   z-index: 10;
+}
+.open-social-media {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-200px);
+  transition: transform 0.3s ease-in-out;
+  z-index: 50;
 }
 </style>
