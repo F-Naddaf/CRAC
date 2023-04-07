@@ -60,7 +60,6 @@ export default {
         openShareMedia.value = !openShareMedia.value;
         isSocialMediaClosed.value = false;
       }
-      console.log(openShareMedia.value);
     };
     return {
       openShareMedia,

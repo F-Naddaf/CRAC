@@ -26,7 +26,6 @@ export default {
   methods: {
     toggleShareContainer() {
       this.$emit("toggle-share-container");
-      console.log("hello");
     },
   },
 };
