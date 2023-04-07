@@ -21,24 +21,52 @@
         <img class="image" src="../../public/img/people.jpg" alt="prople" />
       </div>
       <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
-        <SideNav />
+        <SideNav @toggle-share-container="toggleShareContainer" />
       </div>
     </div>
     <div class="nav-container">
       <NavBar />
     </div>
+    <div v-if="openShareMedia !== null" class="open-social-media">
+      <SocialMedia
+        :isClosed="isSocialMediaClosed"
+        @close="isSocialMediaClosed = true"
+      />
+    </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
+import SocialMedia from "../components/SocialMedia.vue";
 
 export default {
   name: "HomePage",
   components: {
     NavBar,
     SideNav,
+    SocialMedia,
+  },
+  setup() {
+    const openShareMedia = ref(null);
+    const isSocialMediaClosed = ref(false);
+
+    const toggleShareContainer = () => {
+      if (openShareMedia.value === null) {
+        openShareMedia.value = true;
+      } else {
+        openShareMedia.value = !openShareMedia.value;
+        isSocialMediaClosed.value = false;
+      }
+      console.log(openShareMedia.value);
+    };
+    return {
+      openShareMedia,
+      isSocialMediaClosed,
+      toggleShareContainer,
+    };
   },
 };
 </script>
@@ -125,5 +153,13 @@ export default {
   bottom: 0;
   width: 100%;
   z-index: 10;
+}
+.open-social-media {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-200px);
+  transition: transform 0.3s ease-in-out;
+  z-index: 50;
 }
 </style>
