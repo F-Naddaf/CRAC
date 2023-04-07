@@ -1,59 +1,138 @@
 <template>
-  <div :class="{ 'social-media-container': true, closed: isClosed }">
+  <div :class="{ 'social-media-container': true, close: isClosed }">
     <div class="social-media-header">
       <h3 class="share-title">Share via</h3>
-      <i
-        class="fa-solid fa-circle-xmark"
-        :class="{ close: isClosed }"
-        @click="closeSocialMedia"
-      ></i>
+      <i class="fa-solid fa-circle-xmark" @click="closeSocialMedia"></i>
     </div>
-    <div class="facebook social">
+    <button
+      class="facebook social"
+      @click="shareToFacebook"
+      :href="state.facebookLink"
+    >
       <img src="https://i.ibb.co/nzdYVs5/facebook.png" alt="facebook" />
       <p>Facebook</p>
-    </div>
-    <div class="messenger social">
+    </button>
+    <button
+      class="messenger social"
+      @click="shareToMessenger"
+      :href="state.messengerLink"
+    >
       <span>
         <img src="https://i.ibb.co/2WJ1NhQ/messenger.png" alt="messenger" />
       </span>
       <p>Messenger</p>
-    </div>
-    <div class="whatsapp social">
+    </button>
+    <button
+      class="whatsapp social"
+      @click="shareToWhatsapp"
+      :href="state.whatsappLink"
+    >
       <img src="https://i.ibb.co/vd8g99B/whatsapp.png" alt="whatsapp" />
       <p>Whatsapp</p>
-    </div>
-    <div class="twitter social">
+    </button>
+    <button
+      class="twitter social"
+      @click="shareToTwitter"
+      :href="state.twitterLink"
+    >
       <img src="https://i.ibb.co/n88DB2P/twitter.png" alt="twitter" />
       <p>Twitter</p>
-    </div>
-    <div class="instagram social">
+    </button>
+    <button
+      class="instagram social"
+      @click="shareToInstagram"
+      :href="state.instagramLink"
+    >
       <img src="https://i.ibb.co/kMfr9F5/instagram.png" alt="instagram" />
       <p>Instagram</p>
-    </div>
-    <div class="email social">
+    </button>
+    <button class="email social" @click="shareToEmail" :href="state.emailLink">
       <img src="https://i.ibb.co/S3wHVqY/email.png" alt="email" />
       <p>Email</p>
-    </div>
-    <div class="sms social">
+    </button>
+    <button class="sms social" @click="shareToSMS" :href="state.smsLink">
       <img src="https://i.ibb.co/0ZSJWv7/sms.png" alt="sms" />
       <p>SMS</p>
-    </div>
+    </button>
   </div>
 </template>
 
 <script>
+import { reactive } from "vue";
+
 export default {
   name: "SocialMedia",
-  data() {
-    return {
-      isClosed: false,
-    };
-  },
-  methods: {
-    closeSocialMedia() {
-      this.isClosed = true;
-      this.$emit("social-media-closed");
+  props: {
+    isClosed: {
+      type: Boolean,
+      required: true,
     },
+  },
+  emits: ["close"],
+  setup(props, context) {
+    const state = reactive({
+      facebookLink: "",
+      messengerLink: "",
+      whatsappLink: "",
+      twitterLink: "",
+      instagramLink: "",
+      emailLink: "",
+      smsLink: "",
+    });
+
+    const closeSocialMedia = () => {
+      context.emit("close", true);
+    };
+
+    const shareToFacebook = () => {
+      const url = "https://example.com";
+      state.facebookLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.facebookLink);
+    };
+    const shareToMessenger = () => {
+      const url = "https://example.com";
+      state.messengerLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.messengerLink);
+    };
+    const shareToWhatsapp = () => {
+      const url = "https://example.com";
+      state.whatsappLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.whatsappLink);
+    };
+
+    const shareToTwitter = () => {
+      const url = "https://example.com";
+      state.twitterLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.twitterLink);
+    };
+
+    const shareToInstagram = () => {
+      const url = "https://example.com";
+      state.instagramLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.instagramLink);
+    };
+
+    const shareToEmail = () => {
+      const url = "https://example.com";
+      state.emailLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.emailLink);
+    };
+    const shareToSMS = () => {
+      const url = "https://example.com";
+      state.smsLink = `https://www.facebook.com/share.php?u=${url}`;
+      window.open(state.smsLink);
+    };
+    return {
+      state,
+      closeSocialMedia,
+      shareToFacebook,
+      shareToMessenger,
+      shareToWhatsapp,
+      shareToTwitter,
+      shareToInstagram,
+      shareToEmail,
+      shareToSMS,
+    };
   },
 };
 </script>
@@ -75,7 +154,7 @@ export default {
   border-top-left-radius: 15px;
   transition: transform 0.3s ease-in-out;
 }
-.social-media-container.closed {
+.social-media-container.close {
   transform: translateY(200px);
 }
 .social-media-header {
@@ -121,10 +200,5 @@ export default {
 }
 .messenger span img {
   padding: 6px;
-}
-.open-social-media {
-  width: 100%;
-  position: absolute;
-  transform: translateY(200px);
 }
 </style>

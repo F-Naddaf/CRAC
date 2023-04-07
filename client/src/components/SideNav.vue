@@ -23,15 +23,10 @@
 <script>
 export default {
   name: "SideNav",
-  props: {
-    isShareContainerOpen: {
-      type: Boolean,
-      default: false,
-    },
-  },
   methods: {
     toggleShareContainer() {
       this.$emit("toggle-share-container");
+      console.log("hello");
     },
   },
 };

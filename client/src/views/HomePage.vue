@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-screen relative overflow-hidden">
+  <div class="w-full h-screen relative">
     <div class="flex w-full h-8.5 justify-between items-center">
       <div class="input-container">
         <input type="search" class="search-input" />
@@ -21,22 +21,23 @@
         <img class="image" src="../../public/img/people.jpg" alt="prople" />
       </div>
       <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
-        <SideNav
-          :isShareContainerOpen="isShareContainerOpen"
-          @toggle-share-container="toggleShareContainer"
-        />
+        <SideNav @toggle-share-container="toggleShareContainer" />
       </div>
     </div>
     <div class="nav-container">
       <NavBar />
     </div>
-    <div v-if="openShareMedia" class="open-social-media">
-      <SocialMedia :isClosed="!isShareContainerOpen" />
+    <div v-if="openShareMedia !== null" class="open-social-media">
+      <SocialMedia
+        :isClosed="isSocialMediaClosed"
+        @close="isSocialMediaClosed = true"
+      />
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
 import SocialMedia from "../components/SocialMedia.vue";
@@ -48,16 +49,24 @@ export default {
     SideNav,
     SocialMedia,
   },
-  data() {
-    return {
-      isShareContainerOpen: false,
+  setup() {
+    const openShareMedia = ref(null);
+    const isSocialMediaClosed = ref(false);
+
+    const toggleShareContainer = () => {
+      if (openShareMedia.value === null) {
+        openShareMedia.value = true;
+      } else {
+        openShareMedia.value = !openShareMedia.value;
+        isSocialMediaClosed.value = false;
+      }
+      console.log(openShareMedia.value);
     };
-  },
-  methods: {
-    toggleShareContainer() {
-      this.isShareContainerOpen = !this.isShareContainerOpen;
-      this.openShareMedia = !this.openShareMedia;
-    },
+    return {
+      openShareMedia,
+      isSocialMediaClosed,
+      toggleShareContainer,
+    };
   },
 };
 </script>
