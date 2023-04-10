@@ -1,5 +1,5 @@
 <template>
-  <nav class="h-12 mb-2 max-w-md border-t-2">
+  <nav class="navigation">
     <ul class="flex justify-around items-center w-full h-full">
       <li>
         <button class="iconCard">
@@ -50,6 +50,12 @@ export default {
 </script>
 
 <style scoped>
+.navigation {
+  border-top-width: 2px;
+  max-width: 28rem;
+  height: 7vh;
+  margin-bottom: 0.5rem;
+}
 li {
   position: relative;
   width: 2rem;

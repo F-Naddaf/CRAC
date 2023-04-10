@@ -9,11 +9,7 @@
         </div>
       </div>
       <div class="logo-container">
-        <img
-          class="h-auto w-5 pb-0.5 pl-0.5 opacity-70"
-          src="../../public/img/logo-icon-white.png"
-          alt="logo"
-        />
+        <DanceAnimation />
       </div>
     </div>
     <div class="video-container">
@@ -41,6 +37,7 @@ import { ref } from "vue";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
 import SocialMedia from "../components/SocialMedia.vue";
+import DanceAnimation from "../components/DanceAnimation.vue";
 
 export default {
   name: "HomePage",
@@ -48,6 +45,7 @@ export default {
     NavBar,
     SideNav,
     SocialMedia,
+    DanceAnimation,
   },
   setup() {
     const openShareMedia = ref(null);
@@ -120,22 +118,20 @@ export default {
   z-index: 5;
 }
 .logo-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   height: 40px;
   width: 40px;
-  background-color: #ba2f74;
-  border-radius: 50%;
   margin: 8px;
 }
 .video-container {
   display: flex;
   align-items: flex-end;
-  position: absolute;
-  bottom: 56px;
+  margin-bottom: 9vh;
   width: 100%;
-  height: 88%;
+  height: 84vh;
 }
 .vedio-section {
   margin-left: 10px;
