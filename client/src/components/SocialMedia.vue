@@ -91,35 +91,46 @@ export default {
     };
     const shareToMessenger = () => {
       const url = "https://example.com";
-      state.messengerLink = `https://www.facebook.com/share.php?u=${url}`;
+      state.messengerLink = `https://www.facebook.com/dialog/send?link=${url}&app_id=1234567890`;
       window.open(state.messengerLink);
     };
     const shareToWhatsapp = () => {
       const url = "https://example.com";
-      state.whatsappLink = `https://www.facebook.com/share.php?u=${url}`;
+      const message = "Sharing a video from CRAC";
+      state.whatsappLink = `https://wa.me/?text=${message}%20${url}`;
       window.open(state.whatsappLink);
     };
 
     const shareToTwitter = () => {
       const url = "https://example.com";
-      state.twitterLink = `https://www.facebook.com/share.php?u=${url}`;
+      const message = "Sharing a video from CRAC";
+      state.twitterLink = `https://twitter.com/share?url=${url}&text=${message}&hashtags=${""}`;
       window.open(state.twitterLink);
     };
 
     const shareToInstagram = () => {
       const url = "https://example.com";
-      state.instagramLink = `https://www.facebook.com/share.php?u=${url}`;
+      state.instagramLink = `https://www.instagram.com/share?url=${url}&caption=${""}`;
       window.open(state.instagramLink);
     };
 
     const shareToEmail = () => {
       const url = "https://example.com";
-      state.emailLink = `https://www.facebook.com/share.php?u=${url}`;
+      const body = encodeURIComponent(
+        `Hi,\n\nI wanted to share this link with you: ${url}\n\nEnjoy!`
+      );
+      const subject = "Sharing a video from CRAC";
+      state.emailLink = `mailto:?subject=${subject}&body=${body}`;
       window.open(state.emailLink);
     };
     const shareToSMS = () => {
+      if (!/Mobi/i.test(navigator.userAgent)) {
+        alert("This feature is available for mobile devices only");
+        return;
+      }
       const url = "https://example.com";
-      state.smsLink = `https://www.facebook.com/share.php?u=${url}`;
+      const message = "Sharing a video from CRAC";
+      state.smsLink = `sms:?body=${message} ${url}`;
       window.open(state.smsLink);
     };
     return {
