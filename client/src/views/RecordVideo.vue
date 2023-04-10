@@ -113,6 +113,16 @@ export default {
       this.cameraEnabled = true;
       this.recording = false;
     },
+    closeCamera() {
+      if (this.videoStream) {
+        this.videoStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+    },
+  },
+  beforeUnmount() {
+    this.closeCamera();
   },
 };
 </script>
