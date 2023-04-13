@@ -2,7 +2,7 @@
   <div class="relative w-full h-full">
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
     <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
-    <div class="time-container">
+    <div v-if="!isPosting" class="time-container">
       <button class="time-btn" @click="selectedTime = 30">
         30 Sec
         <span v-if="selectedTime === 30" class="under-line"></span>
@@ -20,13 +20,14 @@
       v-if="toggleCamera"
       class="max-w-md h-screen m-auto"
       id="video"
+      ref="myVideo"
       autoplay
     ></video>
     <button
       type="button"
       id="startRecord"
       v-if="cameraEnabled"
-      class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-red-700"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
       @click="startRecording"
     >
       <span class="bg-red-700 w-6 h-6 rounded-full"></span>
@@ -34,16 +35,32 @@
     <button
       type="button"
       id="stopRecord"
-      v-else
-      class="flex items-center justify-center w-11 h-11 rounded-full border-4 border-red-700"
+      v-if="isRecordStop"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
       @click="stopRecording"
     >
-      <span class="bg-gray-400 w-5 h-5 rounded-sm"></span>
+      <span class="bg-gray-400 w-4 h-4 rounded-sm"></span>
+    </button>
+    <button
+      type="button"
+      id="post"
+      class="flex items-center justify-center w-20"
+      v-if="isPosting"
+      @click="postVideo"
+    >
+      <div class="flex items-center justify-evenly w-full mb-4">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p class="text-xl text-gray-400 text-white font-bold">Post</p>
+      </div>
     </button>
   </div>
 </template>
 
 <script>
+import { storage } from "../firebase.js";
+import { ref, uploadBytes } from "firebase/storage";
+import firebase from "firebase/app";
+
 export default {
   name: "RecordVideo",
   data() {
@@ -56,6 +73,8 @@ export default {
       selectedTime: 30,
       timeoutID: null,
       timeRemaining: 0,
+      isRecordStop: false,
+      isPosting: false,
     };
   },
   mounted() {
@@ -82,9 +101,11 @@ export default {
       this.mediaRecorder = new MediaRecorder(this.videoStream);
       this.blob = [];
       this.mediaRecorder.addEventListener("dataavailable", (e) => {
+        console.log("data available", e.data.size);
         this.blob.push(e.data);
       });
       this.mediaRecorder.start();
+      this.isRecordStop = true;
       this.cameraEnabled = false;
       this.recording = true;
       this.timeRemaining = this.selectedTime;
@@ -102,21 +123,68 @@ export default {
       if (this.mediaRecorder.state === "recording") {
         clearTimeout(this.timeoutID);
         this.timeoutID = null;
+        this.isRecordStop = false;
+        this.isPosting = true;
         this.mediaRecorder.stop();
+
+        const blob = new Blob(this.blob, { type: "video/mp4" });
+        const storageRef = firebase.storage().ref();
+        const fileRef = storageRef.child("videos/" + filename);
+        const metadata = {
+          contentType: "video/mp4",
+        };
+        fileRef
+          .put(blob, metadata)
+          .then((snapshot) => {
+            console.log("File uploaded successfully");
+          })
+          .catch((error) => {
+            console.error("Error uploading file", error);
+          });
+
+        this.recording = false;
       }
-      const blob = new Blob(this.blob, { type: "video/mp4" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = "Video.mp4";
-      a.click();
-      this.cameraEnabled = true;
-      this.recording = false;
     },
+    // stopRecording() {
+    //   if (this.mediaRecorder.state === "recording") {
+    //     clearTimeout(this.timeoutID);
+    //     this.timeoutID = null;
+    //     this.mediaRecorder.stop();
+    //   }
+    //   const blob = new Blob(this.blob, { type: "video/mp4" });
+    //   const url = URL.createObjectURL(blob);
+    //   const a = document.createElement("a");
+    //   a.href = url;
+    //   a.download = "Video.mp4";
+    //   a.click();
+    //   this.cameraEnabled = true;
+    //   this.recording = false;
+    // },
+    // stopRecording() {
+    //   if (this.mediaRecorder.state === "recording") {
+    //     clearTimeout(this.timeoutID);
+    //     this.timeoutID = null;
+    //     this.isRecordStop = false;
+    //     this.isPosting = true;
+    //     this.mediaRecorder.stop();
+    //   }
+    //   const storageRef = ref(storage, "folder/myfile.mp4");
+    //   uploadBytes(storageRef, this.blob[0])
+    //     .then((snapshot) => {
+    //       console.log("uploaded");
+    //     })
+    //     .catch((error) => {
+    //       console.log(error);
+    //     });
+    //   this.recording = false;
+    // },
   },
 };
 </script>
 
+// const blob = new Blob(this.blob, { type: "video/mp4" }); // const url =
+URL.createObjectURL(blob); // const a = document.createElement("a"); // a.href =
+url; // a.download = "Video.mp4"; // a.click();
 <style scoped>
 .fa-circle-xmark {
   position: absolute;
@@ -163,11 +231,16 @@ video {
   z-index: 100;
 }
 #startRecord,
-#stopRecord {
+#stopRecord,
+#post {
   position: absolute;
   bottom: 20px;
   left: 50%;
   transform: translate(-50%);
+}
+.fa-cloud-arrow-up {
+  color: #e67cb1;
+  font-size: 18px;
 }
 .recording {
   position: absolute;
