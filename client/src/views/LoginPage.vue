@@ -10,15 +10,14 @@
         :label="input.label"
         :type="input.type"
         :valid="input.valid"
-        :error="input.error"
+        :error="inputError(input)"
         :pattern="input.pattern"
         :value="input.value"
-        @input="
-          (event) => {
-            input.value = event.target.value;
-          }
-        "
+        @input="updateInputValue(input, $event.target.value)"
       />
+      <p class="text-sm font-bold text-primary-200" v-if="loginStatus">
+        {{ loginStatus }}
+      </p>
       <button class="LoginButton rounded-lg text-white font-semibold mt-4">
         Login
       </button>
@@ -53,15 +52,20 @@
 import FormInput from "../components/FormInput.vue";
 import { gapi } from "gapi-script";
 import router from "../router";
-import { inject } from "vue";
+import { inject, ref } from "vue";
 export default {
   name: "LoginPage",
-  data() {
+
+  components: {
+    FormInput,
+  },
+
+  setup() {
     const inputs = [
       {
         id: 1,
         name: "username",
-        type: "text",
+        type: "email",
         label: "Email address",
         pattern: "^[A-Za-z0-9]{3,16}$",
         value: "",
@@ -78,20 +82,27 @@ export default {
         error: "Incorrect Password",
       },
     ];
-    return {
-      inputs,
-      isLoading: false,
-    };
-  },
-  setup() {
+
     const Vue3GoogleOauth = inject("Vue3GoogleOauth");
-    return {
-      Vue3GoogleOauth,
-      user: "",
+    const userEmail = ref("");
+    const userFirstName = ref("");
+    const userLastName = ref("");
+    const userName = ref("");
+    const loginStatus = ref("");
+
+    const inputError = (input) => {
+      if (!input.type) {
+        return input.error;
+      } else {
+        return "";
+      }
     };
-  },
-  methods: {
-    async handelSignIn() {
+
+    const updateInputValue = (input, value) => {
+      input.value = value;
+    };
+
+    const handelSignIn = async () => {
       try {
         gapi.load("auth2", async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
@@ -99,18 +110,53 @@ export default {
           if (!googleUser) {
             return null;
           } else {
-            this.user = googleUser.getBasicProfile().getEmail();
-            router.push("/phone");
+            userEmail.value = googleUser.getBasicProfile().getEmail();
+            userFirstName.value = googleUser.wt.rV;
+            userLastName.value = googleUser.wt.uT;
+
+            userName.value = `${userFirstName.value.charAt(0)}${
+              userLastName.value
+            }`;
+            setTimeout(() => {
+              router.push("/phone");
+            }, 3000);
             console.log("google user", googleUser);
           }
+          const response = await fetch(
+            `http://localhost:5500/api/users/login/google`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                email: userEmail.value,
+                first: userFirstName.value,
+                last: userLastName.value,
+                username: userName.value,
+              }),
+            }
+          );
+          const result = await response.json();
+          loginStatus.value = result.message;
         });
       } catch (error) {
         console.log(error);
       }
-    },
-  },
-  components: {
-    FormInput,
+    };
+
+    return {
+      inputs,
+      isLoading: false,
+      inputError,
+      updateInputValue,
+      handelSignIn,
+      userEmail,
+      userFirstName,
+      userLastName,
+      userName,
+      loginStatus,
+    };
   },
 };
 </script>
