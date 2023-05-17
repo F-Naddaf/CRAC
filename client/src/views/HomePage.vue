@@ -14,7 +14,14 @@
     </div>
     <div class="video-container">
       <div class="vedio-section">
-        <img class="image" src="../../public/img/people.jpg" alt="prople" />
+        <video loop autoplay>
+          <source
+            class="source"
+            src="https://firebasestorage.googleapis.com/v0/b/crac-video-upload.appspot.com/o/videos%2F99b3dc3a-fc32-4701-b8b1-48052620d7e2?alt=media&token=63fa9537-1792-4ef6-9e3d-267f538f76ba"
+            type="video/mp4"
+          />
+        </video>
+        <!-- <img class="image" src="../../public/img/people.jpg" alt="prople" /> -->
       </div>
       <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
         <SideNav @toggle-share-container="toggleShareContainer" />
@@ -156,5 +163,12 @@ export default {
   transform: translateY(-200px);
   transition: transform 0.3s ease-in-out;
   z-index: 50;
+}
+video {
+  width: 100%;
+  height: 100%;
+}
+.vedio-section video {
+  object-fit: cover;
 }
 </style>

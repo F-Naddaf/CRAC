@@ -1,14 +1,35 @@
 <template>
-  <div class="flex flex-col justify-center items-center w-full h-full rounded-md">
+  <div
+    class="flex flex-col justify-center items-center w-full h-full rounded-md"
+  >
     <form class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
-      <FormInput v-for="input in inputs" :key="input.id" :label="input.label" :type="input.type" :valid="input.valid"
-        :error="input.error" :pattern="input.pattern" :value="input.value"
-        @input="(event) => { input.value = event.target.value }" />
-      <button class="LoginButton rounded-lg text-white font-semibold mt-4">Login</button>
+      <FormInput
+        v-for="input in inputs"
+        :key="input.id"
+        :label="input.label"
+        :type="input.type"
+        :valid="input.valid"
+        :error="input.error"
+        :pattern="input.pattern"
+        :value="input.value"
+        @input="
+          (event) => {
+            input.value = event.target.value;
+          }
+        "
+      />
+      <button class="LoginButton rounded-lg text-white font-semibold mt-4">
+        Login
+      </button>
       <div class="flex w-full ml-5">
-        <span class="text-sm mt-4 text-gray-300">Don't have an account?
-          <router-link class="pl-2 text-md text-secondary-200 font-semibold" to="/register">Register</router-link>
+        <span class="text-sm mt-4 text-gray-300"
+          >Don't have an account?
+          <router-link
+            class="pl-2 text-md text-secondary-200 font-semibold"
+            to="/register"
+            >Register</router-link
+          >
         </span>
       </div>
       <div class="flex items-center justify-between w-full mt-5">
@@ -17,7 +38,11 @@
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
       <button @click="handelSignIn" class="googleButton mt-3 mb-2">
-        <img src="../../public/img/google.png" alt="Google logo" class="h-full p-1.5" />
+        <img
+          src="../../public/img/google.png"
+          alt="Google logo"
+          class="h-full p-1.5"
+        />
         <span class="pl-4 text-sm font-semibold">Login with google</span>
       </button>
     </form>
@@ -25,67 +50,69 @@
 </template>
 
 <script>
-import FormInput from "../components/FormInput.vue"
-import { gapi } from 'gapi-script';
-import router from '../router'
-import { inject } from 'vue'
+import FormInput from "../components/FormInput.vue";
+import { gapi } from "gapi-script";
+import router from "../router";
+import { inject } from "vue";
 export default {
   name: "LoginPage",
   data() {
-    const inputs = [{
-      id: 1,
-      name: 'username',
-      type: 'text',
-      label: 'Email address',
-      pattern: "^[A-Za-z0-9]{3,16}$",
-      value: '',
-      valid: null,
-      error: "Incorrect Email address"
-    },
-    {
-      id: 2,
-      name: 'password',
-      type: 'password',
-      label: 'Password',
-      value: '',
-      valid: null,
-      error: "Incorrect Password"
-    }]
+    const inputs = [
+      {
+        id: 1,
+        name: "username",
+        type: "text",
+        label: "Email address",
+        pattern: "^[A-Za-z0-9]{3,16}$",
+        value: "",
+        valid: null,
+        error: "Incorrect Email address",
+      },
+      {
+        id: 2,
+        name: "password",
+        type: "password",
+        label: "Password",
+        value: "",
+        valid: null,
+        error: "Incorrect Password",
+      },
+    ];
     return {
       inputs,
       isLoading: false,
-    }
+    };
   },
   setup() {
-    const Vue3GoogleOauth = inject('Vue3GoogleOauth');
+    const Vue3GoogleOauth = inject("Vue3GoogleOauth");
     return {
       Vue3GoogleOauth,
-      user: ''
-    }
+      user: "",
+    };
   },
   methods: {
     async handelSignIn() {
       try {
-        gapi.load('auth2', async () => {
+        gapi.load("auth2", async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
           const googleUser = await googleAuth.signIn();
           if (!googleUser) {
-            return null
+            return null;
           } else {
-            this.user = googleUser.getBasicProfile().getEmail()
-            router.push('/phone');
+            this.user = googleUser.getBasicProfile().getEmail();
+            router.push("/phone");
             console.log("google user", googleUser);
           }
         });
       } catch (error) {
-        console.log(error)
+        console.log(error);
       }
-    }
+    },
   },
   components: {
-    FormInput
-  }
-}
+    FormInput,
+  },
+};
 </script>
 
 <style>

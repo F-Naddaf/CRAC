@@ -27,5 +27,8 @@
   "homepage": "https://github.com/F-Naddaf/cutcast#readme",
   "devDependencies": {
     "concurrently": "^7.6.0"
+  },
+  "dependencies": {
+    "uuidv4": "^6.2.13"
   }
 }

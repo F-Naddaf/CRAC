@@ -57,9 +57,10 @@
 </template>
 
 <script>
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from "uuid";
 import { storage } from "../firebase.js";
-import { ref, uploadBytes } from "firebase/storage";
-import firebase from "firebase/app";
+import "firebase/storage";
 
 export default {
   name: "RecordVideo",
@@ -75,6 +76,7 @@ export default {
       timeRemaining: 0,
       isRecordStop: false,
       isPosting: false,
+      url: null,
     };
   },
   mounted() {
@@ -82,6 +84,7 @@ export default {
   },
   methods: {
     goBack() {
+      this.closeCamera();
       this.$router.push({ name: "HomePage" });
     },
     async toggleCamera() {
@@ -119,72 +122,44 @@ export default {
         }
       }, 1000);
     },
-    stopRecording() {
+
+    async stopRecording() {
+      const filename = uuidv4();
+      const storageRef = ref(storage);
+      const fileRef = ref(storageRef, "videos/" + filename);
       if (this.mediaRecorder.state === "recording") {
         clearTimeout(this.timeoutID);
         this.timeoutID = null;
         this.isRecordStop = false;
         this.isPosting = true;
-        this.mediaRecorder.stop();
-
-        const blob = new Blob(this.blob, { type: "video/mp4" });
-        const storageRef = firebase.storage().ref();
-        const fileRef = storageRef.child("videos/" + filename);
+        await new Promise((resolve) => {
+          this.mediaRecorder.addEventListener("stop", resolve);
+          this.mediaRecorder.stop();
+        });
+        const blob = new Blob(this.blob, { type: "videos/mp4" });
         const metadata = {
           contentType: "video/mp4",
         };
-        fileRef
-          .put(blob, metadata)
-          .then((snapshot) => {
-            console.log("File uploaded successfully");
-          })
-          .catch((error) => {
-            console.error("Error uploading file", error);
-          });
-
+        const snapShot = await uploadBytes(fileRef, blob, metadata);
+        this.url = await getDownloadURL(snapShot.ref);
+        console.log("url", this.url);
         this.recording = false;
       }
     },
-    // stopRecording() {
-    //   if (this.mediaRecorder.state === "recording") {
-    //     clearTimeout(this.timeoutID);
-    //     this.timeoutID = null;
-    //     this.mediaRecorder.stop();
-    //   }
-    //   const blob = new Blob(this.blob, { type: "video/mp4" });
-    //   const url = URL.createObjectURL(blob);
-    //   const a = document.createElement("a");
-    //   a.href = url;
-    //   a.download = "Video.mp4";
-    //   a.click();
-    //   this.cameraEnabled = true;
-    //   this.recording = false;
-    // },
-    // stopRecording() {
-    //   if (this.mediaRecorder.state === "recording") {
-    //     clearTimeout(this.timeoutID);
-    //     this.timeoutID = null;
-    //     this.isRecordStop = false;
-    //     this.isPosting = true;
-    //     this.mediaRecorder.stop();
-    //   }
-    //   const storageRef = ref(storage, "folder/myfile.mp4");
-    //   uploadBytes(storageRef, this.blob[0])
-    //     .then((snapshot) => {
-    //       console.log("uploaded");
-    //     })
-    //     .catch((error) => {
-    //       console.log(error);
-    //     });
-    //   this.recording = false;
-    // },
+    closeCamera() {
+      if (this.videoStream) {
+        this.videoStream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+    },
+    postVideo() {
+      console.log("url", this.url);
+    },
   },
 };
 </script>
 
-// const blob = new Blob(this.blob, { type: "video/mp4" }); // const url =
-URL.createObjectURL(blob); // const a = document.createElement("a"); // a.href =
-url; // a.download = "Video.mp4"; // a.click();
 <style scoped>
 .fa-circle-xmark {
   position: absolute;
