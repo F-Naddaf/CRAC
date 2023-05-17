@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-screen relative">
-    <div class="flex w-full h-8.5 justify-between items-center">
+    <div class="flex w-full justify-between items-center" id="head">
       <div class="input-container">
         <input type="search" class="search-input" />
         <div class="search-container">
@@ -76,6 +76,9 @@ export default {
 </script>
 
 <style scoped>
+#head {
+  height: 6vh;
+}
 .input-container {
   position: relative;
   display: flex;
@@ -136,9 +139,8 @@ export default {
 .video-container {
   display: flex;
   align-items: flex-end;
-  margin-bottom: 9vh;
   width: 100%;
-  height: 84vh;
+  height: 86vh;
 }
 .vedio-section {
   margin-left: 10px;
