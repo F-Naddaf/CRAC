@@ -20,7 +20,7 @@
             :class="{ active: phoneInputValue !== '' }"
             >Phone</label
           >
-          <button class="info" @click="showPhoneInfo = !showPhoneInfo">
+          <button class="info" @click="phoneToggleInfo">
             <i class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showPhoneInfo">
               <div class="input-popup-info">
@@ -60,7 +60,7 @@
             :class="{ active: codeInputValue !== '' }"
             >Code</label
           >
-          <button class="info" @click="showCodeInfo = !showCodeInfo">
+          <button class="info" @click="codeToggleInfo">
             <i class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showCodeInfo">
               <div class="input-popup-info">
@@ -85,7 +85,7 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { ref, computed } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 export default {
   name: "ConformPhone",
@@ -107,25 +107,53 @@ export default {
       placeholder: "Enter the code you received via SMS ",
       pattern: "^[0-9]{5}$",
     };
+
     const phone = ref("");
     const code = ref("");
     const showPhoneInfo = ref(false);
     const showCodeInfo = ref(false);
+
     const phoneToggleInfo = () => {
+      console.log("phone");
       showPhoneInfo.value = !showPhoneInfo.value;
     };
+
     const codeToggleInfo = () => {
+      console.log("code");
       showCodeInfo.value = !showCodeInfo.value;
     };
 
+    const closeInfoPopup = (e) => {
+      const target = e.target;
+      console.log(target);
+      const infoContainer = document.querySelector(".input-popup-info");
+      const icon = document.querySelector(".fa-solid");
+      if (target !== infoContainer && target !== icon) {
+        if (showPhoneInfo.value !== false) {
+          console.log("1");
+          showPhoneInfo.value = false;
+        } else if (showCodeInfo.value !== false) {
+          console.log("2");
+          showCodeInfo.value = false;
+        }
+      }
+    };
+
+    onMounted(() => {
+      window.addEventListener("click", closeInfoPopup);
+    });
+
     const handelPhone = async () => {
       try {
-        const response = await fetch("http://localhost:5500/api/users/phone", {
+        const response = await fetch("http://localhost:6500/api/users/phone", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ phone: phone.value }),
+          body: JSON.stringify({
+            phone: phone.value,
+            email: "blackroze7023@gmail.com",
+          }),
         });
         const json = await response.json();
         localStorage.setItem("serviceId", json.service);
@@ -138,7 +166,7 @@ export default {
       const serviceId = localStorage.getItem("serviceId");
       try {
         const response = await fetch(
-          "http://localhost:5500/api/users/phone/verify",
+          "http://localhost:6500/api/users/phone/verify",
           {
             method: "POST",
             headers: {
@@ -180,6 +208,7 @@ export default {
       showCodeInfo,
       phoneToggleInfo,
       codeToggleInfo,
+      closeInfoPopup,
     };
   },
 };

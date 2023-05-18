@@ -11,4 +11,4 @@ export const userSchema = new mongoose.Schema({
   token: String,
 });
 
-export const OTP = mongoose.model("OTP", userSchema);
+export const User = mongoose.model("users", userSchema);

@@ -10,15 +10,17 @@
         :label="input.label"
         :type="input.type"
         :valid="input.valid"
-        :error="inputError(input)"
+        :error="input.error"
         :pattern="input.pattern"
-        :value="input.value"
-        @input="updateInputValue(input, $event.target.value)"
+        v-model="input.value"
       />
       <p class="text-sm font-bold text-primary-200" v-if="loginStatus">
         {{ loginStatus }}
       </p>
-      <button class="LoginButton rounded-lg text-white font-semibold mt-4">
+      <button
+        @click="handleLogIn"
+        class="LoginButton rounded-lg text-white font-semibold mt-4"
+      >
         Login
       </button>
       <div class="flex w-full ml-5">
@@ -36,7 +38,7 @@
         <p class="font-bold p-3 text-gray-300">OR</p>
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
-      <button @click="handelSignIn" class="googleButton mt-3 mb-2">
+      <button @click="handelSignInWithGoogle" class="googleButton mt-3 mb-2">
         <img
           src="../../public/img/google.png"
           alt="Google logo"
@@ -67,7 +69,7 @@ export default {
         name: "username",
         type: "email",
         label: "Email address",
-        pattern: "^[A-Za-z0-9]{3,16}$",
+        pattern: "^\\S+@\\S+\\.\\S+$",
         value: "",
         valid: null,
         error: "Incorrect Email address",
@@ -77,6 +79,8 @@ export default {
         name: "password",
         type: "password",
         label: "Password",
+        pattern:
+          "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{8,15}$",
         value: "",
         valid: null,
         error: "Incorrect Password",
@@ -85,6 +89,7 @@ export default {
 
     const Vue3GoogleOauth = inject("Vue3GoogleOauth");
     const userEmail = ref("");
+    const password = ref("");
     const userFirstName = ref("");
     const userLastName = ref("");
     const userName = ref("");
@@ -98,11 +103,35 @@ export default {
       }
     };
 
-    const updateInputValue = (input, value) => {
-      input.value = value;
+    const handleLogIn = async () => {
+      console.log("handleLogIn called");
+      try {
+        const response = await fetch(`http://localhost:6500/api/users/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: userEmail.value,
+            password: password.value,
+          }),
+        });
+        const result = await response.json();
+        console.log("result", result);
+        loginStatus.value = result.message;
+        if (result.success) {
+          setTimeout(() => {
+            router.push("/phone");
+          }, 3000);
+        } else {
+          return result.message;
+        }
+      } catch (error) {
+        console.log(error);
+      }
     };
 
-    const handelSignIn = async () => {
+    const handelSignInWithGoogle = async () => {
       try {
         gapi.load("auth2", async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
@@ -123,17 +152,17 @@ export default {
             console.log("google user", googleUser);
           }
           const response = await fetch(
-            `http://localhost:5500/api/users/login/google`,
+            `http://localhost:6500/api/users/login/google`,
             {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                email: userEmail.value,
+                username: userName.value,
                 first: userFirstName.value,
                 last: userLastName.value,
-                username: userName.value,
+                email: userEmail.value,
               }),
             }
           );
@@ -149,9 +178,10 @@ export default {
       inputs,
       isLoading: false,
       inputError,
-      updateInputValue,
-      handelSignIn,
+      handleLogIn,
+      handelSignInWithGoogle,
       userEmail,
+      password,
       userFirstName,
       userLastName,
       userName,
