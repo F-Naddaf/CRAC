@@ -2,23 +2,24 @@
   <div
     class="flex flex-col justify-center items-center w-full h-full rounded-md"
   >
-    <form class="card">
+    <form @submit.prevent="handleLogIn" class="card">
       <h1 class="mb-5 text-3xl font-bold text-secondary-200">Login</h1>
       <FormInput
-        v-for="input in inputs"
-        :key="input.id"
+        v-for="(input, index) in inputs"
+        :key="index"
         :label="input.label"
         :type="input.type"
         :valid="input.valid"
         :error="input.error"
         :pattern="input.pattern"
         v-model="input.value"
+        @update:value="input.value = $event"
       />
       <p class="text-sm font-bold text-primary-200" v-if="loginStatus">
         {{ loginStatus }}
       </p>
       <button
-        @click="handleLogIn"
+        type="submit"
         class="LoginButton rounded-lg text-white font-semibold mt-4"
       >
         Login
@@ -63,9 +64,8 @@ export default {
   },
 
   setup() {
-    const inputs = [
-      {
-        id: 1,
+    const inputs = ref({
+      username: {
         name: "username",
         type: "email",
         label: "Email address",
@@ -74,8 +74,7 @@ export default {
         valid: null,
         error: "Incorrect Email address",
       },
-      {
-        id: 2,
+      password: {
         name: "password",
         type: "password",
         label: "Password",
@@ -85,16 +84,10 @@ export default {
         valid: null,
         error: "Incorrect Password",
       },
-    ];
+    });
 
     const Vue3GoogleOauth = inject("Vue3GoogleOauth");
-    const userEmail = ref("");
-    const password = ref("");
-    const userFirstName = ref("");
-    const userLastName = ref("");
-    const userName = ref("");
     const loginStatus = ref("");
-
     const inputError = (input) => {
       if (!input.type) {
         return input.error;
@@ -104,7 +97,7 @@ export default {
     };
 
     const handleLogIn = async () => {
-      console.log("handleLogIn called");
+      console.log("userEmail.value", inputs.value.username.value);
       try {
         const response = await fetch(`http://localhost:6500/api/users/login`, {
           method: "POST",
@@ -112,8 +105,8 @@ export default {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            email: userEmail.value,
-            password: password.value,
+            email: inputs.value.username.value,
+            password: inputs.value.password.value,
           }),
         });
         const result = await response.json();
@@ -139,35 +132,34 @@ export default {
           if (!googleUser) {
             return null;
           } else {
-            userEmail.value = googleUser.getBasicProfile().getEmail();
-            userFirstName.value = googleUser.wt.rV;
-            userLastName.value = googleUser.wt.uT;
+            const userEmail = googleUser.getBasicProfile().getEmail();
+            const userFirstName = googleUser.wt.rV;
+            const userLastName = googleUser.wt.uT;
+            const userName = `${userFirstName.charAt(0)}${userLastName}`;
 
-            userName.value = `${userFirstName.value.charAt(0)}${
-              userLastName.value
-            }`;
-            setTimeout(() => {
-              router.push("/phone");
-            }, 3000);
-            console.log("google user", googleUser);
-          }
-          const response = await fetch(
-            `http://localhost:6500/api/users/login/google`,
-            {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                username: userName.value,
-                first: userFirstName.value,
-                last: userLastName.value,
-                email: userEmail.value,
-              }),
+            const response = await fetch(
+              `http://localhost:6500/api/users/login/google`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  username: userName,
+                  first: userFirstName,
+                  last: userLastName,
+                  email: userEmail,
+                }),
+              }
+            );
+            const result = await response.json();
+            if (result.success) {
+              setTimeout(() => {
+                router.push("/phone");
+              }, 3000);
             }
-          );
-          const result = await response.json();
-          loginStatus.value = result.message;
+            loginStatus.value = result.message;
+          }
         });
       } catch (error) {
         console.log(error);
@@ -180,11 +172,6 @@ export default {
       inputError,
       handleLogIn,
       handelSignInWithGoogle,
-      userEmail,
-      password,
-      userFirstName,
-      userLastName,
-      userName,
       loginStatus,
     };
   },

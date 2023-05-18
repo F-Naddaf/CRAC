@@ -162,12 +162,6 @@ export default {
       inputs,
       isLoading: false,
       router,
-      // userName,
-      // firstName,
-      // lastName,
-      // email,
-      // password,
-      // confirmPassword,
       signUpStatus,
       handelSubmit,
     };
