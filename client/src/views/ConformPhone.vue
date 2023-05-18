@@ -114,34 +114,32 @@ export default {
     const showCodeInfo = ref(false);
 
     const phoneToggleInfo = () => {
-      console.log("phone");
       showPhoneInfo.value = !showPhoneInfo.value;
     };
 
     const codeToggleInfo = () => {
-      console.log("code");
       showCodeInfo.value = !showCodeInfo.value;
     };
 
-    const closeInfoPopup = (e) => {
-      const target = e.target;
-      console.log(target);
-      const infoContainer = document.querySelector(".input-popup-info");
-      const icon = document.querySelector(".fa-solid");
-      if (target !== infoContainer && target !== icon) {
-        if (showPhoneInfo.value !== false) {
-          console.log("1");
-          showPhoneInfo.value = false;
-        } else if (showCodeInfo.value !== false) {
-          console.log("2");
-          showCodeInfo.value = false;
-        }
-      }
-    };
+    // const closeInfoPopup = (e) => {
+    //   const target = e.target;
+    //   console.log(target);
+    //   const infoContainer = document.querySelector(".input-popup-info");
+    //   const icon = document.querySelector(".fa-solid");
+    //   if (target !== infoContainer && target !== icon) {
+    //     if (showPhoneInfo.value !== false) {
+    //       console.log("1");
+    //       showPhoneInfo.value = false;
+    //     } else if (showCodeInfo.value !== false) {
+    //       console.log("2");
+    //       showCodeInfo.value = false;
+    //     }
+    //   }
+    // };
 
-    onMounted(() => {
-      window.addEventListener("click", closeInfoPopup);
-    });
+    // onMounted(() => {
+    //   window.addEventListener("click", closeInfoPopup);
+    // });
 
     const handelPhone = async () => {
       try {
@@ -208,7 +206,7 @@ export default {
       showCodeInfo,
       phoneToggleInfo,
       codeToggleInfo,
-      closeInfoPopup,
+      // closeInfoPopup,
     };
   },
 };
