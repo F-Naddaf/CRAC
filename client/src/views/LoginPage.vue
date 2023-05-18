@@ -12,14 +12,15 @@
         :valid="input.valid"
         :error="input.error"
         :pattern="input.pattern"
-        :value="input.value"
-        @input="
-          (event) => {
-            input.value = event.target.value;
-          }
-        "
+        v-model="input.value"
       />
-      <button class="LoginButton rounded-lg text-white font-semibold mt-4">
+      <p class="text-sm font-bold text-primary-200" v-if="loginStatus">
+        {{ loginStatus }}
+      </p>
+      <button
+        @click="handleLogIn"
+        class="LoginButton rounded-lg text-white font-semibold mt-4"
+      >
         Login
       </button>
       <div class="flex w-full ml-5">
@@ -37,7 +38,7 @@
         <p class="font-bold p-3 text-gray-300">OR</p>
         <span class="w-1/2 h-0.5 bg-gray-300"></span>
       </div>
-      <button @click="handelSignIn" class="googleButton mt-3 mb-2">
+      <button @click="handelSignInWithGoogle" class="googleButton mt-3 mb-2">
         <img
           src="../../public/img/google.png"
           alt="Google logo"
@@ -53,17 +54,22 @@
 import FormInput from "../components/FormInput.vue";
 import { gapi } from "gapi-script";
 import router from "../router";
-import { inject } from "vue";
+import { inject, ref } from "vue";
 export default {
   name: "LoginPage",
-  data() {
+
+  components: {
+    FormInput,
+  },
+
+  setup() {
     const inputs = [
       {
         id: 1,
         name: "username",
-        type: "text",
+        type: "email",
         label: "Email address",
-        pattern: "^[A-Za-z0-9]{3,16}$",
+        pattern: "^\\S+@\\S+\\.\\S+$",
         value: "",
         valid: null,
         error: "Incorrect Email address",
@@ -73,25 +79,59 @@ export default {
         name: "password",
         type: "password",
         label: "Password",
+        pattern:
+          "^(?=.*\\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9])(?!.*\\s).{8,15}$",
         value: "",
         valid: null,
         error: "Incorrect Password",
       },
     ];
-    return {
-      inputs,
-      isLoading: false,
-    };
-  },
-  setup() {
+
     const Vue3GoogleOauth = inject("Vue3GoogleOauth");
-    return {
-      Vue3GoogleOauth,
-      user: "",
+    const userEmail = ref("");
+    const password = ref("");
+    const userFirstName = ref("");
+    const userLastName = ref("");
+    const userName = ref("");
+    const loginStatus = ref("");
+
+    const inputError = (input) => {
+      if (!input.type) {
+        return input.error;
+      } else {
+        return "";
+      }
     };
-  },
-  methods: {
-    async handelSignIn() {
+
+    const handleLogIn = async () => {
+      console.log("handleLogIn called");
+      try {
+        const response = await fetch(`http://localhost:6500/api/users/login`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: userEmail.value,
+            password: password.value,
+          }),
+        });
+        const result = await response.json();
+        console.log("result", result);
+        loginStatus.value = result.message;
+        if (result.success) {
+          setTimeout(() => {
+            router.push("/phone");
+          }, 3000);
+        } else {
+          return result.message;
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const handelSignInWithGoogle = async () => {
       try {
         gapi.load("auth2", async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
@@ -99,18 +139,54 @@ export default {
           if (!googleUser) {
             return null;
           } else {
-            this.user = googleUser.getBasicProfile().getEmail();
-            router.push("/phone");
+            userEmail.value = googleUser.getBasicProfile().getEmail();
+            userFirstName.value = googleUser.wt.rV;
+            userLastName.value = googleUser.wt.uT;
+
+            userName.value = `${userFirstName.value.charAt(0)}${
+              userLastName.value
+            }`;
+            setTimeout(() => {
+              router.push("/phone");
+            }, 3000);
             console.log("google user", googleUser);
           }
+          const response = await fetch(
+            `http://localhost:6500/api/users/login/google`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                username: userName.value,
+                first: userFirstName.value,
+                last: userLastName.value,
+                email: userEmail.value,
+              }),
+            }
+          );
+          const result = await response.json();
+          loginStatus.value = result.message;
         });
       } catch (error) {
         console.log(error);
       }
-    },
-  },
-  components: {
-    FormInput,
+    };
+
+    return {
+      inputs,
+      isLoading: false,
+      inputError,
+      handleLogIn,
+      handelSignInWithGoogle,
+      userEmail,
+      password,
+      userFirstName,
+      userLastName,
+      userName,
+      loginStatus,
+    };
   },
 };
 </script>

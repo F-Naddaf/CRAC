@@ -21,7 +21,6 @@
             type="video/mp4"
           />
         </video>
-        <!-- <img class="image" src="../../public/img/people.jpg" alt="prople" /> -->
       </div>
       <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
         <SideNav @toggle-share-container="toggleShareContainer" />
