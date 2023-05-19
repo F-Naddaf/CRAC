@@ -97,7 +97,6 @@ export default {
     };
 
     const handleLogIn = async () => {
-      console.log("userEmail.value", inputs.value.username.value);
       try {
         const response = await fetch(`http://localhost:6500/api/users/login`, {
           method: "POST",
@@ -110,9 +109,9 @@ export default {
           }),
         });
         const result = await response.json();
-        console.log("result", result);
         loginStatus.value = result.message;
         if (result.success) {
+          localStorage.setItem("accessToken", result.accessToken);
           setTimeout(() => {
             router.push("/phone");
           }, 3000);

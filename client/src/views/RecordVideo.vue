@@ -104,7 +104,6 @@ export default {
       this.mediaRecorder = new MediaRecorder(this.videoStream);
       this.blob = [];
       this.mediaRecorder.addEventListener("dataavailable", (e) => {
-        console.log("data available", e.data.size);
         this.blob.push(e.data);
       });
       this.mediaRecorder.start();
@@ -142,7 +141,6 @@ export default {
         };
         const snapShot = await uploadBytes(fileRef, blob, metadata);
         this.url = await getDownloadURL(snapShot.ref);
-        console.log("url", this.url);
         this.recording = false;
       }
     },

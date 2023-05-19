@@ -1,17 +1,20 @@
 import express from "express";
 import {
-  addUserPhone,
+  register,
   login,
   loginWithGoogle,
-  register,
+  authenticateToken,
+  getUser,
+  addUserPhone,
   verifyCode,
 } from "../controllers/user.js";
 const userRouter = express.Router();
 
+userRouter.get("/", authenticateToken, getUser);
 userRouter.post("/register", register);
 userRouter.post("/login", login);
 userRouter.post("/login/google", loginWithGoogle);
-userRouter.post("/phone", addUserPhone);
-userRouter.post("/phone/verify", verifyCode);
+userRouter.post("/phone", authenticateToken, addUserPhone);
+userRouter.post("/phone/verify", authenticateToken, verifyCode);
 
 export default userRouter;

@@ -143,7 +143,6 @@ export default {
         );
         const result = await response.json();
         signUpStatus.value = result.message;
-        console.log("result", result);
         if (result.success) {
           setTimeout(() => {
             router.push("/login");

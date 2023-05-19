@@ -5,7 +5,13 @@
 </template>
 
 <script>
+import store from "@/module/user.js";
+import { provide } from "vue";
+
 export default {
   name: "App",
+  setup() {
+    provide("store", store);
+  },
 };
 </script>
