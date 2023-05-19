@@ -1,79 +1,84 @@
-<template>
-  <div class="relative w-full h-full">
-    <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
-    <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
-    <div v-if="!isPosting" class="time-container">
-      <button class="time-btn" @click="selectedTime = 30">
-        30 Sec
-        <span v-if="selectedTime === 30" class="under-line"></span>
-      </button>
-      <button class="time-btn" @click="selectedTime = 60">
-        60 Sec
-        <span v-if="selectedTime === 60" class="under-line"></span>
-      </button>
-      <button class="time-btn" @click="selectedTime = 90">
-        90 Sec
-        <span v-if="selectedTime === 90" class="under-line"></span>
-      </button>
-    </div>
-    <video
-      v-if="toggleCamera"
-      class="max-w-md h-screen m-auto"
-      id="video"
-      ref="myVideo"
-      autoplay
-    ></video>
-    <button
-      type="button"
-      id="startRecord"
-      v-if="cameraEnabled"
-      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
-      @click="startRecording"
-    >
-      <span class="bg-red-700 w-6 h-6 rounded-full"></span>
-    </button>
-    <button
-      type="button"
-      id="stopRecord"
-      v-if="isRecordStop"
-      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
-      @click="stopRecording"
-    >
-      <span class="bg-gray-400 w-4 h-4 rounded-sm"></span>
-    </button>
-    <div
-      type="button"
-      id="post"
-      class="flex items-center justify-center w-20"
-      v-if="isPosting"
-    >
-      <div class="flex flex-col items-center justify-evenly w-full mb-4">
-        <div class="flex items-center justify-between w-full mb-2">
-          <button class="post-btn" @click="postVideo">Later</button>
-          <button class="post-btn" @click="postVideo">Now</button>
-        </div>
-        <div class="flex items-center justify-between">
-          <i class="fa-solid fa-cloud-arrow-up pr-2"></i>
-          <p class="text-xl text-gray-400 text-white font-bold">Post</p>
-        </div>
+<!-- <template>
+  <CreateVideoPage :isPosting="isPosting">
+    <!-- Timer buttons -->
+    <template #time-buttons>
+      <div class="time-container">
+        <button class="time-btn" @click="selectedTime = 30">
+          30 Sec
+          <span v-if="selectedTime === 30" class="under-line"></span>
+        </button>
+        <button class="time-btn" @click="selectedTime = 60">
+          60 Sec
+          <span v-if="selectedTime === 60" class="under-line"></span>
+        </button>
+        <button class="time-btn" @click="selectedTime = 90">
+          90 Sec
+          <span v-if="selectedTime === 90" class="under-line"></span>
+        </button>
       </div>
-    </div>
-  </div>
+    </template>
+
+    <!-- Start recording button -->
+    <template #start-record-button>
+      <button
+        type="button"
+        id="startRecord"
+        v-if="cameraEnabled"
+        class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
+        @click="startRecording"
+      >
+        <span class="bg-red-700 w-6 h-6 rounded-full"></span>
+      </button>
+    </template>
+
+    <!-- Stop recording button -->
+    <template #stop-record-button>
+      <button
+        type="button"
+        id="stopRecord"
+        v-if="isRecordStop"
+        class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
+        @click="stopRecording"
+      >
+        <span class="bg-gray-400 w-4 h-4 rounded-sm"></span>
+      </button>
+    </template>
+
+    <!-- Post button -->
+    <template #post-button>
+      <div
+        type="button"
+        id="post"
+        class="flex items-center justify-center w-20"
+        v-if="isPosting"
+      ></div>
+    </template>
+  </CreateVideoPage>
 </template>
 
 <script>
+// import { onMounted, inject } from "vue";
+
+import CreateVideoPage from "../views/CreateVideoPage.vue";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../firebase.js";
-import { onMounted, ref as toRef, inject, computed } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref as toRef, computed, provide, reactive } from "vue";
 import "firebase/storage";
 
 export default {
-  name: "RecordVideo",
+  name: "VideoRecorder",
+  components: {
+    CreateVideoPage,
+  },
   setup() {
+    const propState = reactive({
+      isPosting: isPosting,
+    });
+    provide("isPosting", state.isPosting);
     const store = inject("store");
     const userId = computed(() => store.state.userData?._id);
+
     const videoStream = toRef(null);
     const mediaRecorder = toRef(null);
     const blob = toRef(null);
@@ -86,31 +91,10 @@ export default {
     const isPosting = toRef(false);
     const url = toRef(null);
     const title = toRef("");
-    const router = useRouter();
-
-    const toggleCamera = async () => {
-      try {
-        videoStream.value = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: true,
-        });
-        document.getElementById("video").srcObject = videoStream.value;
-        cameraEnabled.value = true;
-      } catch (err) {
-        console.error("Error accessing user media:", err);
-        cameraEnabled.value = false;
-      }
-    };
 
     onMounted(() => {
-      toggleCamera();
       store.methods.load();
     });
-
-    const goBack = () => {
-      closeCamera();
-      router.push({ name: "HomePage" });
-    };
 
     const startRecording = () => {
       if (!videoStream.value) {
@@ -127,10 +111,7 @@ export default {
       cameraEnabled.value = false;
       recording.value = true;
       timeRemaining.value = selectedTime.value;
-      timeoutID.value = setTimeout(
-        stopRecording.value,
-        selectedTime.value * 1000
-      );
+      timeoutID.value = setTimeout(stopRecording, selectedTime.value * 1000);
       let remainingTime = selectedTime.value;
       const timerId = setInterval(() => {
         remainingTime -= 1;
@@ -170,6 +151,7 @@ export default {
         });
       }
     };
+
     const postVideo = async () => {
       const token = localStorage.getItem("accessToken");
       try {
@@ -186,7 +168,7 @@ export default {
         });
         const json = await response.json();
         if (json.success) {
-          goBack();
+          //   goBack();
         }
       } catch (error) {
         console.error(error);
@@ -199,7 +181,6 @@ export default {
       blob,
       cameraEnabled,
       recording,
-      userId,
       selectedTime,
       timeoutID,
       timeRemaining,
@@ -219,25 +200,6 @@ export default {
 </script>
 
 <style scoped>
-.fa-circle-xmark {
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  color: #51555e;
-  font-size: 20px;
-  z-index: 10;
-}
-.fa-circle-xmark:hover {
-  cursor: pointer;
-}
-video {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 .time-container {
   position: absolute;
   bottom: 80px;
@@ -286,13 +248,4 @@ video {
   color: #e67cb1;
   font-size: 18px;
 }
-.recording {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translate(-50%);
-  font-size: 12px;
-  color: red;
-  z-index: 1;
-}
-</style>
+</style> -->
