@@ -4,7 +4,7 @@ import LoginPage from "../views/LoginPage.vue";
 import SignUpPage from "../views/SignUpPage.vue";
 import ConformPhone from "../views/ConformPhone.vue";
 import HomePage from "../views/HomePage.vue";
-import RecordVideo from "../views/RecordVideo.vue";
+import CreateVideoPage from "../views/CreateVideoPage.vue";
 
 const routes = [
   {
@@ -34,8 +34,8 @@ const routes = [
   },
   {
     path: "/camera",
-    name: "RecordVideo",
-    component: RecordVideo,
+    name: "CreateVideoPage",
+    component: CreateVideoPage,
   },
   // {
   //   path: '/home',
