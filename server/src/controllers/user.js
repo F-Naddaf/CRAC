@@ -1,40 +1,45 @@
 import { User } from "../models/User.js";
 import { sendSms, verifySms } from "../services/twilio.js";
+import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
-import { generateToken } from "../util/generateToken.js";
 
 export const register = async (req, res) => {
   const { username, first, last, email, confirmPassword, password } = req.body;
   try {
     const existingUser = await User.findOne({ email: email });
+
     if (existingUser)
       return res.status(409).json({ message: "This user already exists" });
+
     if (password !== confirmPassword)
       return res.status(400).json({ message: "Password don't match." });
-    const hashedPassword = await bcryptjs.hash(password, 10);
 
+    const hashedPassword = await bcryptjs.hash(password, 10);
     const newUser = await User.create({
-      username,
-      email,
+      username: username,
+      email: email,
       firstname: first,
       lastname: last,
       password: hashedPassword,
-      isActivate: false,
     });
-    const token = generateToken(newUser.email, newUser._id);
-    await User.findByIdAndUpdate(newUser._id, { token });
+    const accessToken = jwt.sign(
+      {
+        email: newUser.email,
+        id: newUser._id,
+      },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    await User.findOne({ email: newUser.email });
 
     res.status(200).json({
       success: true,
+      accessToken: accessToken,
       profile: {
         email: newUser.email,
         username: newUser.username,
-        isActivate: newUser.isActivate,
-        token,
       },
     });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Internal Error." });
   }
 };
@@ -45,6 +50,12 @@ export const login = async (req, res) => {
   try {
     const existingUser = await User.findOne({ email });
 
+    if (existingUser === null) {
+      res
+        .status(401)
+        .json({ success: false, msg: "email or password is incorrect" });
+    }
+
     if (!existingUser)
       return res.status(404).json({ message: "This User doesn't exist" });
 
@@ -52,20 +63,22 @@ export const login = async (req, res) => {
       password,
       existingUser.password
     );
-    if (!isPasswordCorrect)
+
+    if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invaild Password" });
-    const token = generateToken(email, existingUser._id);
-    await User.findByIdAndUpdate(existingUser._id, {
-      token,
-    });
+    }
+    const accessToken = jwt.sign(
+      { email: existingUser.email, id: existingUser._id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+    await User.findOne({ email: existingUser.email });
     res.status(200).json({
       message: "Login successful!",
       success: true,
+      accessToken: accessToken,
       profile: {
         email: existingUser.email,
         username: existingUser.username,
-        isActivate: existingUser.isActivate,
-        token,
       },
     });
   } catch (err) {
@@ -75,7 +88,7 @@ export const login = async (req, res) => {
 
 export const loginWithGoogle = async (req, res) => {
   try {
-    let user = await User.findOne({
+    const user = await User.findOne({
       email: req.body.email,
     });
     if (!user) {
@@ -101,6 +114,31 @@ export const loginWithGoogle = async (req, res) => {
   }
 };
 
+export const authenticateToken = async (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+  if (token === null) return res.sendStatus(401);
+  try {
+    const user = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.sendStatus(400);
+  }
+};
+
+export const getUser = async (req, res) => {
+  const email = req.user.email;
+  try {
+    const user = await User.findOne({ email: email });
+    res.status(200).json({ success: true, user: user });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Unable to get user, try again later" });
+  }
+};
+
 export const addUserPhone = async (req, res) => {
   const { phone, email } = req.body;
   if (!phone) {
@@ -122,21 +160,15 @@ export const verifyCode = async (req, res) => {
   const { code, serviceSid, phone } = req.body;
   try {
     const existingUser = await User.findOne({ numberForCheck: phone });
-
     if (existingUser) {
       const isSmsCodeValid = await verifySms(phone, code, serviceSid);
-
       if (isSmsCodeValid === "approved") {
-        const updatedUser = await User.findByIdAndUpdate(existingUser._id, {
-          isActivate: true,
-        });
+        const updatedUser = await User.findByIdAndUpdate(existingUser._id);
         res.status(200).json({
           success: true,
           profile: {
             email: updatedUser.email,
             username: updatedUser.username,
-            isActivate: updatedUser.isActivate,
-            token: updatedUser.token,
           },
         });
       }

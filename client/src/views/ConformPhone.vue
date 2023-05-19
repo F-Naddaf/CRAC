@@ -33,12 +33,14 @@
           </button>
         </div>
         <button
+          v-if="!send"
           @click="handelPhone"
           :class="[isPhoneValid ? 'enabledButton' : 'disabledButton']"
           :disabled="!isPhoneValid"
         >
           Send
         </button>
+        <button v-else class="disabledButton">Done</button>
       </div>
       <span class="lineDivider"></span>
       <div class="w-full flex flex-col items-center mb-2">
@@ -85,11 +87,13 @@
 
 <script>
 import { useRouter } from "vue-router";
-import { ref, computed, onMounted } from "vue";
+import { ref, computed, inject, onMounted } from "vue";
 
 export default {
   name: "ConformPhone",
-  setup() {
+  setup(props) {
+    const store = inject("store");
+    const userEmail = computed(() => store.state.userData?.email);
     const invalid = false;
     const phoneInputValue = "";
     const codeInputValue = "";
@@ -112,6 +116,7 @@ export default {
     const code = ref("");
     const showPhoneInfo = ref(false);
     const showCodeInfo = ref(false);
+    const send = ref(false);
 
     const phoneToggleInfo = () => {
       showPhoneInfo.value = !showPhoneInfo.value;
@@ -120,6 +125,10 @@ export default {
     const codeToggleInfo = () => {
       showCodeInfo.value = !showCodeInfo.value;
     };
+
+    onMounted(() => {
+      store.methods.load();
+    });
 
     // const closeInfoPopup = (e) => {
     //   const target = e.target;
@@ -142,25 +151,38 @@ export default {
     // });
 
     const handelPhone = async () => {
-      try {
-        const response = await fetch("http://localhost:6500/api/users/phone", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            phone: phone.value,
-            email: "blackroze7023@gmail.com",
-          }),
-        });
-        const json = await response.json();
-        localStorage.setItem("serviceId", json.service);
-      } catch (error) {
-        console.error(error);
+      const token = localStorage.getItem("accessToken");
+      if (!send.value) {
+        try {
+          const response = await fetch(
+            "http://localhost:6500/api/users/phone",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                phone: phone.value,
+                email: userEmail.value,
+              }),
+            }
+          );
+          const json = await response.json();
+          if (json.success) {
+            send.value = true;
+            localStorage.setItem("serviceId", json.service);
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else {
+        return;
       }
     };
     const router = useRouter();
     const handelVerify = async () => {
+      const token = localStorage.getItem("accessToken");
       const serviceId = localStorage.getItem("serviceId");
       try {
         const response = await fetch(
@@ -169,6 +191,7 @@ export default {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
               code: code.value,
@@ -198,6 +221,8 @@ export default {
       codeInput,
       phone,
       code,
+      userEmail,
+      send,
       handelPhone,
       handelVerify,
       isPhoneValid,
