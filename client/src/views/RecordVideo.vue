@@ -41,18 +41,23 @@
     >
       <span class="bg-gray-400 w-4 h-4 rounded-sm"></span>
     </button>
-    <button
+    <div
       type="button"
       id="post"
       class="flex items-center justify-center w-20"
       v-if="isPosting"
-      @click="postVideo"
     >
-      <div class="flex items-center justify-evenly w-full mb-4">
-        <i class="fa-solid fa-cloud-arrow-up"></i>
-        <p class="text-xl text-gray-400 text-white font-bold">Post</p>
+      <div class="flex flex-col items-center justify-evenly w-full mb-4">
+        <div class="flex items-center justify-between w-full mb-2">
+          <button class="post-btn" @click="postVideo">Later</button>
+          <button class="post-btn" @click="postVideo">Now</button>
+        </div>
+        <div class="flex items-center justify-between">
+          <i class="fa-solid fa-cloud-arrow-up pr-2"></i>
+          <p class="text-xl text-gray-400 text-white font-bold">Post</p>
+        </div>
       </div>
-    </button>
+    </div>
   </div>
 </template>
 
@@ -60,100 +65,155 @@
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../firebase.js";
+import { onMounted, ref as toRef, inject, computed } from "vue";
+import { useRouter } from "vue-router";
 import "firebase/storage";
 
 export default {
   name: "RecordVideo",
-  data() {
-    return {
-      videoStream: null,
-      mediaRecorder: null,
-      blob: null,
-      cameraEnabled: true,
-      recording: false,
-      selectedTime: 30,
-      timeoutID: null,
-      timeRemaining: 0,
-      isRecordStop: false,
-      isPosting: false,
-      url: null,
-    };
-  },
-  mounted() {
-    this.toggleCamera();
-  },
-  methods: {
-    goBack() {
-      this.closeCamera();
-      this.$router.push({ name: "HomePage" });
-    },
-    async toggleCamera() {
+  setup() {
+    const store = inject("store");
+    const userId = computed(() => store.state.userData?._id);
+    const videoStream = toRef(null);
+    const mediaRecorder = toRef(null);
+    const blob = toRef(null);
+    const cameraEnabled = toRef(true);
+    const recording = toRef(false);
+    const selectedTime = toRef(30);
+    const timeoutID = toRef(null);
+    const timeRemaining = toRef(0);
+    const isRecordStop = toRef(false);
+    const isPosting = toRef(false);
+    const url = toRef(null);
+    const title = toRef("");
+    const router = useRouter();
+
+    const toggleCamera = async () => {
       try {
-        this.videoStream = await navigator.mediaDevices.getUserMedia({
+        videoStream.value = await navigator.mediaDevices.getUserMedia({
           audio: false,
           video: true,
         });
-        document.getElementById("video").srcObject = this.videoStream;
-        this.toggleCamera = true;
+        document.getElementById("video").srcObject = videoStream.value;
+        cameraEnabled.value = true;
       } catch (err) {
         console.error("Error accessing user media:", err);
-        this.cameraEnabled = false;
+        cameraEnabled.value = false;
       }
-    },
-    startRecording() {
-      this.mediaRecorder = new MediaRecorder(this.videoStream);
-      this.blob = [];
-      this.mediaRecorder.addEventListener("dataavailable", (e) => {
-        this.blob.push(e.data);
+    };
+
+    onMounted(() => {
+      toggleCamera();
+      store.methods.load();
+    });
+
+    const goBack = () => {
+      closeCamera();
+      router.push({ name: "HomePage" });
+    };
+
+    const startRecording = () => {
+      if (!videoStream.value) {
+        console.error("Video stream not available.");
+        return;
+      }
+      mediaRecorder.value = new MediaRecorder(videoStream.value);
+      blob.value = [];
+      mediaRecorder.value.addEventListener("dataavailable", (e) => {
+        blob.value.push(e.data);
       });
-      this.mediaRecorder.start();
-      this.isRecordStop = true;
-      this.cameraEnabled = false;
-      this.recording = true;
-      this.timeRemaining = this.selectedTime;
-      this.timeoutID = setTimeout(this.stopRecording, this.selectedTime * 1000);
-      let remainingTime = this.selectedTime;
+      mediaRecorder.value.start();
+      isRecordStop.value = true;
+      cameraEnabled.value = false;
+      recording.value = true;
+      timeRemaining.value = selectedTime.value;
+      timeoutID.value = setTimeout(
+        stopRecording.value,
+        selectedTime.value * 1000
+      );
+      let remainingTime = selectedTime.value;
       const timerId = setInterval(() => {
         remainingTime -= 1;
-        this.timeRemaining = remainingTime;
+        timeRemaining.value = remainingTime;
         if (remainingTime === 0) {
           clearInterval(timerId);
         }
       }, 1000);
-    },
+    };
 
-    async stopRecording() {
+    const stopRecording = async () => {
       const filename = uuidv4();
       const storageRef = ref(storage);
       const fileRef = ref(storageRef, "videos/" + filename);
-      if (this.mediaRecorder.state === "recording") {
-        clearTimeout(this.timeoutID);
-        this.timeoutID = null;
-        this.isRecordStop = false;
-        this.isPosting = true;
+      if (mediaRecorder.value.state === "recording") {
+        clearTimeout(timeoutID.value);
+        timeoutID.value = null;
+        isRecordStop.value = false;
+        isPosting.value = true;
         await new Promise((resolve) => {
-          this.mediaRecorder.addEventListener("stop", resolve);
-          this.mediaRecorder.stop();
+          mediaRecorder.value.addEventListener("stop", resolve);
+          mediaRecorder.value.stop();
         });
-        const blob = new Blob(this.blob, { type: "videos/mp4" });
+        blob.value = new Blob(blob.value, { type: "videos/mp4" });
         const metadata = {
           contentType: "video/mp4",
         };
-        const snapShot = await uploadBytes(fileRef, blob, metadata);
-        this.url = await getDownloadURL(snapShot.ref);
-        this.recording = false;
+        const snapShot = await uploadBytes(fileRef, blob.value, metadata);
+        url.value = await getDownloadURL(snapShot.ref);
+        recording.value = false;
       }
-    },
-    closeCamera() {
-      if (this.videoStream) {
-        this.videoStream.getTracks().forEach((track) => {
+    };
+    const closeCamera = () => {
+      if (videoStream.value) {
+        videoStream.value.getTracks().forEach((track) => {
           track.stop();
         });
       }
-    },
-    postVideo() {
-      console.log("url", this.url);
-    },
+    };
+    const postVideo = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/users/media", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: userId.value,
+            media: { title: title.value, url: url.value },
+          }),
+        });
+        const json = await response.json();
+        if (json.success) {
+          goBack();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    return {
+      videoStream,
+      mediaRecorder,
+      blob,
+      cameraEnabled,
+      recording,
+      userId,
+      selectedTime,
+      timeoutID,
+      timeRemaining,
+      isRecordStop,
+      isPosting,
+      url,
+      title,
+      goBack,
+      toggleCamera,
+      startRecording,
+      stopRecording,
+      closeCamera,
+      postVideo,
+    };
   },
 };
 </script>
@@ -192,6 +252,17 @@ video {
   margin-left: 15px;
   padding: 5px;
   font-size: 12px;
+}
+.post-btn {
+  position: relative;
+  color: rgb(156 163 175);
+  cursor: pointer;
+  padding: 5px;
+  font-size: 12px;
+}
+.post-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
 }
 .under-line {
   position: absolute;

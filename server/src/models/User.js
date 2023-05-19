@@ -7,6 +7,7 @@ export const userSchema = new mongoose.Schema({
   lastname: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String },
+  mediaUrl: [{ title: String, url: String }],
   isActivate: { type: Boolean, default: false },
   token: String,
 });
