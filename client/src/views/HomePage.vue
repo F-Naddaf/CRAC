@@ -17,7 +17,7 @@
         <video loop autoplay>
           <source
             class="source"
-            src="https://firebasestorage.googleapis.com/v0/b/crac-video-upload.appspot.com/o/videos%2F4774f618-9924-49c8-85e6-6b04dd50ca8e?alt=media&token=71f0b495-fbd3-4db9-bd5f-a5f191684927"
+            src="https://firebasestorage.googleapis.com/v0/b/crac-video-upload.appspot.com/o/videos%2Fvideo-1?alt=media&token=a6990fa8-9b6d-4600-8b3d-b7cfdaa5a3c3"
             type="video/mp4"
           />
         </video>
