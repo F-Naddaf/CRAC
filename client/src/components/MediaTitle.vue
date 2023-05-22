@@ -4,9 +4,7 @@
       class="flex flex-col justify-center items-center w-full h-full rounded-md"
     >
       <form @submit.prevent="saveMediaTitle" class="card">
-        <h1 class="mb-5 text-2xl font-bold text-secondary-200">
-          Save for later
-        </h1>
+        <h1 class="mb-5 text-2xl font-bold text-secondary-200">Video Title</h1>
         <FormInput
           v-for="(input, index) in inputs"
           :key="index"
@@ -23,7 +21,9 @@
           >
             Close
           </button>
-          <button type="submit" class="secondaryButton">Save</button>
+          <button type="submit" class="secondaryButton" @click="saveMedia">
+            Save
+          </button>
         </div>
       </form>
     </div>
@@ -32,11 +32,22 @@
 
 <script>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import FormInput from "./FormInput.vue";
 
 export default {
   name: "MediaTitle",
-  props: ["close"],
+  props: {
+    close: {
+      type: Function,
+    },
+    url: {
+      type: String,
+    },
+    userId: {
+      type: String,
+    },
+  },
 
   components: {
     FormInput,
@@ -50,9 +61,36 @@ export default {
         type: "text",
       },
     });
+    const router = useRouter();
+
+    const saveMedia = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/users/media", {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: props.userId,
+            media: { title: inputs.value.media.value, url: props.url },
+          }),
+        });
+        const json = await response.json();
+        if (json.success) {
+          router.push("/home");
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    //   props.title(inputs.value.media.value);
+    //   props.close();
 
     return {
       inputs,
+      saveMedia,
     };
   },
 };

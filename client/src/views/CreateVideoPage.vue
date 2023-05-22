@@ -50,7 +50,7 @@
       <div class="flex flex-col items-center justify-evenly w-full mb-4">
         <div class="flex items-center justify-between w-full mb-2">
           <button class="post-btn" @click="postLater">Later</button>
-          <button class="post-btn" @click="postVideo">Now</button>
+          <button class="post-btn" @click="postNow">Now</button>
         </div>
         <div class="flex items-center justify-between">
           <i class="fa-solid fa-cloud-arrow-up pr-2"></i>
@@ -58,7 +58,13 @@
         </div>
       </div>
     </div>
-    <MediaTitle v-if="showModel" @close="close" :close="close" />
+    <MediaTitle
+      v-if="showModel"
+      @close="close"
+      :close="close"
+      :url="url"
+      :userId="userId"
+    />
   </div>
 </template>
 
@@ -91,8 +97,8 @@ export default {
     const timeRemaining = toRef(0);
     const isRecordStop = toRef(false);
     const isPosting = toRef(false);
-    const url = toRef(null);
     const title = toRef("");
+    const url = toRef("");
     const showModel = toRef(false);
     const router = useRouter();
 
@@ -176,35 +182,37 @@ export default {
       }
     };
 
-    const postLater = () => {
-      showModel.value = true;
-    };
-
     const close = () => {
       showModel.value = false;
     };
 
-    const postVideo = async () => {
-      const token = localStorage.getItem("accessToken");
-      try {
-        const response = await fetch("http://localhost:6500/api/users/media", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: userId.value,
-            media: { title: title.value, url: url.value },
-          }),
-        });
-        const json = await response.json();
-        if (json.success) {
-          goBack();
-        }
-      } catch (error) {
-        console.error(error);
-      }
+    const postNow = () => {
+      showModel.value = true;
+    };
+
+    const postLater = async () => {
+      goBack();
+      // showModel.value = true;
+      // const token = localStorage.getItem("accessToken");
+      // try {
+      //   const response = await fetch("http://localhost:6500/api/users/media", {
+      //     method: "PATCH",
+      //     headers: {
+      //       "Content-Type": "application/json",
+      //       Authorization: `Bearer ${token}`,
+      //     },
+      //     body: JSON.stringify({
+      //       id: userId.value,
+      //       media: { title: title.value, url: url.value },
+      //     }),
+      //   });
+      //   const json = await response.json();
+      //   if (json.success) {
+      //     goBack();
+      //   }
+      // } catch (error) {
+      //   console.error(error);
+      // }
     };
 
     return {
@@ -214,20 +222,21 @@ export default {
       cameraEnabled,
       recording,
       userId,
+      url,
       selectedTime,
       timeoutID,
       timeRemaining,
       isRecordStop,
       isPosting,
-      url,
       title,
       showModel,
+      store,
       goBack,
       toggleCamera,
       startRecording,
       stopRecording,
       closeCamera,
-      postVideo,
+      postNow,
       postLater,
       close,
     };
