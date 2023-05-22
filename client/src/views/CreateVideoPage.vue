@@ -69,7 +69,13 @@
 </template>
 
 <script>
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  listAll,
+  deleteObject,
+} from "firebase/storage";
 import { v4 as uuidv4 } from "uuid";
 import { storage } from "../firebase.js";
 import { onMounted, ref as toRef, inject, computed } from "vue";
@@ -121,16 +127,53 @@ export default {
       store.methods.load();
     });
 
-    const goBack = () => {
-      closeCamera();
-      router.push("/home");
+    const goBack = async () => {
+      if (isRecordStop.value === true) {
+        await stopRecording();
+      }
+      try {
+        const storageRef = ref(storage);
+        const videosRef = ref(storageRef, "videos/");
+
+        const { items } = await listAll(videosRef);
+
+        if (items.length > 0) {
+          const { highestNumber, fileToDelete } =
+            findVideoWithHighestNumber(items);
+
+          if (fileToDelete) {
+            const fileRef = ref(storageRef, fileToDelete.fullPath);
+            await deleteObject(fileRef);
+            console.log("Last recorded video deleted successfully");
+          } else {
+            console.log("No videos found with the highest number");
+          }
+        } else {
+          console.log("No videos found in storage");
+        }
+
+        closeCamera();
+        router.push("/home");
+      } catch (error) {
+        console.error("Error deleting video:", error);
+      }
+    };
+
+    const findVideoWithHighestNumber = (items) => {
+      const numbers = items.map((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      });
+      const highestNumber = Math.max(...numbers);
+      const fileToDelete = items.find((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        const number = match ? parseInt(match[1]) : 0;
+        return number === highestNumber;
+      });
+      return { highestNumber, fileToDelete };
     };
 
     const startRecording = () => {
-      if (!videoStream.value) {
-        console.error("Video stream not available.");
-        return;
-      }
       mediaRecorder.value = new MediaRecorder(videoStream.value);
       blob.value = [];
       mediaRecorder.value.addEventListener("dataavailable", (e) => {
@@ -153,10 +196,22 @@ export default {
     };
 
     const stopRecording = async () => {
-      const filename = uuidv4();
       const storageRef = ref(storage);
-      const fileRef = ref(storageRef, "videos/" + filename);
-      if (mediaRecorder.value.state === "recording") {
+      const videosRef = ref(storageRef, "videos/");
+      const { items } = await listAll(videosRef);
+      let highestNumber = 0;
+      let newFileName;
+
+      if (items.length > 0) {
+        const { highestNumber: maxNumber } = findVideoWithHighestNumber(items);
+        highestNumber = maxNumber;
+        newFileName = `video-${highestNumber + 1}`;
+      } else {
+        newFileName = "video-1";
+      }
+
+      if (items.length === 0 || mediaRecorder.value.state === "recording") {
+        const newVideosRef = ref(storageRef, "videos/" + newFileName);
         clearTimeout(timeoutID.value);
         timeoutID.value = null;
         isRecordStop.value = false;
@@ -169,11 +224,12 @@ export default {
         const metadata = {
           contentType: "video/mp4",
         };
-        const snapShot = await uploadBytes(fileRef, blob.value, metadata);
+        const snapShot = await uploadBytes(newVideosRef, blob.value, metadata);
         url.value = await getDownloadURL(snapShot.ref);
         recording.value = false;
       }
     };
+
     const closeCamera = () => {
       if (videoStream.value) {
         videoStream.value.getTracks().forEach((track) => {
