@@ -13,7 +13,7 @@
       </div>
     </div>
     <div class="video-container">
-      <div class="vedio-section">
+      <div class="video-section">
         <video loop autoplay>
           <source
             class="source"
@@ -22,7 +22,7 @@
           />
         </video>
       </div>
-      <div class="flex justify-center; z-30 ml-auto mr-auto mb-8">
+      <div class="flex justify-center z-30 ml-auto mr-auto mb-8">
         <SideNav @toggle-share-container="toggleShareContainer" />
       </div>
     </div>
@@ -141,7 +141,7 @@ export default {
   width: 100%;
   height: 86vh;
 }
-.vedio-section {
+.video-section {
   margin-left: 10px;
   max-width: 24rem;
   overflow: hidden;
@@ -165,11 +165,18 @@ export default {
   transition: transform 0.3s ease-in-out;
   z-index: 50;
 }
+.open-social-media.open {
+  transform: translateY(0);
+}
+
+.open-social-media.close {
+  transform: translateY(-200px);
+}
 video {
   width: 100%;
   height: 100%;
 }
-.vedio-section video {
+.video-section video {
   object-fit: cover;
 }
 </style>
