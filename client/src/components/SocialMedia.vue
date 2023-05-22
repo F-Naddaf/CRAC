@@ -167,6 +167,7 @@ export default {
 }
 .social-media-container.close {
   transform: translateY(200px);
+  transition: transform 0.3s ease-in-out;
 }
 .social-media-header {
   display: grid;
