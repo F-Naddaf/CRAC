@@ -76,7 +76,6 @@ import {
   listAll,
   deleteObject,
 } from "firebase/storage";
-import { v4 as uuidv4 } from "uuid";
 import { storage } from "../firebase.js";
 import { onMounted, ref as toRef, inject, computed } from "vue";
 import { useRouter } from "vue-router";
