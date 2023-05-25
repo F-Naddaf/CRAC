@@ -21,7 +21,7 @@
             >Phone</label
           >
           <button class="info" @click="phoneToggleInfo">
-            <i class="fa-solid fa-circle-question"></i>
+            <i id="phone-icon" class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showPhoneInfo">
               <div class="input-popup-info">
                 <p class="infoMessage">
@@ -63,7 +63,7 @@
             >Code</label
           >
           <button class="info" @click="codeToggleInfo">
-            <i class="fa-solid fa-circle-question"></i>
+            <i id="code-icon" class="fa-solid fa-circle-question"></i>
             <div class="input-info-container" v-show="showCodeInfo">
               <div class="input-popup-info">
                 <p class="infoMessage">
@@ -130,25 +130,26 @@ export default {
       store.methods.load();
     });
 
-    // const closeInfoPopup = (e) => {
-    //   const target = e.target;
-    //   console.log(target);
-    //   const infoContainer = document.querySelector(".input-popup-info");
-    //   const icon = document.querySelector(".fa-solid");
-    //   if (target !== infoContainer && target !== icon) {
-    //     if (showPhoneInfo.value !== false) {
-    //       console.log("1");
-    //       showPhoneInfo.value = false;
-    //     } else if (showCodeInfo.value !== false) {
-    //       console.log("2");
-    //       showCodeInfo.value = false;
-    //     }
-    //   }
-    // };
+    const closeInfoPopup = (e) => {
+      const target = e.target;
+      const infoContainer = document.querySelector(".input-popup-info");
+      const phone = document.querySelector("#phone-icon");
+      const code = document.querySelector("#code-icon");
+      if (target !== infoContainer && target !== phone) {
+        if (showPhoneInfo.value !== false) {
+          showPhoneInfo.value = false;
+        }
+      }
+      if (target !== infoContainer && target !== code) {
+        if (showCodeInfo.value !== false) {
+          showCodeInfo.value = false;
+        }
+      }
+    };
 
-    // onMounted(() => {
-    //   window.addEventListener("click", closeInfoPopup);
-    // });
+    onMounted(() => {
+      window.addEventListener("click", closeInfoPopup);
+    });
 
     const handelPhone = async () => {
       const token = localStorage.getItem("accessToken");
