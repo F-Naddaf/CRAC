@@ -125,6 +125,8 @@ export default {
 
     const handelSignInWithGoogle = async () => {
       try {
+        inputs.value.username.error = "";
+        inputs.value.password.error = "";
         gapi.load("auth2", async () => {
           const googleAuth = gapi.auth2.getAuthInstance();
           const googleUser = await googleAuth.signIn();
