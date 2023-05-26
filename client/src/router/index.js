@@ -5,6 +5,7 @@ import SignUpPage from "../views/SignUpPage.vue";
 import ConformPhone from "../views/ConformPhone.vue";
 import HomePage from "../views/HomePage.vue";
 import CreateVideoPage from "../views/CreateVideoPage.vue";
+import Profile from "../views/Profile.vue";
 
 const routes = [
   {
@@ -37,6 +38,12 @@ const routes = [
     name: "CreateVideoPage",
     component: CreateVideoPage,
   },
+  {
+    path: "/:id/profile",
+    name: "Profile",
+    component: Profile,
+  },
+
   // {
   //   path: '/home',
   //   name: 'HomePage',

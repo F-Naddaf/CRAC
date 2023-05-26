@@ -2,7 +2,7 @@
   <nav class="navigation">
     <ul class="flex justify-around items-center w-full h-full">
       <li>
-        <button class="iconCard">
+        <button class="iconCard" @click="goHome">
           <i class="fa-solid fa-house"></i>
           <p class="iconTitle">Home</p>
         </button>
@@ -27,7 +27,7 @@
         </button>
       </li>
       <li>
-        <button class="iconCard">
+        <button class="iconCard" @click="profile">
           <i class="fa-solid fa-user"></i>
           <p class="iconTitle">Profile</p>
         </button>
@@ -37,14 +37,37 @@
 </template>
 
 <script>
+import { ref, inject, onMounted } from "vue";
 import router from "../router";
 
 export default {
   name: "NavBar",
-  methods: {
-    openCamera() {
+  setup() {
+    const store = inject("store");
+    const id = ref("");
+
+    const goHome = () => {
+      router.push(`/home`);
+    };
+    const openCamera = () => {
       router.push("/camera");
-    },
+    };
+    const profile = () => {
+      router.push(`${id.value}/profile`);
+    };
+
+    onMounted(async () => {
+      await store.methods.load();
+      id.value = store.state.userData?._id;
+    });
+
+    return {
+      store,
+      id,
+      goHome,
+      openCamera,
+      profile,
+    };
   },
 };
 </script>

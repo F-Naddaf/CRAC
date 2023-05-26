@@ -71,3 +71,12 @@
 .inputContainer {
   @apply flex flex-col justify-center items-center w-full relative m-0 p-0;
 }
+.user-name {
+  @apply text-2xl font-semibold text-primary-100 py-2;
+}
+.userDetails {
+  @apply text-sm text-gray-300 font-normal;
+}
+.editProfileBtn {
+  @apply flex justify-center items-center bg-secondary-100 w-full h-9 rounded-md px-4;
+}
