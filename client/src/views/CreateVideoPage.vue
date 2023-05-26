@@ -64,6 +64,8 @@
       :close="close"
       :url="url"
       :userId="userId"
+      :toPost="toPost"
+      :closeCamera="closeCamera"
     />
   </div>
 </template>
@@ -104,6 +106,7 @@ export default {
     const isPosting = toRef(false);
     const title = toRef("");
     const url = toRef("");
+    const toPost = toRef(false);
     const showModel = toRef(false);
     const router = useRouter();
 
@@ -243,6 +246,7 @@ export default {
 
     const postNow = () => {
       showModel.value = true;
+      toPost.value = true;
     };
 
     const postLater = async () => {
@@ -278,6 +282,7 @@ export default {
       recording,
       userId,
       url,
+      toPost,
       selectedTime,
       timeoutID,
       timeRemaining,

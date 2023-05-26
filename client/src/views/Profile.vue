@@ -35,11 +35,4 @@ export default {
 };
 </script>
 
-<style>
-/* h1 {
-  color: #ba2f74;
-  font-size: larger;
-  font-weight: bold;
-  padding: 8px 0;
-} */
-</style>
+<style></style>

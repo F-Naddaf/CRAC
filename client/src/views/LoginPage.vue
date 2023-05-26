@@ -109,14 +109,16 @@ export default {
           }),
         });
         const result = await response.json();
-        loginStatus.value = result.message;
+        console.log("result", result);
+        // loginStatus.value = result.message;
         if (result.success) {
           localStorage.setItem("accessToken", result.accessToken);
+          loginStatus.value = result.message;
           setTimeout(() => {
             router.push("/phone");
           }, 3000);
         } else {
-          return result.message;
+          loginStatus.value = result.message;
         }
       } catch (error) {
         console.log(error);

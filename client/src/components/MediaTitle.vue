@@ -47,6 +47,12 @@ export default {
     userId: {
       type: String,
     },
+    toPost: {
+      type: Boolean,
+    },
+    closeCamera: {
+      type: Function,
+    },
   },
 
   components: {
@@ -74,11 +80,16 @@ export default {
           },
           body: JSON.stringify({
             id: props.userId,
-            media: { title: inputs.value.media.value, url: props.url },
+            media: {
+              title: inputs.value.media.value,
+              url: props.url,
+              posted: props.toPost,
+            },
           }),
         });
         const json = await response.json();
         if (json.success) {
+          props.closeCamera();
           router.push("/home");
         }
       } catch (error) {
