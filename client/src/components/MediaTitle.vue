@@ -96,8 +96,6 @@ export default {
         console.error(error);
       }
     };
-    //   props.title(inputs.value.media.value);
-    //   props.close();
 
     return {
       inputs,
