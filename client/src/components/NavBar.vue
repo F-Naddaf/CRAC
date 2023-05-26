@@ -2,7 +2,7 @@
   <nav class="navigation">
     <ul class="flex justify-around items-center w-full h-full">
       <li>
-        <button class="iconCard">
+        <button class="iconCard" @click="goHome">
           <i class="fa-solid fa-house"></i>
           <p class="iconTitle">Home</p>
         </button>
@@ -27,7 +27,7 @@
         </button>
       </li>
       <li>
-        <button class="iconCard">
+        <button class="iconCard" @click="profile">
           <i class="fa-solid fa-user"></i>
           <p class="iconTitle">Profile</p>
         </button>
@@ -42,8 +42,14 @@ import router from "../router";
 export default {
   name: "NavBar",
   methods: {
+    goHome() {
+      router.push("/home");
+    },
     openCamera() {
       router.push("/camera");
+    },
+    profile() {
+      router.push("/profile");
     },
   },
 };
