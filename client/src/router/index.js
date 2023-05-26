@@ -39,7 +39,7 @@ const routes = [
     component: CreateVideoPage,
   },
   {
-    path: "/profile",
+    path: "/:id/profile",
     name: "Profile",
     component: Profile,
   },

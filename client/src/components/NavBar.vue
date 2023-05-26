@@ -37,20 +37,37 @@
 </template>
 
 <script>
+import { ref, inject, onMounted } from "vue";
 import router from "../router";
 
 export default {
   name: "NavBar",
-  methods: {
-    goHome() {
-      router.push("/home");
-    },
-    openCamera() {
+  setup() {
+    const store = inject("store");
+    const id = ref("");
+
+    const goHome = () => {
+      router.push(`/home`);
+    };
+    const openCamera = () => {
       router.push("/camera");
-    },
-    profile() {
-      router.push("/profile");
-    },
+    };
+    const profile = () => {
+      router.push(`${id.value}/profile`);
+    };
+
+    onMounted(async () => {
+      await store.methods.load();
+      id.value = store.state.userData?._id;
+    });
+
+    return {
+      store,
+      id,
+      goHome,
+      openCamera,
+      profile,
+    };
   },
 };
 </script>
