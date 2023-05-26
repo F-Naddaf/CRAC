@@ -77,13 +77,13 @@ export default {
 
     const filteredVideos = computed(() => {
       switch (activeCategory.value) {
-        case "unPosted":
+        case "Unposted":
           return unPosted.value;
-        case "posted":
+        case "Posted":
           return posted.value;
-        case "saved":
+        case "Saved":
           return saved.value;
-        case "favorite":
+        case "Favorite":
           return favorite.value;
         default:
           return [];
@@ -92,11 +92,16 @@ export default {
 
     const loadVideos = () => {
       const user = store.state.userData;
+      const allMedia = user?.mediaUrl;
+      const getPostedVideos = allMedia.filter((media) => media.posted === true);
+      const getUnPostedVideos = allMedia.filter(
+        (media) => media.posted === false
+      );
       if (user && user.mediaUrl) {
-        unPosted.value.push(...user.mediaUrl);
-        posted.value.push(...user.mediaUrl);
-        saved.value.push(...user.mediaUrl);
-        favorite.value.push(...user.mediaUrl);
+        posted.value.push(...getPostedVideos);
+        unPosted.value.push(...getUnPostedVideos);
+        // saved.value.push(...user.mediaUrl);
+        // favorite.value.push(...user.mediaUrl);
       }
     };
 

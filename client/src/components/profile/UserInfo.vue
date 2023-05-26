@@ -31,7 +31,7 @@
       <div class="px-4 mt-4 relative">
         <p class="userDetails">Username: {{ username }}</p>
         <p class="userDetails">Email: {{ email }}</p>
-        <div v-if="userImage" class="edit-image">
+        <div v-if="userFullName" class="edit-image">
           <button class="edit-image-btn">
             <i class="fa-solid fa-plus"></i>
             <p class="text-secondary-200 text-xs">Edit image</p>

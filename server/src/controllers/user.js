@@ -66,7 +66,7 @@ export const login = async (req, res) => {
     if (existingUser === null) {
       res
         .status(401)
-        .json({ success: false, msg: "email or password is incorrect" });
+        .json({ success: false, message: "email or password is incorrect" });
     }
 
     if (!existingUser)

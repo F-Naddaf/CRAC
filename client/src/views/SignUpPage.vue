@@ -38,7 +38,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import FormInput from "../components/FormInput.vue";
 import { useRouter } from "vue-router";
 
@@ -102,10 +102,11 @@ export default {
         value: "",
         error: "Password is not match!",
         // validate() {
-        //   const passwordInput = inputs.value.find(
-        //     (input) => input.name === "password"
-        //   );
-        //   if (this.value === passwordInput.value) {
+        //   const passwordInput = inputs.value.password;
+        //   if (
+        //     this.value === passwordInput.value ||
+        //     passwordInput.value === ""
+        //   ) {
         //     this.valid = true;
         //     this.error = null;
         //   } else {
@@ -120,9 +121,6 @@ export default {
     const signUpStatus = ref("");
 
     const handelSubmit = async () => {
-      const typedEmail = inputs.value.email.value;
-      console.log("Typed email:", typedEmail);
-
       try {
         const response = await fetch(
           "http://localhost:6500/api/users/register",
@@ -152,14 +150,12 @@ export default {
           signUpStatus.value = result.message;
         }
       } catch (error) {
-        console.log(error);
-        // errors.value.push("Sorry something went wrong");
+        signUpStatus.push("Sorry something went wrong");
       }
     };
 
     return {
       inputs,
-      isLoading: false,
       router,
       signUpStatus,
       handelSubmit,
