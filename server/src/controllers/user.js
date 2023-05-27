@@ -1,5 +1,4 @@
 import { User } from "../models/User.js";
-import { Videos } from "../models/Media.js";
 import { sendSms, verifySms } from "../services/twilio.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
@@ -177,46 +176,6 @@ export const verifyCode = async (req, res) => {
       res.status(404).json({ message: "This User doesn't exist" });
     }
   } catch (error) {
-    res.status(500).json({ message: "Internal Error." });
-  }
-};
-
-// export const addMedia = async (req, res) => {
-//   const { media, id } = req.body;
-//   try {
-//     const updatedUser = await User.findByIdAndUpdate(id, {
-//       $push: { mediaUrl: media },
-//     });
-//     if (updatedUser) {
-//       res.status(200).json({ success: true, updatedUser });
-//     } else {
-//       res.status(404).json({ message: "User not found" });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Internal Error." });
-//   }
-// };
-
-export const addMedia = async (req, res) => {
-  const { media, id } = req.body;
-  try {
-    if (media.posted) {
-      // Save in mediaSchema
-      const newVideo = await Videos.create(media);
-      const updatedUser = await User.findByIdAndUpdate(id, {
-        $push: { mediaUrl: newVideo },
-      });
-      res.status(200).json({ success: true, updatedUser });
-    } else {
-      // Save in userSchema only
-      const updatedUser = await User.findByIdAndUpdate(id, {
-        $push: { mediaUrl: media },
-      });
-      res.status(200).json({ success: true, updatedUser });
-    }
-  } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Internal Error." });
   }
 };

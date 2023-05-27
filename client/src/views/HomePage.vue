@@ -14,13 +14,16 @@
     </div>
     <div class="video-container">
       <div class="video-section">
-        <video loop autoplay>
-          <source
-            class="source"
-            src="https://firebasestorage.googleapis.com/v0/b/crac-video-upload.appspot.com/o/videos%2Fvideo-1?alt=media&token=a6990fa8-9b6d-4600-8b3d-b7cfdaa5a3c3"
-            type="video/mp4"
-          />
-        </video>
+        <div
+          class="video"
+          v-for="video in videos"
+          :key="video._id"
+          :class="{ active: visibleVideoIndex === videoIndex }"
+        >
+          <video loop autoplay>
+            <source class="source" :src="video.url" type="video/mp4" />
+          </video>
+        </div>
       </div>
       <div class="flex justify-center z-30 ml-auto mr-auto mb-8">
         <SideNav @toggle-share-container="toggleShareContainer" />
@@ -39,7 +42,8 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, onUnmounted, ref, Vue } from "vue";
+import { useRouter } from "vue-router";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
 import SocialMedia from "../components/SocialMedia.vue";
@@ -56,6 +60,91 @@ export default {
   setup() {
     const openShareMedia = ref(null);
     const isSocialMediaClosed = ref(false);
+    const visibleVideoIndex = ref("");
+    const videoIndex = ref(0);
+    const router = useRouter();
+    const videos = ref([]);
+
+    const handleScroll = (event) => {
+      const delta = Math.sign(event.deltaY);
+      console.log("delta", Math.sign(event.deltaY));
+      console.log("videoIndex.value", videoIndex.value);
+      if (delta > 0 && videoIndex.value < videos.length - 1) {
+        videoIndex.value += 1; // Scroll down, go to the next video
+        Vue.nextTick(() => {
+          console.log("lala", videoIndex.value);
+        });
+      } else if (delta < 0 && videoIndex.value > 0) {
+        videoIndex.value -= 1; // Scroll up, go to the previous video
+      }
+      visibleVideoIndex.value = videoIndex.value; // Update the visible video index
+    };
+    // console.log("lala", videoIndex.value);
+
+    onMounted(async () => {
+      await getAllVideos();
+      handleScroll();
+    });
+    // onMounted(async () => {
+    //   await getAllVideos();
+    //   observeVideos();
+    //   const initialVideoIndex = Number(router.currentRoute.value.query.id);
+    //   if (initialVideoIndex >= 0 && initialVideoIndex < videos.length) {
+    //     videoIndex.value = initialVideoIndex;
+    //     visibleVideoIndex.value = initialVideoIndex;
+    //   }
+    //   window.addEventListener("wheel", handleScroll); // Add event listener for mouse wheel scrolling
+    // });
+
+    // onUnmounted(() => {
+    //   window.removeEventListener("wheel", handleScroll); // Remove event listener when component is unmounted
+    // });
+
+    // const observeVideos = () => {
+    //   const options = {
+    //     root: null,
+    //     rootMargin: "0px",
+    //     threshold: 0.5,
+    //   };
+
+    //   const observer = new IntersectionObserver(handleIntersection, options);
+
+    //   const videoElements = document.querySelectorAll(".video");
+    //   videoElements.forEach((video, index) => {
+    //     video.setAttribute("data-index", index);
+    //     observer.observe(video);
+    //   });
+    // };
+
+    // const handleIntersection = (entries, observer) => {
+    //   entries.forEach((entry) => {
+    //     if (entry.isIntersecting) {
+    //       const videoIndexValue = Number(
+    //         entry.target.getAttribute("data-index")
+    //       );
+    //       videoIndex.value = videoIndexValue;
+    //       router.replace({ query: { id: videoIndexValue } });
+    //     }
+    //   });
+    // };
+
+    const getAllVideos = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const json = await response.json();
+        const videosArray = json.videos;
+        videos.value = videosArray;
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const toggleShareContainer = () => {
       if (openShareMedia.value === null) {
@@ -68,6 +157,10 @@ export default {
     return {
       openShareMedia,
       isSocialMediaClosed,
+      visibleVideoIndex,
+      videoIndex,
+      videos,
+      getAllVideos,
       toggleShareContainer,
     };
   },
@@ -142,6 +235,8 @@ export default {
   height: 86vh;
 }
 .video-section {
+  display: flex;
+  flex-direction: column;
   margin-left: 10px;
   max-width: 24rem;
   overflow: hidden;
@@ -174,7 +269,7 @@ export default {
 }
 video {
   width: 100%;
-  height: 100%;
+  height: 86vh;
 }
 .video-section video {
   object-fit: cover;

@@ -105,7 +105,6 @@ export default {
     const timeRemaining = toRef(0);
     const isRecordStop = toRef(false);
     const isPosting = toRef(false);
-    // const title = toRef("");
     const url = toRef("");
     const toPost = toRef(false);
     const showModel = toRef(false);
@@ -251,22 +250,25 @@ export default {
     };
 
     const postLater = async () => {
-      // goBack();
-      // showModel.value = true;
       toPost.value = false;
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/users/media", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: userId.value,
-            media: { title: "", url: url.value, posted: toPost.value },
-          }),
-        });
+        const response = await fetch(
+          "http://localhost:6500/api/videos/postVideo",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              userId: userId.value,
+              userImage: userImage.value,
+              mediaId: "",
+              media: { title: "", url: url.value, posted: toPost.value },
+            }),
+          }
+        );
         const json = await response.json();
         if (json.success) {
           closeCamera();
@@ -292,7 +294,6 @@ export default {
       timeRemaining,
       isRecordStop,
       isPosting,
-      // title,
       showModel,
       store,
       goBack,

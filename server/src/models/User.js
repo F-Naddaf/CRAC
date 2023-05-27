@@ -12,7 +12,7 @@ export const userSchema = new mongoose.Schema({
   userImage: String,
   token: String,
   favorite: [{ url: String }],
-  save: [{ url: String }],
+  // save: [{ url: String }],
 });
 
 export const User = mongoose.model("users", userSchema);

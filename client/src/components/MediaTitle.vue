@@ -50,6 +50,9 @@ export default {
     userImage: {
       type: String,
     },
+    mediaId: {
+      type: String,
+    },
     closeCamera: {
       type: Function,
     },
@@ -72,22 +75,26 @@ export default {
     const saveMedia = async () => {
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/users/media", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            userId: props.userId,
-            userImage: props.userImage,
-            media: {
-              title: inputs.value.media.value,
-              url: props.url,
-              posted: true,
+        const response = await fetch(
+          "http://localhost:6500/api/videos/postVideo",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
             },
-          }),
-        });
+            body: JSON.stringify({
+              userId: props.userId,
+              userImage: props.userImage,
+              mediaId: props.mediaId,
+              media: {
+                title: inputs.value.media.value,
+                url: props.url,
+                posted: true,
+              },
+            }),
+          }
+        );
         const json = await response.json();
         if (json.success) {
           props.closeCamera();
