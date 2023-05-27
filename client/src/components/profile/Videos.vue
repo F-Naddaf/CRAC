@@ -26,12 +26,24 @@ export default {
   methods: {
     playVideo(index) {
       const videoElement = this.$refs.videos[index];
-      videoElement.play();
+      if (
+        !videoElement.currentTime ||
+        videoElement.paused ||
+        videoElement.ended
+      ) {
+        setTimeout(() => {
+          videoElement.play().catch((error) => {
+            console.error("Failed to play video:", error);
+          });
+        }, 10);
+      }
     },
     pauseVideo(index) {
       const videoElement = this.$refs.videos[index];
-      videoElement.pause();
-      videoElement.currentTime = 0;
+      if (!videoElement.paused && !videoElement.ended) {
+        videoElement.pause();
+        videoElement.currentTime = 0;
+      }
     },
   },
 };
@@ -58,7 +70,7 @@ export default {
   bottom: 3px;
   right: 3px;
   font-size: 12px;
-  color: #28BFD2;
+  color: #28bfd2;
   opacity: 0;
   transition: opacity 0.3s;
 }

@@ -9,6 +9,7 @@ export const userSchema = new mongoose.Schema({
   password: { type: String },
   mediaUrl: [{ title: String, url: String, posted: Boolean }],
   isActivate: { type: Boolean, default: false },
+  userImage: String,
   token: String,
 });
 
