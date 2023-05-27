@@ -11,6 +11,8 @@ export const userSchema = new mongoose.Schema({
   isActivate: { type: Boolean, default: false },
   userImage: String,
   token: String,
+  favorite: [{ url: String }],
+  save: [{ url: String }],
 });
 
 export const User = mongoose.model("users", userSchema);

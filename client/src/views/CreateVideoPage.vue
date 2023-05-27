@@ -64,7 +64,7 @@
       :close="close"
       :url="url"
       :userId="userId"
-      :toPost="toPost"
+      :userImage="userImage"
       :closeCamera="closeCamera"
     />
   </div>
@@ -94,6 +94,7 @@ export default {
   setup() {
     const store = inject("store");
     const userId = computed(() => store.state.userData?._id);
+    const userImage = computed(() => store.state.userData?.userImage);
     const videoStream = toRef(null);
     const mediaRecorder = toRef(null);
     const blob = toRef(null);
@@ -104,7 +105,7 @@ export default {
     const timeRemaining = toRef(0);
     const isRecordStop = toRef(false);
     const isPosting = toRef(false);
-    const title = toRef("");
+    // const title = toRef("");
     const url = toRef("");
     const toPost = toRef(false);
     const showModel = toRef(false);
@@ -250,28 +251,30 @@ export default {
     };
 
     const postLater = async () => {
-      goBack();
+      // goBack();
       // showModel.value = true;
-      // const token = localStorage.getItem("accessToken");
-      // try {
-      //   const response = await fetch("http://localhost:6500/api/users/media", {
-      //     method: "PATCH",
-      //     headers: {
-      //       "Content-Type": "application/json",
-      //       Authorization: `Bearer ${token}`,
-      //     },
-      //     body: JSON.stringify({
-      //       id: userId.value,
-      //       media: { title: title.value, url: url.value },
-      //     }),
-      //   });
-      //   const json = await response.json();
-      //   if (json.success) {
-      //     goBack();
-      //   }
-      // } catch (error) {
-      //   console.error(error);
-      // }
+      toPost.value = false;
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/users/media", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            id: userId.value,
+            media: { title: "", url: url.value, posted: toPost.value },
+          }),
+        });
+        const json = await response.json();
+        if (json.success) {
+          closeCamera();
+          router.push("/home");
+        }
+      } catch (error) {
+        console.error(error);
+      }
     };
 
     return {
@@ -281,6 +284,7 @@ export default {
       cameraEnabled,
       recording,
       userId,
+      userImage,
       url,
       toPost,
       selectedTime,
@@ -288,7 +292,7 @@ export default {
       timeRemaining,
       isRecordStop,
       isPosting,
-      title,
+      // title,
       showModel,
       store,
       goBack,

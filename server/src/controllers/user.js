@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import { Videos } from "../models/Media.js";
 import { sendSms, verifySms } from "../services/twilio.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
@@ -180,19 +181,86 @@ export const verifyCode = async (req, res) => {
   }
 };
 
+// export const addMedia = async (req, res) => {
+//   const { media, id } = req.body;
+//   try {
+//     const updatedUser = await User.findByIdAndUpdate(id, {
+//       $push: { mediaUrl: media },
+//     });
+//     if (updatedUser) {
+//       res.status(200).json({ success: true, updatedUser });
+//     } else {
+//       res.status(404).json({ message: "User not found" });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Internal Error." });
+//   }
+// };
+
 export const addMedia = async (req, res) => {
   const { media, id } = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, {
-      $push: { mediaUrl: media },
-    });
-    if (updatedUser) {
+    if (media.posted) {
+      // Save in mediaSchema
+      const newVideo = await Videos.create(media);
+      const updatedUser = await User.findByIdAndUpdate(id, {
+        $push: { mediaUrl: newVideo },
+      });
       res.status(200).json({ success: true, updatedUser });
     } else {
-      res.status(404).json({ message: "User not found" });
+      // Save in userSchema only
+      const updatedUser = await User.findByIdAndUpdate(id, {
+        $push: { mediaUrl: media },
+      });
+      res.status(200).json({ success: true, updatedUser });
     }
   } catch (err) {
     console.log(err);
     res.status(500).json({ message: "Internal Error." });
   }
 };
+
+// export const addFavorite = async (req, res) => {
+//   const email = req.user;
+//   const { videoId } = req.params;
+//   try {
+//     const user = await User.findOne({ email: email });
+//     const isProductFavorite = user.favorites.some(
+//       (product) => product.productId.toString() === productId
+//     );
+//     if (!isProductFavorite) {
+//       await User.findOneAndUpdate(
+//         { email: req.user },
+//         { $push: { favorites: { productId } } }
+//       );
+//     } else {
+//       await User.findOneAndUpdate(
+//         { email: req.user },
+//         { $pull: { favorites: { productId } } }
+//       );
+//     }
+//     const updatedUser = await User.findOne(
+//       { email: email },
+//       { password: false }
+//     )
+//       .populate({
+//         path: "recentViews.productId",
+//         select: "images price title rate",
+//       })
+//       .populate({
+//         path: "shoppingCart.productId",
+//         select: "images price title inStock rate brand",
+//       })
+//       .exec();
+//     res.status(200).json({
+//       success: true,
+//       result: updatedUser,
+//     });
+//   } catch (error) {
+//     logError(error);
+//     res
+//       .status(500)
+//       .json({ success: false, msg: "Unable to update user, try again later" });
+//   }
+// };
