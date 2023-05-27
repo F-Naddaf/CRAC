@@ -18,7 +18,6 @@ const methods = {
         });
         if (userResponse.ok) {
           const result = await userResponse.json();
-          console.log("user info", result);
           state.userData = result.user;
         } else {
           throw new Error("Failed to retrieve user data");
