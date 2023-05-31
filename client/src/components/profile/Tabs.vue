@@ -52,7 +52,7 @@
 
 <script>
 import Videos from "./Videos.vue";
-import { ref, inject, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
 
 export default {
   name: "Tabs",
@@ -60,7 +60,6 @@ export default {
     Videos,
   },
   setup(props) {
-    const store = inject("store");
     const unPosted = ref([]);
     const posted = ref([]);
     const saved = ref([]);
@@ -90,28 +89,37 @@ export default {
       }
     });
 
-    const loadVideos = () => {
-      const user = store.state.userData;
-      const allMedia = user?.mediaUrl;
-      const getPostedVideos = allMedia.filter((media) => media.posted === true);
-      const getUnPostedVideos = allMedia.filter(
-        (media) => media.posted === false
-      );
-      if (user && user.mediaUrl) {
+    const loadVideos = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const json = await response.json();
+        const videosArray = json.videos;
+        const getPostedVideos = videosArray.filter(
+          (media) => media.posted === true
+        );
+        const getUnPostedVideos = videosArray.filter(
+          (media) => media.posted === false
+        );
+        console.log("getUnPostedVideos", getUnPostedVideos);
         posted.value.push(...getPostedVideos);
         unPosted.value.push(...getUnPostedVideos);
-        // saved.value.push(...user.mediaUrl);
-        // favorite.value.push(...user.mediaUrl);
+      } catch (error) {
+        console.error(error);
       }
     };
 
     onMounted(async () => {
-      await store.methods.load();
       loadVideos();
     });
 
     return {
-      store,
       unPosted,
       posted,
       saved,

@@ -45,7 +45,7 @@
   @apply text-gray-300 text-xs font-light md:pt-1 sm:pt-0 m-0;
 }
 .iconCard {
-  @apply flex flex-col items-center m-auto;
+  @apply flex flex-col relative items-center m-auto;
 }
 .cameraButton {
   @apply flex flex-col items-center relative mr-auto ml-auto pl-9 mt-0;

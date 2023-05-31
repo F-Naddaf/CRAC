@@ -14,19 +14,28 @@
     </div>
     <div class="video-container">
       <div class="video-section">
-        <div
-          class="video"
-          v-for="video in videos"
-          :key="video._id"
-          :class="{ active: visibleVideoIndex === videoIndex }"
-        >
-          <video loop autoplay>
+        <div class="relative" v-for="(video, index) in videos" :key="video._id">
+          <video
+            v-if="index === currentVideoIndex"
+            loop
+            autoplay
+            class="video"
+            :ref="getVideoRef(index)"
+            :data-index="index"
+          >
             <source class="source" :src="video.url" type="video/mp4" />
           </video>
+          <div
+            class="absolute bottom-10 right-4 z-30"
+            v-if="index === currentVideoIndex"
+          >
+            <SideNav
+              @toggle-share-container="toggleShareContainer"
+              :videoId="currentVideoId"
+              :amountOfLike="videos[currentVideoIndex].amountOfLike"
+            />
+          </div>
         </div>
-      </div>
-      <div class="flex justify-center z-30 ml-auto mr-auto mb-8">
-        <SideNav @toggle-share-container="toggleShareContainer" />
       </div>
     </div>
     <div class="nav-container">
@@ -42,8 +51,7 @@
 </template>
 
 <script>
-import { onMounted, onUnmounted, ref, Vue } from "vue";
-import { useRouter } from "vue-router";
+import { onMounted, ref, watch, nextTick } from "vue";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
 import SocialMedia from "../components/SocialMedia.vue";
@@ -60,73 +68,53 @@ export default {
   setup() {
     const openShareMedia = ref(null);
     const isSocialMediaClosed = ref(false);
-    const visibleVideoIndex = ref("");
-    const videoIndex = ref(0);
-    const router = useRouter();
+    const currentVideoId = ref(null);
+    const currentVideoIndex = ref(0);
     const videos = ref([]);
-
-    const handleScroll = (event) => {
-      const delta = Math.sign(event.deltaY);
-      console.log("delta", Math.sign(event.deltaY));
-      console.log("videoIndex.value", videoIndex.value);
-      if (delta > 0 && videoIndex.value < videos.length - 1) {
-        videoIndex.value += 1; // Scroll down, go to the next video
-        Vue.nextTick(() => {
-          console.log("lala", videoIndex.value);
-        });
-      } else if (delta < 0 && videoIndex.value > 0) {
-        videoIndex.value -= 1; // Scroll up, go to the previous video
-      }
-      visibleVideoIndex.value = videoIndex.value; // Update the visible video index
-    };
-    // console.log("lala", videoIndex.value);
+    const videoRefs = ref([]);
 
     onMounted(async () => {
       await getAllVideos();
-      handleScroll();
+      await nextTick();
+      observeVideos();
     });
-    // onMounted(async () => {
-    //   await getAllVideos();
-    //   observeVideos();
-    //   const initialVideoIndex = Number(router.currentRoute.value.query.id);
-    //   if (initialVideoIndex >= 0 && initialVideoIndex < videos.length) {
-    //     videoIndex.value = initialVideoIndex;
-    //     visibleVideoIndex.value = initialVideoIndex;
-    //   }
-    //   window.addEventListener("wheel", handleScroll); // Add event listener for mouse wheel scrolling
-    // });
 
-    // onUnmounted(() => {
-    //   window.removeEventListener("wheel", handleScroll); // Remove event listener when component is unmounted
-    // });
+    const getVideoRef = (index) => (el) => {
+      videoRefs.value[index] = el;
+    };
 
-    // const observeVideos = () => {
-    //   const options = {
-    //     root: null,
-    //     rootMargin: "0px",
-    //     threshold: 0.5,
-    //   };
+    const observeVideos = () => {
+      const options = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.5,
+      };
 
-    //   const observer = new IntersectionObserver(handleIntersection, options);
+      const observer = new IntersectionObserver(handleIntersection, options);
 
-    //   const videoElements = document.querySelectorAll(".video");
-    //   videoElements.forEach((video, index) => {
-    //     video.setAttribute("data-index", index);
-    //     observer.observe(video);
-    //   });
-    // };
+      for (let i = 0; i < videos.value.length; i++) {
+        const videoElement = videoRefs.value[i];
+        if (videoElement instanceof Element) {
+          observer.observe(videoElement);
+        }
+      }
+    };
 
-    // const handleIntersection = (entries, observer) => {
-    //   entries.forEach((entry) => {
-    //     if (entry.isIntersecting) {
-    //       const videoIndexValue = Number(
-    //         entry.target.getAttribute("data-index")
-    //       );
-    //       videoIndex.value = videoIndexValue;
-    //       router.replace({ query: { id: videoIndexValue } });
-    //     }
-    //   });
-    // };
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const videoIndex = Number(entry.target.dataset.index);
+          currentVideoId.value = videos.value[videoIndex]._id;
+        }
+      });
+    };
+
+    watch(currentVideoId, (newVideoId) => {
+      const videoIndex = videos.value.findIndex(
+        (video) => video._id === newVideoId
+      );
+      currentVideoIndex.value = videoIndex;
+    });
 
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
@@ -154,14 +142,26 @@ export default {
         isSocialMediaClosed.value = false;
       }
     };
+
+    const handleScroll = () => {
+      currentVideoIndex.value++;
+      if (currentVideoIndex.value >= videos.value.length) {
+        currentVideoIndex.value = 0;
+      }
+      currentVideoId.value = videos.value[currentVideoIndex.value]._id;
+    };
+
     return {
       openShareMedia,
       isSocialMediaClosed,
-      visibleVideoIndex,
-      videoIndex,
       videos,
       getAllVideos,
       toggleShareContainer,
+      handleScroll,
+      currentVideoIndex,
+      currentVideoId,
+      videoRefs,
+      getVideoRef,
     };
   },
 };
@@ -237,11 +237,15 @@ export default {
 .video-section {
   display: flex;
   flex-direction: column;
-  margin-left: 10px;
-  max-width: 24rem;
+  /* margin-left: 10px; */
+  /* max-width: 24rem; */
   overflow: hidden;
   height: 100%;
 }
+/* .video {
+  display: flex;
+  position: relative;
+} */
 .image {
   width: 100%;
   height: 100vh;

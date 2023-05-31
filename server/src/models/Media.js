@@ -6,6 +6,7 @@ export const mediaSchema = new mongoose.Schema({
   posted: Boolean,
   userId: String,
   userImage: String,
+  amountOfLike: Number,
 });
 
 export const Videos = mongoose.model("Videos", mediaSchema);

@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import { Videos } from "../models/Media.js";
 import { sendSms, verifySms } from "../services/twilio.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
@@ -180,46 +181,153 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-// export const addFavorite = async (req, res) => {
-//   const email = req.user;
-//   const { videoId } = req.params;
+// export const createNewVideo = async (req, res) => {
+//   const { media, mediaId, userId, userImage } = req.body;
+//   console.log("req", req.body);
 //   try {
-//     const user = await User.findOne({ email: email });
-//     const isProductFavorite = user.favorites.some(
-//       (product) => product.productId.toString() === productId
-//     );
-//     if (!isProductFavorite) {
-//       await User.findOneAndUpdate(
-//         { email: req.user },
-//         { $push: { favorites: { productId } } }
-//       );
+//     if (mediaId) {
+//       // Update existing video
+//       // const video = await User.findOne( $in:{mediaUrl:{_id: mediaId}});
+//       if (video) {
+//         if (media.posted) {
+//           video.title = media.title;
+//           video.posted = media.posted;
+//           video.userId = userId;
+//           video.userImage = userImage;
+//           const updatedMedia = await video.save();
+
+//           res.status(200).json({ success: true, updatedMedia });
+//         } else {
+//           res.status(400).json({
+//             success: false,
+//             message: "Invalid request. 'posted' is required.",
+//           });
+//         }
+//       } else {
+//         await User.findByIdAndUpdate(userId, {
+//           $push: {
+//             mediaUrl: {
+//               title: video.title,
+//               url: video.url,
+//               posted: video.posted,
+//             },
+//           },
+//         });
+//         // res.status(404).json({ success: false, message: "Video not found." });
+//       }
 //     } else {
-//       await User.findOneAndUpdate(
-//         { email: req.user },
-//         { $pull: { favorites: { productId } } }
-//       );
+//       // Create new video
+
+//       // const newVideo = await User.create({ ...media, userId, userImage });
+//       res.status(200).json({ success: true, newVideo });
 //     }
-//     const updatedUser = await User.findOne(
-//       { email: email },
-//       { password: false }
-//     )
-//       .populate({
-//         path: "recentViews.productId",
-//         select: "images price title rate",
-//       })
-//       .populate({
-//         path: "shoppingCart.productId",
-//         select: "images price title inStock rate brand",
-//       })
-//       .exec();
-//     res.status(200).json({
-//       success: true,
-//       result: updatedUser,
-//     });
-//   } catch (error) {
-//     logError(error);
-//     res
-//       .status(500)
-//       .json({ success: false, msg: "Unable to update user, try again later" });
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Internal Error." });
 //   }
 // };
+
+export const postVideo = async (req, res) => {
+  const { media, firstRecord, userId, userImage } = req.body;
+  try {
+    if (firstRecord) {
+      if (media.posted) {
+        const newVideo = await Videos.create({
+          title: media.title,
+          url: media.url,
+          posted: media.posted,
+          userId: userId,
+          userImage: userImage,
+        });
+        await User.findByIdAndUpdate(userId, {
+          $push: {
+            mediaUrl: {
+              title: media.title,
+              url: media.url,
+              posted: media.posted,
+            },
+          },
+        });
+        const updatedUser = User.findById(userId);
+        res.status(200).json({ success: true, newVideo, updatedUser });
+      } else {
+        await User.findByIdAndUpdate(userId, {
+          $push: {
+            mediaUrl: {
+              title: media.title,
+              url: media.url,
+              posted: media.posted,
+            },
+          },
+        });
+        const updatedUser = User.findById(userId);
+        res.status(200).json({ success: true, updatedUser });
+      }
+    } else {
+      const newVideo = await Videos.create({
+        title: media.title,
+        url: media.url,
+        posted: media.posted,
+        userId: userId,
+        userImage: userImage,
+      });
+      await User.findOneAndUpdate(
+        { _id: userId, "mediaUrl.url": media.url },
+        {
+          $set: {
+            "mediaUrl.$.posted": media.posted,
+            "mediaUrl.$.title": media.title,
+          },
+        }
+      );
+      const updatedUser = User.findById(userId);
+      res.status(200).json({ success: true, newVideo, updatedUser });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Error." });
+  }
+};
+
+export const addToFavorite = async (req, res) => {
+  const { videoId, userId } = req.body;
+  console.log("req.body", req.body);
+  try {
+    const user = await User.findById(userId);
+    const video = await Videos.findById(videoId);
+
+    if (!user || !video) {
+      return res.status(404).json({ message: "User or video not found" });
+    }
+
+    const favoriteIndex = user.favoriteVideos.findIndex(
+      (item) => item.videoId === videoId
+    );
+
+    if (favoriteIndex > -1) {
+      user.favoriteVideos.splice(favoriteIndex, 1);
+      if (video.amountOfLike && video.amountOfLike > 0) {
+        video.amountOfLike--;
+        res.json({
+          success: true,
+          result: user,
+          message: "Video is removed from favorites successfully",
+        });
+      }
+    } else {
+      user.favoriteVideos.push({ videoId });
+      video.amountOfLike = (video.amountOfLike || 0) + 1;
+      res.json({
+        success: true,
+        result: user,
+        message: "Video is added to favorites successfully",
+      });
+    }
+
+    await user.save();
+    await video.save();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
