@@ -14,16 +14,28 @@
     </div>
     <div class="video-container">
       <div class="video-section">
-        <video loop autoplay>
-          <source
-            class="source"
-            src="https://firebasestorage.googleapis.com/v0/b/crac-video-upload.appspot.com/o/videos%2Fvideo-1?alt=media&token=a6990fa8-9b6d-4600-8b3d-b7cfdaa5a3c3"
-            type="video/mp4"
-          />
-        </video>
-      </div>
-      <div class="flex justify-center z-30 ml-auto mr-auto mb-8">
-        <SideNav @toggle-share-container="toggleShareContainer" />
+        <div class="relative" v-for="(video, index) in videos" :key="video._id">
+          <video
+            v-if="index === currentVideoIndex"
+            loop
+            autoplay
+            class="video"
+            :ref="getVideoRef(index)"
+            :data-index="index"
+          >
+            <source class="source" :src="video.url" type="video/mp4" />
+          </video>
+          <div
+            class="absolute bottom-10 right-4 z-30"
+            v-if="index === currentVideoIndex"
+          >
+            <SideNav
+              @toggle-share-container="toggleShareContainer"
+              :videoId="currentVideoId"
+              :amountOfLike="videos[currentVideoIndex].amountOfLike"
+            />
+          </div>
+        </div>
       </div>
     </div>
     <div class="nav-container">
@@ -39,7 +51,7 @@
 </template>
 
 <script>
-import { ref } from "vue";
+import { onMounted, ref, watch, nextTick } from "vue";
 import NavBar from "../components/NavBar.vue";
 import SideNav from "../components/SideNav.vue";
 import SocialMedia from "../components/SocialMedia.vue";
@@ -56,6 +68,71 @@ export default {
   setup() {
     const openShareMedia = ref(null);
     const isSocialMediaClosed = ref(false);
+    const currentVideoId = ref(null);
+    const currentVideoIndex = ref(0);
+    const videos = ref([]);
+    const videoRefs = ref([]);
+
+    onMounted(async () => {
+      await getAllVideos();
+      await nextTick();
+      observeVideos();
+    });
+
+    const getVideoRef = (index) => (el) => {
+      videoRefs.value[index] = el;
+    };
+
+    const observeVideos = () => {
+      const options = {
+        root: null,
+        rootMargin: "0px",
+        threshold: 0.5,
+      };
+
+      const observer = new IntersectionObserver(handleIntersection, options);
+
+      for (let i = 0; i < videos.value.length; i++) {
+        const videoElement = videoRefs.value[i];
+        if (videoElement instanceof Element) {
+          observer.observe(videoElement);
+        }
+      }
+    };
+
+    const handleIntersection = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const videoIndex = Number(entry.target.dataset.index);
+          currentVideoId.value = videos.value[videoIndex]._id;
+        }
+      });
+    };
+
+    watch(currentVideoId, (newVideoId) => {
+      const videoIndex = videos.value.findIndex(
+        (video) => video._id === newVideoId
+      );
+      currentVideoIndex.value = videoIndex;
+    });
+
+    const getAllVideos = async () => {
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch("http://localhost:6500/api/videos", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const json = await response.json();
+        const videosArray = json.videos;
+        videos.value = videosArray;
+      } catch (error) {
+        console.error(error);
+      }
+    };
 
     const toggleShareContainer = () => {
       if (openShareMedia.value === null) {
@@ -65,10 +142,26 @@ export default {
         isSocialMediaClosed.value = false;
       }
     };
+
+    const handleScroll = () => {
+      currentVideoIndex.value++;
+      if (currentVideoIndex.value >= videos.value.length) {
+        currentVideoIndex.value = 0;
+      }
+      currentVideoId.value = videos.value[currentVideoIndex.value]._id;
+    };
+
     return {
       openShareMedia,
       isSocialMediaClosed,
+      videos,
+      getAllVideos,
       toggleShareContainer,
+      handleScroll,
+      currentVideoIndex,
+      currentVideoId,
+      videoRefs,
+      getVideoRef,
     };
   },
 };
@@ -142,11 +235,17 @@ export default {
   height: 86vh;
 }
 .video-section {
-  margin-left: 10px;
-  max-width: 24rem;
+  display: flex;
+  flex-direction: column;
+  /* margin-left: 10px; */
+  /* max-width: 24rem; */
   overflow: hidden;
   height: 100%;
 }
+/* .video {
+  display: flex;
+  position: relative;
+} */
 .image {
   width: 100%;
   height: 100vh;
@@ -174,7 +273,7 @@ export default {
 }
 video {
   width: 100%;
-  height: 100%;
+  height: 86vh;
 }
 .video-section video {
   object-fit: cover;

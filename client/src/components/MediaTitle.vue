@@ -47,8 +47,11 @@ export default {
     userId: {
       type: String,
     },
-    toPost: {
-      type: Boolean,
+    userImage: {
+      type: String,
+    },
+    mediaId: {
+      type: String,
     },
     closeCamera: {
       type: Function,
@@ -70,23 +73,25 @@ export default {
     const router = useRouter();
 
     const saveMedia = async () => {
-      const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/users/media", {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            id: props.userId,
-            media: {
-              title: inputs.value.media.value,
-              url: props.url,
-              posted: props.toPost,
-            },
-          }),
-        });
+        const response = await fetch(
+          "http://localhost:6500/api/users/postVideo",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              userId: props.userId,
+              userImage: props.userImage,
+              // When the video is unposted and want to posted from later videos
+              // section then the firstRecord should be false.
+              firstRecord: true,
+              media: {
+                title: inputs.value.media.value,
+                url: props.url,
+                posted: true,
+              },
+            }),
+          }
+        );
         const json = await response.json();
         if (json.success) {
           props.closeCamera();

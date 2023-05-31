@@ -1,4 +1,5 @@
 import { User } from "../models/User.js";
+import { Videos } from "../models/Media.js";
 import { sendSms, verifySms } from "../services/twilio.js";
 import jwt from "jsonwebtoken";
 import bcryptjs from "bcryptjs";
@@ -180,19 +181,152 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-export const addMedia = async (req, res) => {
-  const { media, id } = req.body;
+// export const createNewVideo = async (req, res) => {
+//   const { media, mediaId, userId, userImage } = req.body;
+//   console.log("req", req.body);
+//   try {
+//     if (mediaId) {
+//       // Update existing video
+//       // const video = await User.findOne( $in:{mediaUrl:{_id: mediaId}});
+//       if (video) {
+//         if (media.posted) {
+//           video.title = media.title;
+//           video.posted = media.posted;
+//           video.userId = userId;
+//           video.userImage = userImage;
+//           const updatedMedia = await video.save();
+
+//           res.status(200).json({ success: true, updatedMedia });
+//         } else {
+//           res.status(400).json({
+//             success: false,
+//             message: "Invalid request. 'posted' is required.",
+//           });
+//         }
+//       } else {
+//         await User.findByIdAndUpdate(userId, {
+//           $push: {
+//             mediaUrl: {
+//               title: video.title,
+//               url: video.url,
+//               posted: video.posted,
+//             },
+//           },
+//         });
+//         // res.status(404).json({ success: false, message: "Video not found." });
+//       }
+//     } else {
+//       // Create new video
+
+//       // const newVideo = await User.create({ ...media, userId, userImage });
+//       res.status(200).json({ success: true, newVideo });
+//     }
+//   } catch (err) {
+//     console.log(err);
+//     res.status(500).json({ message: "Internal Error." });
+//   }
+// };
+
+export const postVideo = async (req, res) => {
+  const { media, firstRecord, userId, userImage } = req.body;
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, {
-      $push: { mediaUrl: media },
-    });
-    if (updatedUser) {
-      res.status(200).json({ success: true, updatedUser });
+    if (firstRecord) {
+      if (media.posted) {
+        const newVideo = await Videos.create({
+          title: media.title,
+          url: media.url,
+          posted: media.posted,
+          userId: userId,
+          userImage: userImage,
+        });
+        await User.findByIdAndUpdate(userId, {
+          $push: {
+            mediaUrl: {
+              title: media.title,
+              url: media.url,
+              posted: media.posted,
+            },
+          },
+        });
+        const updatedUser = User.findById(userId);
+        res.status(200).json({ success: true, newVideo, updatedUser });
+      } else {
+        await User.findByIdAndUpdate(userId, {
+          $push: {
+            mediaUrl: {
+              title: media.title,
+              url: media.url,
+              posted: media.posted,
+            },
+          },
+        });
+        const updatedUser = User.findById(userId);
+        res.status(200).json({ success: true, updatedUser });
+      }
     } else {
-      res.status(404).json({ message: "User not found" });
+      const newVideo = await Videos.create({
+        title: media.title,
+        url: media.url,
+        posted: media.posted,
+        userId: userId,
+        userImage: userImage,
+      });
+      await User.findOneAndUpdate(
+        { _id: userId, "mediaUrl.url": media.url },
+        {
+          $set: {
+            "mediaUrl.$.posted": media.posted,
+            "mediaUrl.$.title": media.title,
+          },
+        }
+      );
+      const updatedUser = User.findById(userId);
+      res.status(200).json({ success: true, newVideo, updatedUser });
     }
-  } catch (err) {
-    console.log(err);
+  } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Internal Error." });
+  }
+};
+
+export const addToFavorite = async (req, res) => {
+  const { videoId, userId } = req.body;
+  try {
+    const user = await User.findById(userId);
+    const video = await Videos.findById(videoId);
+
+    if (!user || !video) {
+      return res.status(404).json({ message: "User or video not found" });
+    }
+
+    const favoriteIndex = user.favoriteVideos.findIndex(
+      (item) => item.videoId === videoId
+    );
+
+    if (favoriteIndex > -1) {
+      user.favoriteVideos.splice(favoriteIndex, 1);
+      if (video.amountOfLike && video.amountOfLike > 0) {
+        video.amountOfLike--;
+        res.json({
+          success: true,
+          result: user,
+          message: "Video is removed from favorites successfully",
+        });
+      }
+    } else {
+      user.favoriteVideos.push({ videoId });
+      video.amountOfLike = (video.amountOfLike || 0) + 1;
+      res.json({
+        success: true,
+        result: user,
+        message: "Video is added to favorites successfully",
+      });
+    }
+
+    await user.save();
+    await video.save();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
   }
 };
