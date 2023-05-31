@@ -16,6 +16,7 @@
       <div class="video-section">
         <div class="relative" v-for="(video, index) in videos" :key="video._id">
           <video
+            @click="handleScroll"
             v-if="index === currentVideoIndex"
             loop
             autoplay
@@ -237,15 +238,9 @@ export default {
 .video-section {
   display: flex;
   flex-direction: column;
-  /* margin-left: 10px; */
-  /* max-width: 24rem; */
   overflow: hidden;
   height: 100%;
 }
-/* .video {
-  display: flex;
-  position: relative;
-} */
 .image {
   width: 100%;
   height: 100vh;
