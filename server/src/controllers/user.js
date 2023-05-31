@@ -291,7 +291,6 @@ export const postVideo = async (req, res) => {
 
 export const addToFavorite = async (req, res) => {
   const { videoId, userId } = req.body;
-  console.log("req.body", req.body);
   try {
     const user = await User.findById(userId);
     const video = await Videos.findById(videoId);

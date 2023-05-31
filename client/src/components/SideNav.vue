@@ -33,7 +33,7 @@
 </template>
 
 <script>
-import { ref, inject, reactive, onMounted } from "vue";
+import { ref, inject, onMounted } from "vue";
 
 export default {
   props: {
