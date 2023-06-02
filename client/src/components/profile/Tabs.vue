@@ -52,7 +52,7 @@
 
 <script>
 import Videos from "./Videos.vue";
-import { ref, onMounted, computed } from "vue";
+import { ref, inject, onMounted, computed } from "vue";
 
 export default {
   name: "Tabs",
@@ -60,10 +60,12 @@ export default {
     Videos,
   },
   setup(props) {
+    const store = inject("store");
     const unPosted = ref([]);
     const posted = ref([]);
     const saved = ref([]);
     const favorite = ref([]);
+    const userFavorite = ref([]);
     const activeCategory = ref("Unposted");
 
     const selectCategory = (category) => {
@@ -107,9 +109,19 @@ export default {
         const getUnPostedVideos = videosArray.filter(
           (media) => media.posted === false
         );
-        console.log("getUnPostedVideos", getUnPostedVideos);
+
+        await store.methods.load();
+        userFavorite.value = store.state.userData?.favoriteVideos;
+
+        const userFavoriteVideos = userFavorite.value;
+
+        const matchingVideos = videosArray.filter((video) =>
+          userFavoriteVideos.some((favVideo) => favVideo.videoId === video._id)
+        );
+
         posted.value.push(...getPostedVideos);
         unPosted.value.push(...getUnPostedVideos);
+        favorite.value.push(...matchingVideos);
       } catch (error) {
         console.error(error);
       }
@@ -117,13 +129,16 @@ export default {
 
     onMounted(async () => {
       loadVideos();
+      await store.methods.load();
     });
 
     return {
+      store,
       unPosted,
       posted,
       saved,
       favorite,
+      userFavorite,
       selectCategory,
       isActiveCategory,
       activeCategory,
