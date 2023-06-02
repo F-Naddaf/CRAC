@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ 'social-media-container': true, close: isClosed }">
+  <div class="social-media-container" :class="{ 'slide-up': show }">
     <div class="social-media-header">
       <h3 class="share-title">Share via</h3>
       <i class="fa-solid fa-circle-xmark" @click="closeSocialMedia"></i>
@@ -63,13 +63,13 @@ import { reactive } from "vue";
 export default {
   name: "SocialMedia",
   props: {
-    isClosed: {
+    show: {
       type: Boolean,
       required: true,
     },
   },
-  emits: ["close"],
-  setup(props, context) {
+
+  setup(props, { emit }) {
     const state = reactive({
       facebookLink: "",
       messengerLink: "",
@@ -78,11 +78,8 @@ export default {
       instagramLink: "",
       emailLink: "",
       smsLink: "",
+      show: false,
     });
-
-    const closeSocialMedia = () => {
-      context.emit("close", true);
-    };
 
     const shareToFacebook = () => {
       const url = "https://example.com";
@@ -133,9 +130,13 @@ export default {
       state.smsLink = `sms:?body=${message} ${url}`;
       window.open(state.smsLink);
     };
+
+    const closeSocialMedia = () => {
+      emit("closeClicked");
+    };
+
     return {
       state,
-      closeSocialMedia,
       shareToFacebook,
       shareToMessenger,
       shareToWhatsapp,
@@ -143,6 +144,7 @@ export default {
       shareToInstagram,
       shareToEmail,
       shareToSMS,
+      closeSocialMedia,
     };
   },
 };
@@ -150,25 +152,31 @@ export default {
 
 <style scoped>
 .social-media-container {
-  position: absolute;
+  position: fixed;
+  bottom: -200px;
+  left: 0;
+  right: 0;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   justify-items: center;
   align-content: center;
   gap: 20px;
-  transform: translateY(0);
   width: 100%;
   height: 200px;
   padding: 0 25px;
   background-color: rgba(255, 255, 255, 0.9);
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
-  transition: transform 0.3s ease-in-out;
+  transition: bottom 0.3s ease-in-out;
+  z-index: 100;
 }
-.social-media-container.close {
-  transform: translateY(200px);
-  transition: transform 0.3s ease-in-out;
+
+.slide-up {
+  bottom: 0;
+  transition: bottom 0.3s ease-in-out;
+  z-index: 100;
 }
+
 .social-media-header {
   display: grid;
   position: relative;

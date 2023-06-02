@@ -2,32 +2,32 @@
   <div>
     <img
       class="dance-image"
-      src="../../public/img/dance-1.png"
+      src="../../../public/img/dance-1.png"
       alt="dance-lady-1"
     />
     <img
       class="dance-image"
-      src="../../public/img/dance-2.png"
+      src="../../../public/img/dance-2.png"
       alt="dance-lady-2"
     />
     <img
       class="dance-image"
-      src="../../public/img/dance-3.png"
+      src="../../../public/img/dance-3.png"
       alt="dance-lady-3"
     />
     <img
       class="dance-image"
-      src="../../public/img/dance-4.png"
+      src="../../../public/img/dance-4.png"
       alt="dance-lady-4"
     />
     <img
       class="dance-image"
-      src="../../public/img/dance-5.png"
+      src="../../../public/img/dance-5.png"
       alt="dance-lady-5"
     />
     <img
       class="dance-image"
-      src="../../public/img/dance-6.png"
+      src="../../../public/img/dance-6.png"
       alt="dance-lady-6"
     />
   </div>
