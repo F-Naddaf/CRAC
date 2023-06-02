@@ -7,7 +7,7 @@
         </template>
       </UserInfo>
     </section>
-    <section class="w-full h-2/3">
+    <section class="w-full h-2/3 overflow-y-auto pt-6">
       <Tabs :activeCategory="activeCategory" />
     </section>
     <div class="bg-black">

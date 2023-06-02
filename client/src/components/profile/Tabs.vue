@@ -163,5 +163,6 @@ button {
   transform: translateX(-50%);
   font-size: 10px;
   color: #e67cb1;
+  z-index: 100;
 }
 </style>

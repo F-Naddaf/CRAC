@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen h-screen flex items-center justify-center">
+  <div id="app" class="w-screen h-screen flex items-center justify-center">
     <router-view />
   </div>
 </template>
@@ -15,3 +15,8 @@ export default {
   },
 };
 </script>
+<style>
+#app {
+  background-image: url(../public/img/background.png);
+}
+</style>
