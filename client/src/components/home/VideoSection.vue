@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import { onMounted, ref, watch, getCurrentInstance } from "vue";
+import { onMounted, ref, watch } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 
 export default {
@@ -34,22 +34,14 @@ export default {
   components: {
     SideNav,
   },
-  //   props: {
-  //     showSocialMedia: {
-  //       type: Boolean,
-  //       required: true,
-  //     },
-  //   },
 
-  setup(props) {
+  setup(props, { emit }) {
     const currentVideoId = ref(null);
     const currentVideoIndex = ref(0);
     const videos = ref([]);
     const videoRefs = ref([]);
     const videoContainer = ref(null);
     const showSocialMedia = ref(false);
-    const instance = getCurrentInstance();
-    const emit = instance.emit;
 
     onMounted(async () => {
       await getAllVideos();
@@ -126,16 +118,15 @@ export default {
     };
 
     return {
+      currentVideoId,
+      currentVideoIndex,
       videos,
+      videoRefs,
+      videoContainer,
+      showSocialMedia,
+      getVideoRef,
       getAllVideos,
       handleScroll,
-      currentVideoIndex,
-      currentVideoId,
-      videoRefs,
-      getVideoRef,
-      videoContainer,
-      handleScroll,
-      showSocialMedia,
       toggleSocialMedia,
     };
   },
@@ -155,12 +146,6 @@ export default {
   flex-direction: column;
   height: 100%;
   width: 100%;
-}
-.nav-container {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  z-index: 10;
 }
 video {
   width: 100%;

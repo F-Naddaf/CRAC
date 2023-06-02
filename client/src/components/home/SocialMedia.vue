@@ -152,10 +152,9 @@ export default {
 
 <style scoped>
 .social-media-container {
-  position: fixed;
-  bottom: -200px;
+  position: absolute;
+  bottom: -210px;
   left: 0;
-  right: 0;
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   justify-items: center;
@@ -170,13 +169,11 @@ export default {
   transition: bottom 0.3s ease-in-out;
   z-index: 100;
 }
-
 .slide-up {
-  bottom: 0;
+  bottom: -2px;
   transition: bottom 0.3s ease-in-out;
   z-index: 100;
 }
-
 .social-media-header {
   display: grid;
   position: relative;

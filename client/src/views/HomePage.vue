@@ -13,11 +13,10 @@
       </div>
     </div>
     <VideoSection @shareClicked="toggleSocialMedia" />
-
-    <div class="nav-container">
-      <NavBar />
+    <NavBar />
+    <div>
+      <SocialMedia :show="showSocialMedia" @closeClicked="closeSocialMedia" />
     </div>
-    <SocialMedia :show="showSocialMedia" @closeClicked="closeSocialMedia" />
   </div>
 </template>
 
@@ -40,11 +39,11 @@ export default {
     const showSocialMedia = ref(false);
 
     const toggleSocialMedia = () => {
-      this.showSocialMedia = !this.showSocialMedia;
+      showSocialMedia.value = !showSocialMedia.value;
     };
 
     const closeSocialMedia = () => {
-      this.showSocialMedia = false;
+      showSocialMedia.value = false;
     };
 
     return {
@@ -52,14 +51,6 @@ export default {
       toggleSocialMedia,
       closeSocialMedia,
     };
-  },
-  methods: {
-    toggleSocialMedia() {
-      this.showSocialMedia = !this.showSocialMedia;
-    },
-    closeSocialMedia() {
-      this.showSocialMedia = false;
-    },
   },
 };
 </script>
@@ -124,11 +115,5 @@ export default {
   height: 40px;
   width: 40px;
   margin: 8px;
-}
-.video-container {
-  display: flex;
-  align-items: flex-end;
-  width: 100%;
-  height: 86vh;
 }
 </style>
