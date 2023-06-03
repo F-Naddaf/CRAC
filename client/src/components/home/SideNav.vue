@@ -83,7 +83,6 @@ export default {
           }
         );
         const json = await response.json();
-        console.log("json", json);
         store.methods.updateUser(json.result);
         if (json.message === "Video is removed from favorites successfully") {
           updatedAmountOfLike.value -= 1;

@@ -7,7 +7,6 @@ import {
   getUser,
   addUserPhone,
   verifyCode,
-  postVideo,
   addToFavorite,
 } from "../controllers/user.js";
 const userRouter = express.Router();
@@ -18,7 +17,6 @@ userRouter.post("/login", login);
 userRouter.post("/login/google", loginWithGoogle);
 userRouter.post("/phone", authenticateToken, addUserPhone);
 userRouter.post("/phone/verify", authenticateToken, verifyCode);
-userRouter.post("/postVideo", postVideo);
 userRouter.post("/:id/favorite", addToFavorite);
 
 export default userRouter;

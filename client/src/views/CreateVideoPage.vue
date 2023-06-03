@@ -95,6 +95,7 @@ export default {
     const store = inject("store");
     const userId = computed(() => store.state.userData?._id);
     const userImage = computed(() => store.state.userData?.userImage);
+    const username = computed(() => store.state.userData?.username);
     const videoStream = toRef(null);
     const mediaRecorder = toRef(null);
     const blob = toRef(null);
@@ -264,7 +265,7 @@ export default {
             body: JSON.stringify({
               userId: userId.value,
               userImage: userImage.value,
-              mediaId: "",
+              username: username.value,
               media: { title: "", url: url.value, posted: toPost.value },
             }),
           }

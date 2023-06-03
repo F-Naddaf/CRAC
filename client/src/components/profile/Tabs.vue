@@ -53,6 +53,7 @@
 <script>
 import Videos from "./Videos.vue";
 import { ref, inject, onMounted, computed } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Tabs",
@@ -65,8 +66,11 @@ export default {
     const posted = ref([]);
     const saved = ref([]);
     const favorite = ref([]);
+    const userId = ref("");
     const userFavorite = ref([]);
     const activeCategory = ref("Unposted");
+
+    const router = useRouter();
 
     const selectCategory = (category) => {
       activeCategory.value = category;
@@ -92,15 +96,20 @@ export default {
     });
 
     const loadVideos = async () => {
+      userId.value = router.currentRoute.value.params.id;
+      console.log("userId.value", userId.value);
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/videos", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:6500/api/videos/getMedia/${userId.value}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const json = await response.json();
         const videosArray = json.videos;
         const getPostedVideos = videosArray.filter(
@@ -134,6 +143,7 @@ export default {
 
     return {
       store,
+      userId,
       unPosted,
       posted,
       saved,

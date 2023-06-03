@@ -50,6 +50,9 @@ export default {
     userImage: {
       type: String,
     },
+    username: {
+      type: String,
+    },
     mediaId: {
       type: String,
     },
@@ -73,21 +76,25 @@ export default {
     const router = useRouter();
 
     const saveMedia = async () => {
+      const posted = true;
+      const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          "http://localhost:6500/api/users/postVideo",
+          "http://localhost:6500/api/videos/postVideo",
           {
             method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
             body: JSON.stringify({
               userId: props.userId,
               userImage: props.userImage,
-              // When the video is unposted and want to posted from later videos
-              // section then the firstRecord should be false.
-              firstRecord: true,
+              username: props.username,
               media: {
                 title: inputs.value.media.value,
                 url: props.url,
-                posted: true,
+                posted: posted,
               },
             }),
           }
