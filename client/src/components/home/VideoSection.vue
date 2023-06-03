@@ -10,6 +10,20 @@
         <video loop autoplay class="video" :data-index="index">
           <source class="source" :src="video.url" type="video/mp4" />
         </video>
+        <div class="absolute bottom-4 left-4">
+          <p
+            class="text-base text-primary-200"
+            style="text-shadow: 0.5px 0.5px #262626"
+          >
+            #{{ video.username }}
+          </p>
+          <p
+            class="text-sm text-label -mt-1 ml-2"
+            style="text-shadow: 0.5px 0.5px #262626"
+          >
+            {{ video.title }}
+          </p>
+        </div>
         <div
           class="absolute bottom-10 right-4 z-30"
           v-if="index === currentVideoIndex"
@@ -80,37 +94,32 @@ export default {
     };
 
     const handleScroll = () => {
-    //   const container = videoContainer.value;
-    //   let video = videoRefs.value[currentVideoIndex.value];
-    //   console.log("video", video);
-
-    //   const scrollDown = 35;
-    //   const viewportHeight = window.innerHeight;
-    //   const videoViewPoint = (86 / 100) * viewportHeight;
-    //   console.log("videoViewPoint", videoViewPoint);
-    //   const placeVideo = videoViewPoint - scrollDown;
-
-    //   const videoRect = video.getBoundingClientRect();
-    //   const videoPosition = videoRect.top;
-    //   console.log("videoPosition", videoPosition);
-
-    //   if (videoPosition <= scrollDown) {
-    //     currentVideoIndex.value++;
-    //     console.log("newVideoIndex", currentVideoIndex.value);
-
-    //     // if (currentVideoIndex.value >= videos.value.length) {
-    //     //   currentVideoIndex.value = 0;
-    //     // }
-
-    //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-    //     console.log("currentVideoId.value", currentVideoId.value);
-    //     console.log("currentVideoIndex.value", currentVideoIndex.value);
-    //     container.scrollTop = (placeVideo + scrollDown) * currentVideoIndex;
-    //     console.log("con", container.scrollTop);
-    //   }
-    //   //   else {
-    //   //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-    //   //     container.scrollTop = videoViewPoint;
+      //   const container = videoContainer.value;
+      //   let video = videoRefs.value[currentVideoIndex.value];
+      //   console.log("video", video);
+      //   const scrollDown = 35;
+      //   const viewportHeight = window.innerHeight;
+      //   const videoViewPoint = (86 / 100) * viewportHeight;
+      //   console.log("videoViewPoint", videoViewPoint);
+      //   const placeVideo = videoViewPoint - scrollDown;
+      //   const videoRect = video.getBoundingClientRect();
+      //   const videoPosition = videoRect.top;
+      //   console.log("videoPosition", videoPosition);
+      //   if (videoPosition <= scrollDown) {
+      //     currentVideoIndex.value++;
+      //     console.log("newVideoIndex", currentVideoIndex.value);
+      //     // if (currentVideoIndex.value >= videos.value.length) {
+      //     //   currentVideoIndex.value = 0;
+      //     // }
+      //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
+      //     console.log("currentVideoId.value", currentVideoId.value);
+      //     console.log("currentVideoIndex.value", currentVideoIndex.value);
+      //     container.scrollTop = (placeVideo + scrollDown) * currentVideoIndex;
+      //     console.log("con", container.scrollTop);
+      //   }
+      //   //   else {
+      //   //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
+      //   //     container.scrollTop = videoViewPoint;
       //   }
     };
 

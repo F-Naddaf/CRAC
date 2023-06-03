@@ -28,6 +28,7 @@ export const getUserMedia = async (req, res) => {
 
 export const postVideo = async (req, res) => {
   const { media, userId, userImage, username } = req.body;
+  console.log("req.body", req.body);
   try {
     const existingVideo = await Videos.findOne({ url: media.url });
 

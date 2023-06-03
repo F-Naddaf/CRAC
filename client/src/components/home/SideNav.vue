@@ -10,7 +10,7 @@
         class="fa-solid fa-heart text-2xl"
         :class="`${
           isFavorite(store.state.userData?.favoriteVideos)
-            ? 'text-red-500'
+            ? 'text-primary-100'
             : 'text-gray-200'
         }`"
       ></i>

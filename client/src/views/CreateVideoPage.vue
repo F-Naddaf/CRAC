@@ -65,6 +65,7 @@
       :url="url"
       :userId="userId"
       :userImage="userImage"
+      :username="username"
       :closeCamera="closeCamera"
     />
   </div>
@@ -251,6 +252,7 @@ export default {
     };
 
     const postLater = async () => {
+      console.log("username", username.value);
       toPost.value = false;
       const token = localStorage.getItem("accessToken");
       try {
@@ -288,6 +290,7 @@ export default {
       recording,
       userId,
       userImage,
+      username,
       url,
       toPost,
       selectedTime,
