@@ -17,6 +17,7 @@ export const authenticateToken = async (req, res, next) => {
   }
 };
 
+// Registering a new user
 export const register = async (req, res) => {
   const { username, first, last, email, confirmPassword, password } = req.body;
   try {
@@ -58,6 +59,7 @@ export const register = async (req, res) => {
   }
 };
 
+// Login with registed user
 export const login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -100,6 +102,7 @@ export const login = async (req, res) => {
   }
 };
 
+// Login with google and save the user details
 export const loginWithGoogle = async (req, res) => {
   try {
     const user = await User.findOne({
@@ -128,6 +131,7 @@ export const loginWithGoogle = async (req, res) => {
   }
 };
 
+//Get the user details
 export const getUser = async (req, res) => {
   const email = req.user.email;
   try {
@@ -140,6 +144,7 @@ export const getUser = async (req, res) => {
   }
 };
 
+// Getting the user phone number
 export const addUserPhone = async (req, res) => {
   const { phone, email } = req.body;
   if (!phone) {
@@ -157,6 +162,7 @@ export const addUserPhone = async (req, res) => {
   }
 };
 
+// Verify user phone by SMS
 export const verifyCode = async (req, res) => {
   const { code, serviceSid, phone } = req.body;
   try {
@@ -181,114 +187,7 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-// export const createNewVideo = async (req, res) => {
-//   const { media, mediaId, userId, userImage } = req.body;
-//   console.log("req", req.body);
-//   try {
-//     if (mediaId) {
-//       // Update existing video
-//       // const video = await User.findOne( $in:{mediaUrl:{_id: mediaId}});
-//       if (video) {
-//         if (media.posted) {
-//           video.title = media.title;
-//           video.posted = media.posted;
-//           video.userId = userId;
-//           video.userImage = userImage;
-//           const updatedMedia = await video.save();
-
-//           res.status(200).json({ success: true, updatedMedia });
-//         } else {
-//           res.status(400).json({
-//             success: false,
-//             message: "Invalid request. 'posted' is required.",
-//           });
-//         }
-//       } else {
-//         await User.findByIdAndUpdate(userId, {
-//           $push: {
-//             mediaUrl: {
-//               title: video.title,
-//               url: video.url,
-//               posted: video.posted,
-//             },
-//           },
-//         });
-//         // res.status(404).json({ success: false, message: "Video not found." });
-//       }
-//     } else {
-//       // Create new video
-
-//       // const newVideo = await User.create({ ...media, userId, userImage });
-//       res.status(200).json({ success: true, newVideo });
-//     }
-//   } catch (err) {
-//     console.log(err);
-//     res.status(500).json({ message: "Internal Error." });
-//   }
-// };
-
-export const postVideo = async (req, res) => {
-  const { media, firstRecord, userId, userImage } = req.body;
-  try {
-    if (firstRecord) {
-      if (media.posted) {
-        const newVideo = await Videos.create({
-          title: media.title,
-          url: media.url,
-          posted: media.posted,
-          userId: userId,
-          userImage: userImage,
-        });
-        await User.findByIdAndUpdate(userId, {
-          $push: {
-            mediaUrl: {
-              title: media.title,
-              url: media.url,
-              posted: media.posted,
-            },
-          },
-        });
-        const updatedUser = User.findById(userId);
-        res.status(200).json({ success: true, newVideo, updatedUser });
-      } else {
-        await User.findByIdAndUpdate(userId, {
-          $push: {
-            mediaUrl: {
-              title: media.title,
-              url: media.url,
-              posted: media.posted,
-            },
-          },
-        });
-        const updatedUser = User.findById(userId);
-        res.status(200).json({ success: true, updatedUser });
-      }
-    } else {
-      const newVideo = await Videos.create({
-        title: media.title,
-        url: media.url,
-        posted: media.posted,
-        userId: userId,
-        userImage: userImage,
-      });
-      await User.findOneAndUpdate(
-        { _id: userId, "mediaUrl.url": media.url },
-        {
-          $set: {
-            "mediaUrl.$.posted": media.posted,
-            "mediaUrl.$.title": media.title,
-          },
-        }
-      );
-      const updatedUser = User.findById(userId);
-      res.status(200).json({ success: true, newVideo, updatedUser });
-    }
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Internal Error." });
-  }
-};
-
+// Add video to favorite
 export const addToFavorite = async (req, res) => {
   const { videoId, userId } = req.body;
   try {

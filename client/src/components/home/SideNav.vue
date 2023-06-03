@@ -10,7 +10,7 @@
         class="fa-solid fa-heart text-2xl"
         :class="`${
           isFavorite(store.state.userData?.favoriteVideos)
-            ? 'text-red-500'
+            ? 'text-primary-100'
             : 'text-gray-200'
         }`"
       ></i>
@@ -26,7 +26,7 @@
     <button class="iconCard pt-10">
       <i class="fa-solid fa-bookmark text-2xl text-gray-200"></i>
     </button>
-    <button class="iconCard pt-10" @click="toggleShareContainer">
+    <button class="iconCard pt-10" @click="$emit('shareClicked')">
       <i class="fa-solid fa-share text-2xl text-gray-200"></i>
     </button>
   </aside>
@@ -46,7 +46,7 @@ export default {
     },
   },
   name: "SideNav",
-  setup(props, { emit }) {
+  setup(props) {
     const store = inject("store");
     const updatedAmountOfLike = ref(props.amountOfLike);
 
@@ -83,7 +83,6 @@ export default {
           }
         );
         const json = await response.json();
-        console.log("json", json);
         store.methods.updateUser(json.result);
         if (json.message === "Video is removed from favorites successfully") {
           updatedAmountOfLike.value -= 1;
@@ -100,16 +99,11 @@ export default {
       }
     };
 
-    const toggleShareContainer = () => {
-      emit("toggle-share-container");
-    };
-
     return {
       store,
       isFavorite,
       updatedAmountOfLike,
       addToFavorite,
-      toggleShareContainer,
     };
   },
 };

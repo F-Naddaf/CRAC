@@ -27,7 +27,7 @@
         </button>
       </li>
       <li>
-        <button class="iconCard" @click="profile">
+        <button id="user" class="iconCard" @click="profile">
           <i class="fa-solid fa-user"></i>
           <p class="iconTitle">Profile</p>
         </button>
@@ -53,7 +53,7 @@ export default {
       router.push("/camera");
     };
     const profile = () => {
-      router.push(`${id.value}/profile`);
+      router.push({ name: "Profile", params: { id: id.value } });
     };
 
     onMounted(async () => {

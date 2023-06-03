@@ -65,6 +65,7 @@
       :url="url"
       :userId="userId"
       :userImage="userImage"
+      :username="username"
       :closeCamera="closeCamera"
     />
   </div>
@@ -95,6 +96,7 @@ export default {
     const store = inject("store");
     const userId = computed(() => store.state.userData?._id);
     const userImage = computed(() => store.state.userData?.userImage);
+    const username = computed(() => store.state.userData?.username);
     const videoStream = toRef(null);
     const mediaRecorder = toRef(null);
     const blob = toRef(null);
@@ -250,6 +252,7 @@ export default {
     };
 
     const postLater = async () => {
+      console.log("username", username.value);
       toPost.value = false;
       const token = localStorage.getItem("accessToken");
       try {
@@ -264,7 +267,7 @@ export default {
             body: JSON.stringify({
               userId: userId.value,
               userImage: userImage.value,
-              mediaId: "",
+              username: username.value,
               media: { title: "", url: url.value, posted: toPost.value },
             }),
           }
@@ -287,6 +290,7 @@ export default {
       recording,
       userId,
       userImage,
+      username,
       url,
       toPost,
       selectedTime,
