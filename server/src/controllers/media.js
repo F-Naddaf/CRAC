@@ -32,7 +32,6 @@ export const postVideo = async (req, res) => {
     const existingVideo = await Videos.findOne({ url: media.url });
 
     if (existingVideo) {
-      // Video exists, update it if it's posted
       if (media.posted) {
         await Videos.findByIdAndUpdate(existingVideo._id, {
           $set: {
@@ -45,7 +44,6 @@ export const postVideo = async (req, res) => {
         });
       }
     } else {
-      // Video does not exist, create a new video
       const newVideo = await Videos.create({
         title: media.title,
         url: media.url,

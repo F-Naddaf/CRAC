@@ -187,55 +187,6 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-
-// // Create a video or Update it
-// export const postVideo = async (req, res) => {
-//   const { media, userId, userImage } = req.body;
-//   console.log("body", req.body);
-//   try {
-//     const existingVideo = await Videos.findOne({ url: media.url });
-
-//     if (existingVideo) {
-//       await User.findOneAndUpdate(
-//         { _id: userId, "mediaUrl.url": media.url },
-//         {
-//           $set: {
-//             "mediaUrl.$.posted": media.posted,
-//             "mediaUrl.$.title": media.title,
-//           },
-//         }
-//       );
-
-//       const updatedUser = await User.findById(userId);
-//       res.status(200).json({ success: true, updatedUser });
-//     } else {
-//       const newVideo = await Videos.create({
-//         title: media.title,
-//         url: media.url,
-//         posted: media.posted,
-//         userId: userId,
-//         userImage: userImage,
-//       });
-
-//       await User.findByIdAndUpdate(userId, {
-//         $push: {
-//           mediaUrl: {
-//             title: media.title,
-//             url: media.url,
-//             posted: media.posted,
-//           },
-//         },
-//       });
-
-//       const updatedUser = await User.findById(userId);
-//       res.status(200).json({ success: true, newVideo, updatedUser });
-//     }
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Internal Error." });
-//   }
-// };
-
 // Add video to favorite
 export const addToFavorite = async (req, res) => {
   const { videoId, userId } = req.body;
