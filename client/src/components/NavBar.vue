@@ -8,7 +8,7 @@
         </button>
       </li>
       <li>
-        <button class="iconCard">
+        <button class="iconCard" @click="goFriends">
           <i class="fa-solid fa-user-group"></i>
           <p class="iconTitle">Friends</p>
         </button>
@@ -55,6 +55,9 @@ export default {
     const profile = () => {
       router.push({ name: "Profile", params: { id: id.value } });
     };
+    const goFriends = () => {
+      router.push("/friends");
+    };
 
     onMounted(async () => {
       await store.methods.load();
@@ -67,6 +70,7 @@ export default {
       goHome,
       openCamera,
       profile,
+      goFriends,
     };
   },
 };

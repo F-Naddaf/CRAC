@@ -36,6 +36,7 @@ export const register = async (req, res) => {
       firstname: first,
       lastname: last,
       password: hashedPassword,
+      userImage: "",
     });
     const accessToken = jwt.sign(
       {
@@ -144,6 +145,72 @@ export const getUser = async (req, res) => {
   }
 };
 
+//Get a user details by id
+// export const getUserById = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const user = await User.findById(id);
+//     if (!user) {
+//       return res.status(404).json({ error: "User not found" });
+//     } else {
+//       res.status(200).json({ success: true, user: user });
+//     }
+//   } catch (error) {
+//     res
+//       .status(500)
+//       .json({ success: false, msg: "Unable to get user, try again later" });
+//   }
+// };
+
+export const getUserById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    } else {
+      const videos = await Videos.find({ userId: id, posted: true });
+      res.status(200).json({
+        success: true,
+        user: {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          username: user.username,
+          email: user.email,
+          userImage: user.userImage,
+        },
+        videos: videos,
+      });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Unable to get user, try again later" });
+  }
+};
+
+// Get friends detail
+export const getFriendDetails = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    const friendIds = user.friends.map((friend) => friend.userId);
+    const friendDetails = await User.find(
+      { _id: { $in: friendIds } },
+      "username firstname lastname userImage"
+    );
+
+    res.json({
+      success: true,
+      result: friendDetails,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Getting the user phone number
 export const addUserPhone = async (req, res) => {
   const { phone, email } = req.body;
@@ -187,14 +254,36 @@ export const verifyCode = async (req, res) => {
   }
 };
 
+// Add video to friends
+export const addToFriends = async (req, res) => {
+  try {
+    const { userId, friendId } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.friends.push({ userId: friendId });
+    await user.save();
+
+    return res.status(200).json({ message: "Friend added successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
 // Add video to favorite
 export const addToFavorite = async (req, res) => {
-  const { videoId, userId } = req.body;
+  const { videoId, userId, url } = req.body;
+  console.log("body", req.body);
   try {
     const user = await User.findById(userId);
     const video = await Videos.findById(videoId);
 
-    if (!user || !video) {
+    if (!user || !video || !url) {
       return res.status(404).json({ message: "User or video not found" });
     }
 
@@ -213,7 +302,7 @@ export const addToFavorite = async (req, res) => {
         });
       }
     } else {
-      user.favoriteVideos.push({ videoId });
+      user.favoriteVideos.push({ videoId, url });
       video.amountOfLike = (video.amountOfLike || 0) + 1;
       res.json({
         success: true,
@@ -224,6 +313,38 @@ export const addToFavorite = async (req, res) => {
 
     await user.save();
     await video.save();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Delete a friend from user list
+export const deleteFriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const friendIndex = user.friends.findIndex(
+      (friend) => friend.userId === friendId
+    );
+
+    if (friendIndex === -1) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+
+    user.friends.splice(friendIndex, 1);
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Friend deleted successfully",
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

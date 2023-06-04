@@ -30,6 +30,9 @@
         >
           <SideNav
             @shareClicked="toggleSocialMedia"
+            :userId="videos[currentVideoIndex].userId"
+            :userImage="videos[currentVideoIndex].userImage"
+            :videoUrl="videos[currentVideoIndex].url"
             :videoId="currentVideoId"
             :amountOfLike="videos[currentVideoIndex].amountOfLike"
           ></SideNav>
@@ -59,7 +62,6 @@ export default {
 
     onMounted(async () => {
       await getAllVideos();
-      console.log("showSocialMedia ", showSocialMedia);
     });
 
     const getVideoRef = (index) => (el) => {

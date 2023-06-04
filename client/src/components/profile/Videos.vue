@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <slot name="videos">
+    <!-- <slot name="videos"> -->
       <button
         class="video-section"
         v-for="(video, index) in videos"
@@ -11,7 +11,7 @@
         <i class="fa-solid fa-play"></i>
         <video :src="video.url" type="video/mp4" ref="videos"></video>
       </button>
-    </slot>
+    <!-- </slot> -->
   </div>
 </template>
 

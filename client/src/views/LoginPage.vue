@@ -109,8 +109,6 @@ export default {
           }),
         });
         const result = await response.json();
-        console.log("result", result);
-        // loginStatus.value = result.message;
         if (result.success) {
           localStorage.setItem("accessToken", result.accessToken);
           loginStatus.value = result.message;
