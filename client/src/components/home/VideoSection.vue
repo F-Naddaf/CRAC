@@ -94,7 +94,7 @@ export default {
         (video) => video._id === newVideoId
       );
       currentVideoIndex.value = videoIndex;
-      emit("video-id", videoIndex);
+      emit("video-id", newVideoId);
     });
 
     const getAllVideos = async () => {
