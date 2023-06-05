@@ -6,6 +6,8 @@ import ConformPhone from "../views/ConformPhone.vue";
 import HomePage from "../views/HomePage.vue";
 import CreateVideoPage from "../views/CreateVideoPage.vue";
 import Profile from "../views/Profile.vue";
+import FriendProfile from "../views/FriendProfile.vue";
+import Friends from "../views/Friends.vue";
 
 const routes = [
   {
@@ -42,6 +44,16 @@ const routes = [
     path: "/profile/:id",
     name: "Profile",
     component: Profile,
+  },
+  {
+    path: "/friend/profile/:id",
+    name: "FriendProfile",
+    component: FriendProfile,
+  },
+  {
+    path: "/friends",
+    name: "Friends",
+    component: Friends,
   },
 
   // {

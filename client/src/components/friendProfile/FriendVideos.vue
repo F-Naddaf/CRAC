@@ -46,19 +46,22 @@
         </button>
       </li>
     </ul>
-    <Videos :videos="filteredVideos"></Videos>
+    <Videos :videos="videosArray"></Videos>
   </div>
 </template>
 
 <script>
 import Videos from "./Videos.vue";
 import { ref, inject, onMounted, computed } from "vue";
-import { useRouter } from "vue-router";
+// import { useRouter } from "vue-router";
 
 export default {
-  name: "Tabs",
+  name: "FriendVideos",
   components: {
     Videos,
+  },
+  props: {
+    videosArray: Array,
   },
   setup(props) {
     const store = inject("store");

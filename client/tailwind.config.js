@@ -15,9 +15,6 @@ module.exports = {
         background: "#51555e",
         label: "#86aebf",
       },
-      // textShadow: {
-      //   sm: '0 1px 2px var(--tw-shadow-color)',
-      // }
     },
   },
   plugins: [],

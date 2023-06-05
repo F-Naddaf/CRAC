@@ -4,16 +4,6 @@
       <div class="header-container">
         <h1 class="user-name">{{ userFullName }}</h1>
       </div>
-      <div class="logout-container">
-        <router-link
-          to="/home"
-          @click="store.methods.logout"
-          class="logout-btn"
-        >
-          <i class="fa-solid fa-arrow-right-from-bracket"></i>
-          <p>Logout</p>
-        </router-link>
-      </div>
     </section>
     <section class="flex w-full p-8 justify-center">
       <div
@@ -34,44 +24,17 @@
         <div v-if="userFullName" class="edit-image"></div>
       </div>
     </section>
-    <section>
-      <button class="editProfileBtn">
-        <p class="text-sm font-semibold text-gray-300">Edit Profile</p>
-      </button>
-    </section>
   </div>
 </template>
 
 <script>
-import { ref, inject, onMounted } from "vue";
-
 export default {
-  name: "UserInfo",
-  setup() {
-    const store = inject("store");
-    const userFullName = ref("");
-    const username = ref("");
-    const email = ref("");
-    const userImage = ref("");
-
-    onMounted(async () => {
-      await store.methods.load();
-      const userFirstName = store.state.userData?.firstname;
-      const userLastName = store.state.userData?.lastname;
-
-      userFullName.value = `${userFirstName} ${userLastName}`;
-      username.value = store.state.userData?.username;
-      email.value = store.state.userData?.email;
-      userImage.value = store.state.userData?.userImage;
-    });
-
-    return {
-      store,
-      userFullName,
-      username,
-      email,
-      userImage,
-    };
+  name: "FriendInfo",
+  props: {
+    userFullName: String,
+    username: String,
+    email: String,
+    userImage: String,
   },
 };
 </script>
