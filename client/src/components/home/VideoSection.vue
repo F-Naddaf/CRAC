@@ -7,6 +7,11 @@
         :key="video._id"
         :ref="getVideoRef(index)"
       >
+        <div class="error-container">
+          <p v-if="showError" class="text-sm text-gray-200">
+            {{ error }}
+          </p>
+        </div>
         <video loop autoplay class="video" :data-index="index">
           <source class="source" :src="video.url" type="video/mp4" />
         </video>
@@ -30,6 +35,7 @@
         >
           <SideNav
             @shareClicked="toggleSocialMedia"
+            @error-message="handleErrorMessage"
             :userId="videos[currentVideoIndex].userId"
             :userImage="videos[currentVideoIndex].userImage"
             :videoUrl="videos[currentVideoIndex].url"
@@ -51,7 +57,11 @@ export default {
   components: {
     SideNav,
   },
-
+  props: {
+    error: {
+      type: String,
+    },
+  },
   setup(props, { emit }) {
     const currentVideoId = ref(null);
     const currentVideoIndex = ref(0);
@@ -59,10 +69,20 @@ export default {
     const videoRefs = ref([]);
     const videoContainer = ref(null);
     const showSocialMedia = ref(false);
+    const showError = ref(false);
+    const error = ref("");
 
     onMounted(async () => {
       await getAllVideos();
     });
+
+    const handleErrorMessage = (value) => {
+      error.value = value;
+      showError.value = true;
+      setTimeout(() => {
+        showError.value = false;
+      }, 2000);
+    };
 
     const getVideoRef = (index) => (el) => {
       videoRefs.value[index] = el;
@@ -134,9 +154,12 @@ export default {
       currentVideoIndex,
       videos,
       videoRefs,
+      showError,
+      error,
       videoContainer,
       showSocialMedia,
       getVideoRef,
+      handleErrorMessage,
       getAllVideos,
       handleScroll,
       toggleSocialMedia,
@@ -153,6 +176,24 @@ export default {
   width: 100%;
   height: 86vh;
 }
+.error-container {
+  display: grid;
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  justify-content: center;
+  width: fit-content;
+  max-width: 95%;
+  background-color: #ba2f74;
+  border-radius: 5px;
+  padding: 0 15px;
+  z-index: 20;
+  white-space: nowrap;
+  overflow: hidden;
+  /* text-overflow: ellipsis; */
+}
+
 .video-section {
   display: flex;
   flex-direction: column;

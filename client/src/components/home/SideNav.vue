@@ -43,8 +43,15 @@
     </div>
 
     <div class="mt-10">
-      <button class="iconCard">
-        <i class="fa-solid fa-bookmark text-2xl text-gray-200"></i>
+      <button @click="saveVideo" class="iconCard">
+        <i
+          class="fa-solid fa-bookmark text-2xl text-gray-200"
+          :class="`${
+            isSaved(store.state.userData?.savedVideos)
+              ? 'text-save'
+              : 'text-gray-200'
+          }`"
+        ></i>
       </button>
     </div>
 
@@ -79,7 +86,8 @@ export default {
     },
   },
   name: "SideNav",
-  setup(props) {
+  emits: ["error-message"],
+  setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
     const updatedAmountOfLike = ref(props.amountOfLike);
@@ -106,6 +114,16 @@ export default {
     };
 
     function isFavorite(favoriteArray) {
+      const getVideoId = favoriteArray?.map((video) => {
+        return {
+          id: video.videoId,
+        };
+      });
+      const isExist = getVideoId?.some((item) => item.id === props.videoId);
+      return isExist;
+    }
+
+    function isSaved(favoriteArray) {
       const getVideoId = favoriteArray?.map((video) => {
         return {
           id: video.videoId,
@@ -162,6 +180,10 @@ export default {
         );
         const json = await response.json();
         store.methods.updateUser(json.result);
+        if (!json.success) {
+          const error = json.message;
+          emit("error-message", error);
+        }
         if (json.message === "Video is removed from favorites successfully") {
           updatedAmountOfLike.value -= 1;
         } else if (
@@ -177,9 +199,41 @@ export default {
       }
     };
 
+    const saveVideo = async () => {
+      await store.methods.load();
+      const token = localStorage.getItem("accessToken");
+      try {
+        const response = await fetch(
+          `http://localhost:6500/api/users/${props.videoId}/save`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              userId: store.state.userData?._id,
+              videoId: props.videoId,
+              url: props.videoUrl,
+            }),
+          }
+        );
+        const json = await response.json();
+        if (!json.success) {
+          const error = json.message;
+          emit("error-message", error);
+        }
+        store.methods.updateUser(json.result);
+        isSaved.value = true;
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     return {
       store,
       isFavorite,
+      isSaved,
       currentUserId,
       updatedAmountOfLike,
       currentUserimage,
@@ -187,6 +241,7 @@ export default {
       showAdd,
       addToFriends,
       addToFavorite,
+      saveVideo,
     };
   },
 };
