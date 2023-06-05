@@ -341,43 +341,6 @@ export const addToFavorite = async (req, res) => {
 };
 
 // Adding video to user
-// export const addSavedVideos = async (req, res) => {
-//   const { videoId, userId, url } = req.body;
-//   try {
-//     const user = await User.findById(userId);
-//     const video = await Videos.findById(videoId);
-
-//     if (!user || !video || !url) {
-//       return res.status(404).json({ message: "User or video not found" });
-//     }
-
-//     const savedIndex = user.savedVideos.findIndex(
-//       (item) => item.videoId === videoId
-//     );
-
-//     if (savedIndex > -1) {
-//       user.savedVideos.splice(savedIndex, 1);
-//       res.json({
-//         success: true,
-//         result: user,
-//         message: "Video is removed from saved videos successfully",
-//       });
-//     } else {
-//       user.savedVideos.push({ videoId, url });
-//       res.json({
-//         success: true,
-//         result: user,
-//         message: "Video is added to saved videos successfully",
-//       });
-//     }
-
-//     await user.save();
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
-
 export const addSavedVideos = async (req, res) => {
   const { videoId, userId, url } = req.body;
 
