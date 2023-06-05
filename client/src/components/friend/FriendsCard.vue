@@ -3,7 +3,8 @@
     <div
       class="absolute flex h-20 w-20 -left-4 items-center justify-start border-2 border-gray-200 rounded-full overflow-hidden"
     >
-      <img :src="userImage" />
+      <img v-if="userImage" :src="userImage" />
+      <i v-else class="fa-solid fa-user text-gray-200 text-3xl ml-6"></i>
     </div>
     <div class="friend-card-container">
       <p class="text-xs font-thin text-secondary-200">Username:</p>
