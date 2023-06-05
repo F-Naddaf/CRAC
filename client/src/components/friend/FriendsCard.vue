@@ -1,31 +1,31 @@
 <template>
-  <router-link :to="`/friend/profile/${id}`" class="friend-card">
-    <div
-      class="absolute flex h-20 w-20 -left-4 items-center justify-start border-2 border-gray-200 rounded-full overflow-hidden"
-    >
-      <img v-if="userImage" :src="userImage" />
-      <i v-else class="fa-solid fa-user text-gray-200 text-3xl ml-6"></i>
-    </div>
-    <div class="friend-card-container">
-      <p class="text-xs font-thin text-secondary-200">Username:</p>
-      <p class="text-sm text-secondary-200">#{{ username }}</p>
-    </div>
-    <div class="friend-card-container">
-      <p class="text-xs font-thin text-secondary-200">Full Name:</p>
-      <p class="text-sm text-secondary-200">{{ firstname }} {{ lastname }}</p>
-    </div>
-    <div class="absolute right-2 top-2 ml-16 z-30">
+  <div class="friend-card">
+    <router-link :to="`/friend/profile/${id}`" class="flex items-center">
+      <div
+        class="absolute flex h-20 w-20 -left-4 items-center justify-start border-2 border-gray-200 rounded-full overflow-hidden"
+      >
+        <img v-if="userImage" :src="userImage" />
+        <i v-else class="fa-solid fa-user text-gray-200 text-3xl ml-6"></i>
+      </div>
+      <div class="friend-card-container">
+        <p class="text-xs font-thin text-secondary-200">Username:</p>
+        <p class="text-sm text-secondary-200">#{{ username }}</p>
+      </div>
+      <div class="friend-card-container">
+        <p class="text-xs font-thin text-secondary-200">Full Name:</p>
+        <p class="text-sm text-secondary-200">{{ firstname }} {{ lastname }}</p>
+      </div>
+    </router-link>
+    <div class="absolute right-2 top-2 ml-16 z-40">
       <button class="flex items-center" @click="deleteFriend">
         <i class="fa-solid fa-ban"></i>
         <p class="text-xs font-base text-primary-200">Unfollow</p>
       </button>
     </div>
-  </router-link>
+  </div>
 </template>
 
 <script>
-import { onMounted, ref, inject, watch } from "vue";
-
 export default {
   name: "FriendsCard",
   props: {
@@ -40,10 +40,6 @@ export default {
     const deleteFriend = () => {
       emit("deleteFriend");
     };
-
-    onMounted(async () => {
-      console.log("id", props.id);
-    });
 
     return {
       deleteFriend,
