@@ -3,7 +3,8 @@ import { Videos } from "../models/Media.js";
 export const getAllMedia = async (req, res) => {
   try {
     const videos = await Videos.find({ posted: true });
-    res.status(200).json({ success: true, videos });
+    const reversedVideos = videos.reverse();
+    res.status(200).json({ success: true, videos: reversedVideos });
   } catch (error) {
     console.error(error);
     res

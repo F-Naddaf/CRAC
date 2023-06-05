@@ -1,10 +1,17 @@
 <template>
   <div class="flex flex-col h-full w-full">
     <section
-      class="flex w-full h-16 justify-start text-xl font-base items-center mx-auto px-2"
+      class="flex w-full h-16 justify-start text-xl font-base items-center mx-auto"
       id="head"
     >
-      <h1 class="text-primary-100 ml-4">Friends</h1>
+      <div id="title-container">
+        <h1
+          class="text-gray-300 ml-4"
+          style="text-shadow: rgb(38, 38, 38) 1px 1px"
+        >
+          Friends
+        </h1>
+      </div>
     </section>
     <section
       class="relative flex flex-col w-full h-full pt-4 items-center mx-auto overflow-scroll-auto"
@@ -117,5 +124,16 @@ export default {
 }
 #friend-section {
   height: 86vh;
+}
+#title-container {
+  display: flex;
+  align-items: center;
+  width: 110px;
+  height: 35px;
+  background: rgba(186, 47, 116, 0.7);
+  position: relative;
+  margin-top: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 </style>
