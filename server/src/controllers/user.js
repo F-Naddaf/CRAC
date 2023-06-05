@@ -222,12 +222,15 @@ export const verifyCode = async (req, res) => {
       const isSmsCodeValid = await verifySms(phone, code, serviceSid);
       if (isSmsCodeValid === "approved") {
         const updatedUser = await User.findByIdAndUpdate(existingUser._id);
+        const videos = await Videos.find({ posted: true }).sort({ _id: -1 }).limit(1);
+        const lastVideoId = videos.length > 0 ? videos[0]._id : null;
         res.status(200).json({
           success: true,
           profile: {
             email: updatedUser.email,
             username: updatedUser.username,
           },
+          videoId: lastVideoId,
         });
       }
     } else {

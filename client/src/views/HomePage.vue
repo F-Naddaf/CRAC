@@ -12,7 +12,7 @@
         <DanceAnimation />
       </div>
     </div>
-    <VideoSection @shareClicked="toggleSocialMedia" />
+    <VideoSection @shareClicked="toggleSocialMedia" @video-id="handleVideoId" />
     <NavBar />
     <div>
       <SocialMedia :show="showSocialMedia" @closeClicked="closeSocialMedia" />
@@ -26,6 +26,8 @@ import DanceAnimation from "@/components/home/DanceAnimation.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
 import NavBar from "@/components/NavBar.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
+import { useRouter } from "vue-router";
+
 export default {
   name: "HomePage",
   components: {
@@ -36,6 +38,7 @@ export default {
   },
 
   setup() {
+    const router = useRouter();
     const showSocialMedia = ref(false);
 
     const toggleSocialMedia = () => {
@@ -46,10 +49,15 @@ export default {
       showSocialMedia.value = false;
     };
 
+    const handleVideoId = (videoId) => {
+      router.push({ name: "HomePage", params: { id: videoId } });
+    };
+
     return {
       showSocialMedia,
       toggleSocialMedia,
       closeSocialMedia,
+      handleVideoId,
     };
   },
 };

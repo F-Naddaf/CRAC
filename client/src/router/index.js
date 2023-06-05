@@ -31,7 +31,7 @@ const routes = [
     component: ConformPhone,
   },
   {
-    path: "/home",
+    path: "/:id/home",
     name: "HomePage",
     component: HomePage,
   },
