@@ -146,22 +146,6 @@ export const getUser = async (req, res) => {
 };
 
 //Get a user details by id
-// export const getUserById = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const user = await User.findById(id);
-//     if (!user) {
-//       return res.status(404).json({ error: "User not found" });
-//     } else {
-//       res.status(200).json({ success: true, user: user });
-//     }
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ success: false, msg: "Unable to get user, try again later" });
-//   }
-// };
-
 export const getUserById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -211,7 +195,7 @@ export const getFriendDetails = async (req, res) => {
   }
 };
 
-// Getting the user phone number
+// Adding user phone number
 export const addUserPhone = async (req, res) => {
   const { phone, email } = req.body;
   if (!phone) {
@@ -254,7 +238,7 @@ export const verifyCode = async (req, res) => {
   }
 };
 
-// Add video to friends
+// Adding friend to user list
 export const addToFriends = async (req, res) => {
   try {
     const { userId, friendId } = req.body;
@@ -275,16 +259,53 @@ export const addToFriends = async (req, res) => {
   }
 };
 
+// Deleting friend from user list
+export const deleteFriend = async (req, res) => {
+  try {
+    const { userId, friendId } = req.params;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const friendIndex = user.friends.findIndex(
+      (friend) => friend.userId === friendId
+    );
+
+    if (friendIndex === -1) {
+      return res.status(404).json({ message: "Friend not found" });
+    }
+
+    user.friends.splice(friendIndex, 1);
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "Friend deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 // Add video to favorite
 export const addToFavorite = async (req, res) => {
   const { videoId, userId, url } = req.body;
-  console.log("body", req.body);
   try {
     const user = await User.findById(userId);
     const video = await Videos.findById(videoId);
 
     if (!user || !video || !url) {
       return res.status(404).json({ message: "User or video not found" });
+    }
+
+    if (video.userId === userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cannot favorite your own video" });
     }
 
     const favoriteIndex = user.favoriteVideos.findIndex(
@@ -319,32 +340,82 @@ export const addToFavorite = async (req, res) => {
   }
 };
 
-// Delete a friend from user list
-export const deleteFriend = async (req, res) => {
+// Adding video to user
+// export const addSavedVideos = async (req, res) => {
+//   const { videoId, userId, url } = req.body;
+//   try {
+//     const user = await User.findById(userId);
+//     const video = await Videos.findById(videoId);
+
+//     if (!user || !video || !url) {
+//       return res.status(404).json({ message: "User or video not found" });
+//     }
+
+//     const savedIndex = user.savedVideos.findIndex(
+//       (item) => item.videoId === videoId
+//     );
+
+//     if (savedIndex > -1) {
+//       user.savedVideos.splice(savedIndex, 1);
+//       res.json({
+//         success: true,
+//         result: user,
+//         message: "Video is removed from saved videos successfully",
+//       });
+//     } else {
+//       user.savedVideos.push({ videoId, url });
+//       res.json({
+//         success: true,
+//         result: user,
+//         message: "Video is added to saved videos successfully",
+//       });
+//     }
+
+//     await user.save();
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
+export const addSavedVideos = async (req, res) => {
+  const { videoId, userId, url } = req.body;
+
   try {
-    const { userId, friendId } = req.params;
-
     const user = await User.findById(userId);
+    const video = await Videos.findById(videoId);
 
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    if (!user || !video || !url) {
+      return res.status(404).json({ message: "User or video not found" });
     }
 
-    const friendIndex = user.friends.findIndex(
-      (friend) => friend.userId === friendId
+    if (video.userId === userId) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Cannot save your own video" });
+    }
+
+    const savedIndex = user.savedVideos.findIndex(
+      (item) => item.videoId === videoId
     );
 
-    if (friendIndex === -1) {
-      return res.status(404).json({ message: "Friend not found" });
+    if (savedIndex > -1) {
+      user.savedVideos.splice(savedIndex, 1);
+      res.json({
+        success: true,
+        result: user,
+        message: "Video is removed from saved videos successfully",
+      });
+    } else {
+      user.savedVideos.push({ videoId, url });
+      res.json({
+        success: true,
+        result: user,
+        message: "Video is added to saved videos successfully",
+      });
     }
 
-    user.friends.splice(friendIndex, 1);
     await user.save();
-
-    res.json({
-      success: true,
-      message: "Friend deleted successfully",
-    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

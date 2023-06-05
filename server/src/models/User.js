@@ -11,7 +11,7 @@ export const userSchema = new mongoose.Schema({
   userImage: { type: String },
   token: String,
   favoriteVideos: [{ videoId: String, url: String }],
-  savedVideos: [{ url: String }],
+  savedVideos: [{ videoId: String, url: String }],
   friends: [{ userId: String }],
 });
 

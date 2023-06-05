@@ -11,6 +11,7 @@ import {
   addToFriends,
   addToFavorite,
   getFriendDetails,
+  addSavedVideos,
   deleteFriend,
 } from "../controllers/user.js";
 const userRouter = express.Router();
@@ -25,6 +26,7 @@ userRouter.post("/phone", authenticateToken, addUserPhone);
 userRouter.post("/phone/verify", authenticateToken, verifyCode);
 userRouter.post("/:id/addFriend", addToFriends);
 userRouter.post("/:id/favorite", addToFavorite);
+userRouter.post("/:id/save", addSavedVideos);
 userRouter.delete("/:userId/friends/:friendId", deleteFriend);
 
 export default userRouter;

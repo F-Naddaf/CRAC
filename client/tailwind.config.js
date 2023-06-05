@@ -15,6 +15,7 @@ module.exports = {
         background: "#51555e",
         label: "#86aebf",
         hover: "#ccc745",
+        save: "#eded00",
       },
     },
   },

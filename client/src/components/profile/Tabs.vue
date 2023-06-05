@@ -119,9 +119,11 @@ export default {
 
         await store.methods.load();
         const userFavorite = store.state.userData?.favoriteVideos;
+        const userSavedVideos = store.state.userData?.savedVideos;
 
         posted.value.push(...getPostedVideos);
         unPosted.value.push(...getUnPostedVideos);
+        saved.value.push(...userSavedVideos);
         favorite.value.push(...userFavorite);
       } catch (error) {
         console.error(error);
