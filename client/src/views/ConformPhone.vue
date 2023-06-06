@@ -95,6 +95,7 @@ export default {
     const store = inject("store");
     const userEmail = computed(() => store.state.userData?.email);
     const invalid = false;
+    const videoId = ref("");
     const phoneInputValue = "";
     const codeInputValue = "";
     const phoneInput = {
@@ -204,7 +205,8 @@ export default {
         const json = await response.json();
         if (json.success) {
           localStorage.removeItem("serviceId");
-          router.push("/home");
+          videoId.value = json.videoId;
+          router.push({ name: "HomePage", params: { id: videoId.value } });
         }
       } catch (error) {
         console.error(error);
@@ -224,6 +226,7 @@ export default {
       code,
       userEmail,
       send,
+      videoId,
       handelPhone,
       handelVerify,
       isPhoneValid,

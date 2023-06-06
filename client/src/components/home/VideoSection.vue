@@ -62,6 +62,7 @@ export default {
       type: String,
     },
   },
+  emits: ["video-id"],
   setup(props, { emit }) {
     const currentVideoId = ref(null);
     const currentVideoIndex = ref(0);
@@ -93,6 +94,7 @@ export default {
         (video) => video._id === newVideoId
       );
       currentVideoIndex.value = videoIndex;
+      emit("video-id", newVideoId);
     });
 
     const getAllVideos = async () => {

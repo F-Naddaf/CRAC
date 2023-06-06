@@ -67,6 +67,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    videoId: {
+      type: String,
+      required: true,
+    },
   },
 
   setup(props, { emit }) {
@@ -82,7 +86,7 @@ export default {
     });
 
     const shareToFacebook = () => {
-      const url = "https://example.com";
+      const url = `https://example/${props.videoId}/home.com`;
       state.facebookLink = `https://www.facebook.com/share.php?u=${url}`;
       window.open(state.facebookLink);
     };
