@@ -45,9 +45,10 @@ export default {
   setup() {
     const store = inject("store");
     const id = ref("");
+    const videoId = ref(store.state.userData?.videoId);
 
     const goHome = () => {
-      router.push(`/home`);
+      router.push(`/${videoId}/home`);
     };
     const openCamera = () => {
       router.push("/camera");
@@ -67,6 +68,7 @@ export default {
     return {
       store,
       id,
+      videoId,
       goHome,
       openCamera,
       profile,

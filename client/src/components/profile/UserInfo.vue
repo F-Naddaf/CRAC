@@ -6,7 +6,7 @@
       </div>
       <div class="logout-container">
         <router-link
-          to="/home"
+          :to="`/${videoId}/home`"
           @click="store.methods.logout"
           class="logout-btn"
         >
@@ -28,16 +28,15 @@
       >
         <img id="user-image" :src="userImage" />
       </div>
-      <div class="px-4 mt-4 relative">
+      <div class="px-4 mt-4">
         <p class="userDetails">#{{ username }}</p>
         <p class="userDetails">{{ email }}</p>
-        <div v-if="userFullName" class="edit-image"></div>
       </div>
     </section>
     <section>
-      <button class="editProfileBtn">
+      <router-link :to="`/edit/${id}`" class="editProfileBtn">
         <p class="text-sm font-semibold text-gray-300">Edit Profile</p>
-      </button>
+      </router-link>
     </section>
   </div>
 </template>
@@ -49,6 +48,8 @@ export default {
   name: "UserInfo",
   setup() {
     const store = inject("store");
+    const id = ref("");
+    const videoId = ref("");
     const userFullName = ref("");
     const username = ref("");
     const email = ref("");
@@ -59,6 +60,8 @@ export default {
       const userFirstName = store.state.userData?.firstname;
       const userLastName = store.state.userData?.lastname;
 
+      id.value = store.state.userData?._id;
+      videoId.value = store.state.userData?.videoId;
       userFullName.value = `${userFirstName} ${userLastName}`;
       username.value = store.state.userData?.username;
       email.value = store.state.userData?.email;
@@ -67,6 +70,8 @@ export default {
 
     return {
       store,
+      id,
+      videoId,
       userFullName,
       username,
       email,

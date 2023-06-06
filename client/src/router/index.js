@@ -8,6 +8,7 @@ import CreateVideoPage from "../views/CreateVideoPage.vue";
 import Profile from "../views/Profile.vue";
 import FriendProfile from "../views/FriendProfile.vue";
 import Friends from "../views/Friends.vue";
+import EditProfile from "../views/EditProfile.vue";
 
 const routes = [
   {
@@ -49,6 +50,11 @@ const routes = [
     path: "/friend/profile/:id",
     name: "FriendProfile",
     component: FriendProfile,
+  },
+  {
+    path: "/edit/:id",
+    name: "EditProfile",
+    component: EditProfile,
   },
   {
     path: "/friends",

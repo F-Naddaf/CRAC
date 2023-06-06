@@ -13,6 +13,7 @@ export const userSchema = new mongoose.Schema({
   favoriteVideos: [{ videoId: String, url: String }],
   savedVideos: [{ videoId: String, url: String }],
   friends: [{ userId: String }],
+  videoId: String,
 });
 
 export const User = mongoose.model("users", userSchema);

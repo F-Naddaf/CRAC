@@ -86,7 +86,8 @@ export default {
     },
   },
   name: "SideNav",
-  emits: ["error-message"],
+  emits: ["error-message", "shareClicked"],
+
   setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
