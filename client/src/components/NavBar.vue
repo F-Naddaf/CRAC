@@ -45,7 +45,7 @@ export default {
   setup() {
     const store = inject("store");
     const id = ref("");
-    const videoId = ref(store.state.userData?.videoId);
+    const videoId = ref("");
 
     const goHome = () => {
       router.push(`/${videoId}/home`);
@@ -63,6 +63,7 @@ export default {
     onMounted(async () => {
       await store.methods.load();
       id.value = store.state.userData?._id;
+      videoId.value = store.state.userData?.videoId;
     });
 
     return {

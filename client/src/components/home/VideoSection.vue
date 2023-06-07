@@ -109,8 +109,8 @@ export default {
         });
         const json = await response.json();
         const videosArray = json.videos;
-        currentVideoId.value = videosArray[0]._id;
         console.log("videosArray", videosArray);
+        currentVideoId.value = videosArray[0]._id;
         videos.value = videosArray;
       } catch (error) {
         console.error(error);

@@ -14,8 +14,13 @@
       v-model="user.value"
       @update:value="user.value = $event"
     />
-    <CroppedImage @image-cropped="isCropped = true" />
-    <div class="w-5/6 mb-2 mt-4">
+    <CroppedImage
+      @image-cropped="isCropped = true"
+      @image-cropped-url="imageUrl = $event"
+      v-bind:id="id"
+    />
+    <p class="text-green text-sm font-semibold">{{ resultMessage }}</p>
+    <div class="flex flex-col items-center w-5/6 mb-2 mt-4">
       <button
         class="flex items-center justify-center w-full py-1 text-md font-semibold text-gray-700 rounded-md"
         @click="handleCrop"
@@ -30,6 +35,7 @@
 <script>
 import { ref, inject, onMounted } from "vue";
 import FormInput from "../components/FormInput.vue";
+import { useRouter } from "vue-router";
 import CroppedImage from "../components/edit-profile/CroppedImage.vue";
 
 export default {
@@ -43,6 +49,8 @@ export default {
     const id = ref("");
     const image = ref(null);
     const isCropped = ref(false);
+    const imageUrl = ref("");
+    const resultMessage = ref("");
 
     const userData = ref({
       username: {
@@ -72,18 +80,17 @@ export default {
       },
     });
 
+    const router = useRouter();
+
     onMounted(async () => {
       await store.methods.load();
       id.value = store.state.userData?._id;
       userData.value.first.detail = store.state.userData?.firstname;
       userData.value.last.detail = store.state.userData?.lastname;
       userData.value.username.detail = store.state.userData?.username;
-      console.log("isCropped", isCropped);
     });
 
     const handelSubmit = async () => {
-      console.log("value", userData.value.username.value);
-      console.log("value", id.value);
       try {
         const response = await fetch(
           `http://localhost:6500/api/users/${id.value}/updateUser`,
@@ -97,11 +104,16 @@ export default {
               username: userData.value.username.value,
               first: userData.value.first.value,
               last: userData.value.last.value,
-              //   userImage: croppedImage.value,
+              userImage: imageUrl.value,
             }),
           }
         );
         const result = await response.json();
+        console.log("res", result);
+        resultMessage.value = result.message;
+        setTimeout(() => {
+          router.push(`/profile/${id.value}`);
+        }, 3000);
         console.log(result);
       } catch (error) {
         console.log(error);
@@ -113,6 +125,8 @@ export default {
       id,
       image,
       userData,
+      imageUrl,
+      resultMessage,
       isCropped,
       handelSubmit,
     };

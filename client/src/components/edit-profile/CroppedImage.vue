@@ -38,28 +38,39 @@
 </template>
 
 <script>
-import { ref as toRef, onUnmounted, nextTick, watch } from "vue";
+import { ref, onUnmounted, nextTick, watch, onMounted } from "vue";
 import Cropper from "cropperjs";
-// import { ref } from "firebase/storage";
-// import { storage } from "../../firebase.js";
-// import "firebase/storage";
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from "firebase/storage";
+import { storage } from "../../firebase.js";
+import "firebase/storage";
 
 export default {
   name: "CroppedImage",
   props: {
-    id: String,
+    id: {
+      type: String,
+      required: true,
+    },
     isCropped: Boolean,
   },
   setup(props, { emit }) {
-    const displayImage = toRef("");
-    const imageName = toRef("");
-    const croppedImage = toRef("");
+    const displayImage = ref("");
+    const imageName = ref("");
+    const croppedImage = ref("");
+    const userId = ref("");
+    const croppedImageDataURL = ref(null);
+    const blob = ref(null);
 
     let cropperInstance = null;
 
     const handleFileName = (e) => {
       const inputImage = e.target.files[0];
-      imageName.value = inputImage.name;
+      imageName.value = `${userId.value}.${inputImage.name.split(".").pop()}`;
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -106,7 +117,7 @@ export default {
       });
     };
 
-    const handleCrop = () => {
+    const handleCrop = async () => {
       if (cropperInstance && cropperInstance.cropper) {
         const displayImageContainer = document.querySelector("#display-image");
         const croppedCanvas = cropperInstance.getCroppedCanvas({
@@ -114,30 +125,29 @@ export default {
           height: 240,
         });
         if (croppedCanvas) {
-          const croppedImageDataURL = croppedCanvas.toDataURL("image/jpeg");
-          displayImageContainer.innerHTML = `<img class="uploaded-image" src="${croppedImageDataURL}" alt="Cropped Image">`;
-          displayImageContainer.style.overflow = "hidden";
-          displayImageContainer.style.display = "block";
-          props.isCropped = true;
-          emit("image-cropped");
+          const blob = await new Promise((resolve) => {
+            croppedCanvas.toBlob((blob) => {
+              resolve(blob);
+            }, "image/jpeg");
+          });
+          const storageReference = storageRef(
+            storage,
+            `profile/${imageName.value}`
+          );
+          try {
+            await uploadBytes(storageReference, blob);
+            const downloadURL = await getDownloadURL(storageReference);
+            emit("image-cropped-url", downloadURL);
+            displayImageContainer.innerHTML = `<img class="uploaded-image" src="${downloadURL}" alt="Cropped Image">`;
+            displayImageContainer.style.overflow = "hidden";
+            displayImageContainer.style.display = "block";
+            props.isCropped = true;
+            emit("image-cropped");
+          } catch (error) {
+            console.error("Failed to upload image:", error);
+          }
         } else {
           console.error("Failed to crop image. Cropped canvas is null.");
-        }
-
-        const cropBoxData = cropperInstance.getCropBoxData();
-        const imageData = cropperInstance.getImageData();
-        console.log("Crop Box Dimensions:", cropBoxData);
-        console.log("Image Dimensions:", imageData);
-
-        const canvas = cropperInstance.getCroppedCanvas({
-          width: 240,
-          height: 240,
-        });
-
-        if (canvas) {
-          croppedImage.value = canvas.toDataURL("image/jpeg").split(",")[1];
-        } else {
-          console.error("Failed to crop image. Canvas is null.");
         }
       } else {
         console.error("Cropper instance is not initialized.");
@@ -154,8 +164,17 @@ export default {
       }
     });
 
+    watch(
+      () => props.id,
+      (newValue) => {
+        userId.value = newValue;
+      }
+    );
+
     return {
       displayImage,
+      userId,
+      blob,
       imageName,
       croppedImage,
       handleFileName,
@@ -175,9 +194,11 @@ export default {
   width: 100%;
   margin-top: 15px;
 }
+
 input {
   display: none;
 }
+
 label {
   font-size: 14px;
   cursor: pointer;
@@ -187,20 +208,24 @@ label {
   padding: 5px 10px;
   border-radius: 6px;
 }
+
 #imageName {
   width: 40%;
   overflow: scroll;
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
 #imageName::-webkit-scrollbar {
   width: 0;
 }
+
 #imageName p {
   font-size: 14px;
   color: #e67cb1;
   padding-top: 14px;
 }
+
 #display-image {
   width: 240px;
   height: 240px;
@@ -211,10 +236,12 @@ label {
   justify-content: center;
   align-items: center;
 }
+
 .cropper-container {
   width: 100%;
   height: 100%;
 }
+
 .uploaded-image {
   width: 100%;
   height: 100%;
