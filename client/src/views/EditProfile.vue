@@ -1,35 +1,38 @@
 <template>
-  <form class="card" @submit.prevent="handelSubmit">
-    <h1 class="mb-10 text-2xl font-semibold text-secondary-200">
-      Edit Profile
-    </h1>
-    <FormInput
-      v-for="(user, index) in userData"
-      :key="index"
-      :label="user.label"
-      :type="user.type"
-      :existingValue="user.detail"
-      :error="user.error"
-      :pattern="user.pattern"
-      v-model="user.value"
-      @update:value="user.value = $event"
-    />
-    <CroppedImage
-      @image-cropped="isCropped = true"
-      @image-cropped-url="imageUrl = $event"
-      v-bind:id="id"
-    />
-    <p class="text-green text-sm font-semibold">{{ resultMessage }}</p>
-    <div class="flex flex-col items-center w-5/6 mb-2 mt-4">
-      <button
-        class="flex items-center justify-center w-full py-1 text-md font-semibold text-gray-700 rounded-md"
-        @click="handleCrop"
-        :class="isCropped ? 'enabled' : 'disabled'"
-      >
-        Submit
-      </button>
-    </div>
-  </form>
+  <div class="relative w-full h-full flex items-center justify-center">
+    <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
+    <form class="card" @submit.prevent="handelSubmit">
+      <h1 class="mb-10 text-2xl font-semibold text-secondary-200">
+        Edit Profile
+      </h1>
+      <FormInput
+        v-for="(user, index) in userData"
+        :key="index"
+        :label="user.label"
+        :type="user.type"
+        :existingValue="user.detail"
+        :error="user.error"
+        :pattern="user.pattern"
+        v-model="user.value"
+        @update:value="user.value = $event"
+      />
+      <CroppedImage
+        @image-cropped="isCropped = true"
+        @image-cropped-url="imageUrl = $event"
+        v-bind:id="id"
+      />
+      <p class="text-green text-sm font-semibold">{{ resultMessage }}</p>
+      <div class="flex flex-col items-center w-5/6 mb-2 mt-4">
+        <button
+          class="flex items-center justify-center w-full py-1 text-md font-semibold text-gray-700 rounded-md"
+          @click="handleCrop"
+          :class="isCropped ? 'enabled' : 'disabled'"
+        >
+          Submit
+        </button>
+      </div>
+    </form>
+  </div>
 </template>
 
 <script>
@@ -120,6 +123,10 @@ export default {
       }
     };
 
+    const goBack = async () => {
+      router.push(`/profile/${id.value}`);
+    };
+
     return {
       store,
       id,
@@ -129,12 +136,25 @@ export default {
       resultMessage,
       isCropped,
       handelSubmit,
+      goBack,
     };
   },
 };
 </script>
 
 <style scoped>
+.fa-circle-xmark {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  color: #51555e;
+  font-size: 20px;
+  z-index: 10;
+}
+.fa-circle-xmark:hover {
+  cursor: pointer;
+  color: #E67CB1;
+}
 .disabled {
   background-color: rgb(167, 167, 167);
   width: 100%;

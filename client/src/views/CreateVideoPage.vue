@@ -324,6 +324,7 @@ export default {
 }
 .fa-circle-xmark:hover {
   cursor: pointer;
+  color: #e67cb1;
 }
 video {
   position: absolute;

@@ -78,9 +78,6 @@
 .userDetails {
   @apply text-sm text-gray-300 font-normal;
 }
-.editProfileBtn {
-  @apply flex justify-center items-center bg-secondary-100 w-full h-9 rounded-md px-4;
-}
 .uploadImage {
   @apply flex justify-center items-center bg-secondary-100 w-1/2 h-6 rounded-md px-4;
 }
@@ -90,8 +87,6 @@
 .friend-card-container {
   @apply flex flex-col justify-center h-14 ml-16;
 }
-
-/* .cropper-view-box,
-.cropper-face {
-  border-radius: 50%;
-} */
+.editProfileBtn {
+  @apply flex items-center justify-center w-full py-1 px-4 bg-secondary-100 font-semibold text-gray-700 rounded-md;
+}
