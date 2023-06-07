@@ -178,6 +178,39 @@ export const getUserById = async (req, res) => {
   }
 };
 
+//Update user information
+export const updateUser = async (req, res) => {
+  const { username, first, last, id, userImage } = req.body;
+
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.username = username;
+    user.firstname = first;
+    user.lastname = last;
+    user.userImage = userImage;
+
+    const updatedUser = await user.save();
+
+    await Videos.updateMany(
+      { userId: id },
+      { $set: { userImage: userImage, username: username } }
+    );
+
+    res.status(200).json({
+      message: "Your profile has been successfully updated",
+      success: true,
+      user: updatedUser,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Internal Error." });
+  }
+};
+
 // Get friends detail
 export const getFriendDetails = async (req, res) => {
   try {
