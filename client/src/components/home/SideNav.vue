@@ -1,7 +1,7 @@
 <template>
   <aside class="flex flex-col mr-1 ml-1 justify-center h-fit w-10">
     <div>
-      <button class="relative">
+      <button class="relative" @click="handleProfile">
         <div
           class="flex items-center justify-center bg-gray-700 rounded-full w-12 h-12 justify-center border-2 border-gray-200 overflow-hidden"
         >
@@ -65,6 +65,7 @@
 
 <script>
 import { ref, inject, onMounted } from "vue";
+import { useRouter } from "vue-router";
 
 export default {
   props: {
@@ -96,6 +97,8 @@ export default {
     const friendsArry = ref([]);
     const showAdd = ref(false);
 
+    const router = useRouter();
+
     onMounted(async () => {
       await store.methods.load();
       friendsArry.value = store.state.userData?.friends;
@@ -114,6 +117,10 @@ export default {
       }
     };
 
+    const handleProfile = () => {
+      router.push(`/profile/${currentUserId.value}`);
+    };
+
     function isFavorite(favoriteArray) {
       const getVideoId = favoriteArray?.map((video) => {
         return {
@@ -124,7 +131,7 @@ export default {
       return isExist;
     }
 
-    function isSaved(favoriteArray) {
+    const isSaved = (favoriteArray) => {
       const getVideoId = favoriteArray?.map((video) => {
         return {
           id: video.videoId,
@@ -132,7 +139,7 @@ export default {
       });
       const isExist = getVideoId?.some((item) => item.id === props.videoId);
       return isExist;
-    }
+    };
 
     const addToFriends = async () => {
       if (currentUserId.value) {
@@ -240,6 +247,7 @@ export default {
       currentUserimage,
       friendsArry,
       showAdd,
+      handleProfile,
       addToFriends,
       addToFavorite,
       saveVideo,
