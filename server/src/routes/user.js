@@ -12,6 +12,7 @@ import {
   addToFavorite,
   getFriendDetails,
   addSavedVideos,
+  updateUser,
   deleteFriend,
 } from "../controllers/user.js";
 const userRouter = express.Router();
@@ -27,6 +28,7 @@ userRouter.post("/phone/verify", authenticateToken, verifyCode);
 userRouter.post("/:id/addFriend", addToFriends);
 userRouter.post("/:id/favorite", addToFavorite);
 userRouter.post("/:id/save", addSavedVideos);
+userRouter.patch("/:id/updateUser", updateUser);
 userRouter.delete("/:userId/friends/:friendId", deleteFriend);
 
 export default userRouter;
