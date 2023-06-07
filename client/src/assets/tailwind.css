@@ -1,3 +1,4 @@
+/* @import "cropperjs/dist/cropper.css"; */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -80,9 +81,17 @@
 .editProfileBtn {
   @apply flex justify-center items-center bg-secondary-100 w-full h-9 rounded-md px-4;
 }
+.uploadImage {
+  @apply flex justify-center items-center bg-secondary-100 w-1/2 h-6 rounded-md px-4;
+}
 .friend-card {
   @apply relative flex items-center bg-background w-full h-14 p-4 mb-1 overflow-hidden bg-opacity-60 border-t border-l border-white border-opacity-30 z-10 hover:bg-hover hover:bg-opacity-30 hover:-translate-y-1;
 }
 .friend-card-container {
   @apply flex flex-col justify-center h-14 ml-16;
 }
+
+/* .cropper-view-box,
+.cropper-face {
+  border-radius: 50%;
+} */

@@ -13,6 +13,7 @@ module.exports = {
           200: "#28BFD2",
         },
         background: "#51555e",
+        green: "#00cb5a",
         label: "#86aebf",
         hover: "#ccc745",
         save: "#eded00",
