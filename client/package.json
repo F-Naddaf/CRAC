@@ -13,6 +13,7 @@
     "autoprefixer": "^10",
     "babel-loader": "^9.1.2",
     "core-js": "^3.8.3",
+    "cropperjs": "^1.5.13",
     "firebase": "^9.19.1",
     "gapi-script": "^1.2.0",
     "postcss": "^8",
