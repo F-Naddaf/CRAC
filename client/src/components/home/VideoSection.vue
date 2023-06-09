@@ -1,48 +1,52 @@
 <template>
-  <div class="video-container" ref="videoContainer" @scroll="handleScroll">
-    <div class="video-section">
-      <div
-        class="relative"
-        v-for="(video, index) in videos"
-        :key="video._id"
-        :ref="getVideoRef(index)"
-      >
-        <div class="error-container">
-          <p v-if="showError" class="text-sm text-gray-200">
-            {{ error }}
-          </p>
-        </div>
-        <video loop autoplay class="video" :data-index="index">
-          <source class="source" :src="video.url" type="video/mp4" />
-        </video>
-        <div class="absolute bottom-4 left-4">
-          <p
-            class="text-base text-primary-200"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            #{{ video.username }}
-          </p>
-          <p
-            class="text-sm text-label -mt-1 ml-2"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            {{ video.title }}
-          </p>
-        </div>
-        <div
-          class="absolute bottom-10 right-4 z-30"
-          v-if="index === currentVideoIndex"
+  <div
+    class="video-container"
+    ref="videoContainer"
+    @scroll="handleScroll"
+    id="videoScroll"
+  >
+    <!-- <p class="text-xl text-red-500">searchedVideoId: {{ searchedVideoId }}</p> -->
+    <div
+      class="relative"
+      v-for="(video, index) in videos"
+      :key="video._id"
+      :ref="getVideoRef(index)"
+    >
+      <div class="error-container">
+        <p v-if="showError" class="text-sm text-gray-200">
+          {{ error }}
+        </p>
+      </div>
+      <video loop autoplay class="video" :data-index="index">
+        <source class="source" :src="video.url" type="video/mp4" />
+      </video>
+      <div class="absolute bottom-4 left-4">
+        <p
+          class="text-base text-primary-200"
+          style="text-shadow: 0.5px 0.5px #262626"
         >
-          <SideNav
-            @shareClicked="toggleSocialMedia"
-            @error-message="handleErrorMessage"
-            :userId="videos[currentVideoIndex].userId"
-            :userImage="videos[currentVideoIndex].userImage"
-            :videoUrl="videos[currentVideoIndex].url"
-            :videoId="currentVideoId"
-            :amountOfLike="videos[currentVideoIndex].amountOfLike"
-          ></SideNav>
-        </div>
+          #{{ video.username }}
+        </p>
+        <p
+          class="text-sm text-label -mt-1 ml-2"
+          style="text-shadow: 0.5px 0.5px #262626"
+        >
+          {{ video.title }}
+        </p>
+      </div>
+      <div
+        class="absolute bottom-10 right-4 z-30"
+        v-if="index === currentVideoIndex"
+      >
+        <SideNav
+          @shareClicked="toggleSocialMedia"
+          @error-message="handleErrorMessage"
+          :userId="videos[currentVideoIndex].userId"
+          :userImage="videos[currentVideoIndex].userImage"
+          :videoUrl="videos[currentVideoIndex].url"
+          :videoId="currentVideoId"
+          :amountOfLike="videos[currentVideoIndex].amountOfLike"
+        ></SideNav>
       </div>
     </div>
   </div>
@@ -51,15 +55,21 @@
 <script>
 import { onMounted, ref, watch } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
+import SocialMedia from "./SocialMedia.vue";
 
 export default {
   name: "VideoSection",
   components: {
     SideNav,
+    SocialMedia,
   },
   props: {
     error: {
       type: String,
+    },
+    searchedVideoIdProp: {
+      type: String,
+      default: null,
     },
   },
   emits: ["video-id"],
@@ -69,13 +79,11 @@ export default {
     const videos = ref([]);
     const videoRefs = ref([]);
     const videoContainer = ref(null);
-    const showSocialMedia = ref(false);
     const showError = ref(false);
+    const videosArrayLength = ref(0);
     const error = ref("");
 
-    onMounted(async () => {
-      await getAllVideos();
-    });
+    const searchedVideoId = ref(props.searchedVideoIdProp);
 
     const handleErrorMessage = (value) => {
       error.value = value;
@@ -94,11 +102,52 @@ export default {
         (video) => video._id === newVideoId
       );
       currentVideoIndex.value = videoIndex;
+      console.log("currentVideoIndex.value", currentVideoIndex.value);
       emit("video-id", newVideoId);
     });
 
+    watch(
+      () => props.searchedVideoId,
+      (newVideoId) => {
+        searchedVideoId.value = newVideoId;
+      }
+    );
+
+    onMounted(async () => {
+      await getSearchedVideo();
+      await getAllVideos();
+    });
+
+    const getSearchedVideo = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (!searchedVideoId.value) {
+        return;
+      }
+      try {
+        const response = await fetch(
+          `http://localhost:6500/api/videos/${searchedVideoId.value}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const json = await response.json();
+        const video = json.video;
+        currentVideoId.value = video._id;
+        videos.value = [video];
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
+      if (searchedVideoId.value) {
+        return;
+      }
       try {
         const response = await fetch("http://localhost:6500/api/videos", {
           method: "GET",
@@ -109,7 +158,7 @@ export default {
         });
         const json = await response.json();
         const videosArray = json.videos;
-        console.log("videosArray", videosArray);
+        videosArrayLength.value = videosArray.length;
         currentVideoId.value = videosArray[0]._id;
         videos.value = videosArray;
       } catch (error) {
@@ -117,39 +166,57 @@ export default {
       }
     };
 
-    const handleScroll = () => {
-      //   const container = videoContainer.value;
-      //   let video = videoRefs.value[currentVideoIndex.value];
-      //   console.log("video", video);
-      //   const scrollDown = 35;
-      //   const viewportHeight = window.innerHeight;
-      //   const videoViewPoint = (86 / 100) * viewportHeight;
-      //   console.log("videoViewPoint", videoViewPoint);
-      //   const placeVideo = videoViewPoint - scrollDown;
-      //   const videoRect = video.getBoundingClientRect();
-      //   const videoPosition = videoRect.top;
-      //   console.log("videoPosition", videoPosition);
-      //   if (videoPosition <= scrollDown) {
-      //     currentVideoIndex.value++;
-      //     console.log("newVideoIndex", currentVideoIndex.value);
-      //     // if (currentVideoIndex.value >= videos.value.length) {
-      //     //   currentVideoIndex.value = 0;
-      //     // }
-      //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-      //     console.log("currentVideoId.value", currentVideoId.value);
-      //     console.log("currentVideoIndex.value", currentVideoIndex.value);
-      //     container.scrollTop = (placeVideo + scrollDown) * currentVideoIndex;
-      //     console.log("con", container.scrollTop);
-      //   }
-      //   //   else {
-      //   //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-      //   //     container.scrollTop = videoViewPoint;
-      //   }
-    };
-
     const toggleSocialMedia = () => {
       emit("shareClicked");
     };
+
+    const handleScroll = (event) => {
+      const container = videoContainer.value;
+      const arrayHeight = container.scrollHeight;
+      const elementHeight = arrayHeight / videosArrayLength.value;
+      const elementIndex = Math.floor(container.scrollTop / elementHeight);
+      const scrollTop = container.scrollTop;
+      const currentLocation = elementHeight * elementIndex;
+      console.log("currentLocation", currentLocation);
+
+      // if (!checkScrollDirectionIsUp(event)) {
+      if (scrollTop + elementHeight > currentLocation + elementHeight) {
+        const newVideoIndex = elementIndex + 1;
+        currentVideoIndex.value = newVideoIndex;
+        currentVideoId.value = videos.value[newVideoIndex]._id;
+
+        const nextVideoElement = videoRefs.value[newVideoIndex];
+        const scrollToNextElement = () => {
+          nextVideoElement.scrollIntoView(true);
+        };
+        setTimeout(() => {
+          scrollToNextElement();
+        }, 500);
+        console.log("elementHeight", elementHeight);
+      } else if (scrollTop < elementHeight) {
+        const previousVideoIndex = elementIndex - 1;
+        currentVideoIndex.value = previousVideoIndex;
+        currentVideoId.value = videos.value[currentVideoIndex.value]._id;
+
+        const previousVideoElement = videoRefs.value[previousVideoIndex];
+
+        const scrollToPreviousElement = () => {
+          previousVideoElement.scrollIntoView(true);
+        };
+        setTimeout(() => {
+          scrollToPreviousElement();
+        }, 500);
+      }
+    };
+
+    // const checkScrollDirectionIsUp = (event) => {
+    //   if (event.wheelDelta) {
+    //     return event.wheelDelta > 0;
+    //   }
+    //   return event.deltaY < 0;
+    // };
+    // const scrollableElement = document.body;
+    // scrollableElement.addEventListener("wheel", handleScroll);
 
     return {
       currentVideoId,
@@ -159,10 +226,11 @@ export default {
       showError,
       error,
       videoContainer,
-      showSocialMedia,
+      searchedVideoId,
       getVideoRef,
       handleErrorMessage,
       getAllVideos,
+      getSearchedVideo,
       handleScroll,
       toggleSocialMedia,
     };
@@ -172,11 +240,12 @@ export default {
 
 <style scoped>
 .video-container {
-  display: flex;
   position: relative;
-  overflow: scroll;
   width: 100%;
-  height: 86vh;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: scroll;
 }
 .error-container {
   display: grid;
@@ -199,6 +268,7 @@ export default {
 .video-section {
   display: flex;
   flex-direction: column;
+  align-items: center;
   height: 100%;
   width: 100%;
 }

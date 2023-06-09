@@ -61,3 +61,35 @@ export const postVideo = async (req, res) => {
     res.status(500).json({ message: "Internal Error." });
   }
 };
+
+// Get all the videos with same title
+export const getMediaByTitle = async (req, res) => {
+  const { title } = req.params;
+  try {
+    const regex = new RegExp(title, "i");
+    const videos = await Videos.find({
+      title: { $regex: regex },
+      posted: true,
+    });
+    const reversedVideos = videos.reverse();
+    res.status(200).json({ success: true, videos: reversedVideos });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch videos." });
+  }
+};
+
+// Get a video by ID
+export const getVideoById = async (req, res) => {
+  const { videoId } = req.params;
+
+  try {
+    const video = await Videos.findById(videoId);
+    res.status(200).json({ video });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to retrieve video" });
+  }
+};
