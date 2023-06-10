@@ -1,5 +1,8 @@
 <template>
-  <div class="flex w-full relative justify-between items-center" id="head">
+  <div
+    class="flex w-full absolute top-0 justify-between items-center"
+    id="head"
+  >
     <div class="input-container">
       <input
         type="search"

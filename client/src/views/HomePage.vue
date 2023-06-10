@@ -6,6 +6,7 @@
         @shareClicked="toggleSocialMedia"
         @video-id="handleVideoId"
         :searchedVideoId="searchedVideoId"
+        @video-clicked="handleVideoClicked"
       />
     </div>
     <NavBar />
@@ -54,19 +55,24 @@ export default {
       router.push({ name: "HomePage", params: { id: videoId } });
     };
 
-    onMounted(() => {
-      console.log("searchedVideoId:", props.searchedVideoId);
-      const { params } = router.currentRoute.value;
-      if (params.id) {
-        currentVideoId.value = params.id;
-      }
-    });
+    const handleVideoClicked = ({ index, id }) => {
+      console.log("Clicked video index:", index);
+      console.log("Clicked video ID:", id);
+    };
 
     watch(searchedVideoId, (newVideoId) => {
       if (newVideoId !== null) {
         currentVideoId.value = newVideoId;
       }
       console.log("searchedVideoId:", newVideoId);
+    });
+
+    onMounted(() => {
+      console.log("searchedVideoId:", props.searchedVideoId);
+      const { params } = router.currentRoute.value;
+      if (params.id) {
+        currentVideoId.value = params.id;
+      }
     });
 
     return {
@@ -76,6 +82,7 @@ export default {
       currentVideoId,
       searchedVideoId,
       handleVideoId,
+      handleVideoClicked,
     };
   },
 };

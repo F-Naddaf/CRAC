@@ -83,8 +83,11 @@ export default {
 .navigation {
   border-top-width: 2px;
   max-width: 28rem;
-  height: 7vh;
+  height: 50px;
   margin-bottom: 0.5rem;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
 }
 li {
   position: relative;
