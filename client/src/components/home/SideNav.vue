@@ -29,6 +29,7 @@
           }`"
         ></i>
         <p
+          v-if="updatedAmountOfLike > 0"
           class="absolute -bottom-1 left-5 text-primary-100 text-xs font-semibold"
         >
           {{ updatedAmountOfLike }}

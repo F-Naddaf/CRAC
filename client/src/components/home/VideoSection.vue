@@ -14,8 +14,13 @@
       :ref="
         (el) => {
           videoRefs[i] = el;
-          if (currentVideoIndex === i) {
+          if (currentVideoIndex.value === i) {
             currentVideoRef.value = el;
+            if (state.currentSlide === i + 1) {
+              el.play();
+            } else {
+              el.pause();
+            }
           }
         }
       "
@@ -43,11 +48,14 @@ export default {
   setup(props, { emit }) {
     const videos = ref([]);
     const videoRefs = ref([]);
-    const i = ref(null);
-    const nextVideo = ref(null);
+    // const i = ref(null);
+    const currentVideoRef = ref(null);
+    const currentVideoIndex = ref(0);
+    // const nextVideo = ref(null);
+
     const state = reactive({
       currentSlide: 1,
-      amoundOfSlides: videos.length,
+      amoundOfSlides: 0,
       style: {
         transform: computed(
           () => `translate3d(0, ${-(state.currentSlide - 1) * 100}%, 0)`
@@ -63,7 +71,13 @@ export default {
         return;
       }
 
-      state.currentSlide += direction;
+      const nextSlide = state.currentSlide + direction;
+
+      if (direction === 1 && !videos.value[nextSlide - 1]) {
+        return;
+      }
+
+      state.currentSlide = nextSlide;
     };
 
     onBeforeUpdate(() => {
@@ -73,8 +87,12 @@ export default {
     watch(
       () => state.currentSlide,
       (items, oldItems) => {
-        videoRefs.value[items - 1].play();
-        videoRefs.value[oldItems - 1].pause();
+        if (videoRefs.value[items - 1]) {
+          videoRefs.value[items - 1].play();
+        }
+        if (videoRefs.value[oldItems - 1]) {
+          videoRefs.value[oldItems - 1].pause();
+        }
       },
       {
         lazy: false,
@@ -131,8 +149,9 @@ export default {
     return {
       videos,
       videoRefs,
-      i,
-      nextVideo,
+      currentVideoRef,
+      currentVideoIndex,
+      // nextVideo,
       state,
       onSwipe,
       getAllVideos,
