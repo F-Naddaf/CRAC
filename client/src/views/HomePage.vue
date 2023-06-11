@@ -5,8 +5,8 @@
       <VideoSection
         @shareClicked="toggleSocialMedia"
         @video-id="handleVideoId"
+        :router="router"
         :searchedVideoId="searchedVideoId"
-        @video-clicked="handleVideoClicked"
       />
     </div>
     <NavBar />
@@ -52,12 +52,10 @@ export default {
     };
 
     const handleVideoId = (videoId) => {
-      router.push({ name: "HomePage", params: { id: videoId } });
-    };
-
-    const handleVideoClicked = ({ index, id }) => {
-      console.log("Clicked video index:", index);
-      console.log("Clicked video ID:", id);
+      router.push({
+        name: "HomePage",
+        params: { id: videoId, videoId: videoId },
+      });
     };
 
     watch(searchedVideoId, (newVideoId) => {
@@ -82,7 +80,7 @@ export default {
       currentVideoId,
       searchedVideoId,
       handleVideoId,
-      handleVideoClicked,
+      router,
     };
   },
 };

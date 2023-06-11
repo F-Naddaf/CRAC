@@ -43,7 +43,7 @@
 </template>
 
 <script>
-import { ref, reactive } from "vue";
+import { ref, reactive, onMounted } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 
 export default {
@@ -79,6 +79,8 @@ export default {
       } else {
         play();
       }
+      props.video.playing = !props.video.playing;
+      emit("video-clicked", props.video._id);
     };
 
     const handleErrorMessage = (value) => {

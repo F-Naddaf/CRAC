@@ -1,6 +1,6 @@
 <template>
-  <aside class="flex flex-col mr-1 ml-1 justify-center h-fit w-10">
-    <div>
+  <aside class="flex flex-col -mr-1 justify-center h-fit w-10">
+    <div class="flex justify-center">
       <button class="relative" @click="handleProfile">
         <div
           class="flex items-center justify-center bg-gray-700 rounded-full w-12 h-12 justify-center border-2 border-gray-200 overflow-hidden"
@@ -85,6 +85,7 @@ export default {
     amountOfLike: {
       type: Number,
       required: true,
+      default: 0,
     },
   },
   name: "SideNav",

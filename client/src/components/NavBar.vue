@@ -50,6 +50,7 @@ export default {
     const goHome = () => {
       router.push(`/${videoId}/home`);
     };
+
     const openCamera = () => {
       router.push("/camera");
     };

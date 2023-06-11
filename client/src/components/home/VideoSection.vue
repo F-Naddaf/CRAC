@@ -6,17 +6,18 @@
     :style="state.style"
   >
     <Video
-      v-for="(video, i) in videos"
-      :key="video.id"
+      v-for="(video, index) in videos"
+      @video-clicked="handleVideoClicked(video._id, index)"
+      :key="video._id"
       :id="video._id"
       :video="video"
-      :index="i"
+      :index="index"
       :ref="
         (el) => {
-          videoRefs[i] = el;
-          if (currentVideoIndex.value === i) {
+          videoRefs[index] = el;
+          if (currentVideoIndex.value === index) {
             currentVideoRef.value = el;
-            if (state.currentSlide === i + 1) {
+            if (state.currentSlide === index + 1) {
               el.play();
             } else {
               el.pause();
@@ -45,13 +46,14 @@ export default {
     Video,
   },
   emits: ["video-id"],
+  props: ["router"],
   setup(props, { emit }) {
     const videos = ref([]);
     const videoRefs = ref([]);
-    // const i = ref(null);
     const currentVideoRef = ref(null);
     const currentVideoIndex = ref(0);
-    // const nextVideo = ref(null);
+    const currentVideoId = ref("");
+    const firstVideo = ref("");
 
     const state = reactive({
       currentSlide: 1,
@@ -84,24 +86,66 @@ export default {
       videoRefs.value = [];
     });
 
+    // watch(
+    //   () => state.currentSlide,
+    //   (items, oldItems) => {
+    //     if (videoRefs.value[items - 1]) {
+    //       videoRefs.value[items - 1].play();
+    //     }
+    //     if (videoRefs.value[oldItems - 1]) {
+    //       videoRefs.value[oldItems - 1].pause();
+    //     }
+    //   },
+    //   {
+    //     lazy: false,
+    //   }
+    // );
+
+    const handleVideoClicked = (videoId, index) => {
+      console.log("Clicked video index:", index);
+      console.log("Clicked video ID:", videoId);
+      currentVideoId.value = videoId;
+      props.router.push({ name: "HomePage", params: { id: videoId } });
+    };
+
+    // onMounted(async () => {
+    //   await getAllVideos();
+    //   const { params } = props.router.currentRoute.value;
+    //   if (!params.id && videos.value.length > 0) {
+    //     currentVideoId.value = videos.value[0].id;
+    //   }
+    // });
+
+    onMounted(async () => {
+      await getAllVideos();
+    });
+
+    // watch(
+    //   () => videos.value,
+    //   (newVideos) => {
+    //     if (
+    //       newVideos.length > 0 &&
+    //       !props.router.currentRoute.value.params.id
+    //     ) {
+    //       currentVideoId.value = newVideos[0].id;
+    //     }
+    //   }
+    // );
+
     watch(
       () => state.currentSlide,
-      (items, oldItems) => {
-        if (videoRefs.value[items - 1]) {
-          videoRefs.value[items - 1].play();
+      (newSlide, oldSlide) => {
+        if (videoRefs.value[newSlide - 1]) {
+          videoRefs.value[newSlide - 1].play();
         }
-        if (videoRefs.value[oldItems - 1]) {
-          videoRefs.value[oldItems - 1].pause();
+        if (videoRefs.value[oldSlide - 1]) {
+          videoRefs.value[oldSlide - 1].pause();
         }
       },
       {
         lazy: false,
       }
     );
-
-    onMounted(async () => {
-      await getAllVideos();
-    });
 
     // const getSearchedVideo = async () => {
     //   const token = localStorage.getItem("accessToken");
@@ -140,6 +184,9 @@ export default {
         });
         const json = await response.json();
         const videosArray = json.videos;
+        console.log("videosArray", videosArray);
+        firstVideo.value = videosArray[0]._id;
+        // console.log("firstVideo.value", firstVideo.value);
         videos.value = videosArray;
       } catch (error) {
         console.error(error);
@@ -151,10 +198,12 @@ export default {
       videoRefs,
       currentVideoRef,
       currentVideoIndex,
-      // nextVideo,
+      currentVideoId,
+      firstVideo,
       state,
       onSwipe,
       getAllVideos,
+      handleVideoClicked,
     };
   },
 };
