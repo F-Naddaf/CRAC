@@ -10,6 +10,7 @@ import FriendProfile from "../views/FriendProfile.vue";
 import Friends from "../views/Friends.vue";
 import EditProfile from "../views/EditProfile.vue";
 import ResultPage from "../views/ResultPage.vue";
+import ViewVideo from "../views/ViewVideo.vue";
 
 const routes = [
   {
@@ -66,6 +67,11 @@ const routes = [
     path: "/friends",
     name: "Friends",
     component: Friends,
+  },
+  {
+    path: "/view-video/:id",
+    name: "ViewVideo",
+    component: ViewVideo,
   },
 
   // {

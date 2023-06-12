@@ -34,6 +34,11 @@ export const postVideo = async (req, res) => {
 
     if (existingVideo) {
       if (media.posted) {
+        if (!media.title || media.title.trim() === "") {
+          return res
+            .status(400)
+            .json({ success: false, message: "Title is required" });
+        }
         await Videos.findByIdAndUpdate(existingVideo._id, {
           $set: {
             title: media.title,
@@ -45,6 +50,11 @@ export const postVideo = async (req, res) => {
         });
       }
     } else {
+      if (!media.title || media.title.trim() === "") {
+        return res
+          .status(400)
+          .json({ success: false, message: "Title is required" });
+      }
       newVideo = await Videos.create({
         title: media.title,
         url: media.url,
@@ -54,6 +64,27 @@ export const postVideo = async (req, res) => {
         username: username,
       });
     }
+    res.status(200).json({
+      success: true,
+      message: "Video saved successfully",
+      newVideo: newVideo,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Error." });
+  }
+};
+
+export const postLater = async (req, res) => {
+  const { media, userId, userImage, username } = req.body;
+  try {
+    const newVideo = await Videos.create({
+      url: media.url,
+      posted: media.posted,
+      userId: userId,
+      userImage: userImage,
+      username: username,
+    });
     res.status(200).json({
       success: true,
       message: "Video saved successfully",
