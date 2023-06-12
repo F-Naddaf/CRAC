@@ -13,7 +13,7 @@
     <div v-if="showSocialMedia">
       <SocialMedia
         :show="showSocialMedia"
-        :videoId="currentVideoId"
+        :videoId="videoId"
         @closeClicked="closeSocialMedia"
       />
     </div>
@@ -22,6 +22,7 @@
 
 <script>
 import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
 import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
 import NavBar from "@/components/NavBar.vue";
@@ -39,6 +40,9 @@ export default {
   setup(props) {
     const showSocialMedia = ref(false);
     const videos = ref([]);
+    const route = useRoute();
+    const videoId = route.params.id;
+    console.log("id", videoId);
 
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
@@ -74,6 +78,7 @@ export default {
     return {
       showSocialMedia,
       videos,
+      videoId,
       toggleSocialMedia,
       closeSocialMedia,
       getAllVideos,

@@ -45,7 +45,6 @@
     </div>
   </div>
 </template>
-<!-- @shareClicked="toggleSocialMedia" -->
 <script>
 import { ref, reactive, onMounted, watch } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
@@ -123,7 +122,7 @@ export default {
     });
 
     const toggleSocialMedia = (videoId) => {
-      handleVideoId(videoId);
+        emit("shareClicked", videoId);
     };
 
     return {

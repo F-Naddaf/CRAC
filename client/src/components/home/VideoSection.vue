@@ -25,6 +25,7 @@
           }
         }
       "
+      @shareClicked="toggleSocialMedia"
     >
     </Video>
   </div>
@@ -104,6 +105,10 @@ export default {
       }
     );
 
+    const toggleSocialMedia = (videoId) => {
+      emit("shareClicked", videoId);
+    };
+
     return {
       videos,
       videoRefs,
@@ -112,6 +117,7 @@ export default {
       state,
       onSwipe,
       enableSwipe,
+      toggleSocialMedia,
     };
   },
 };
