@@ -1,6 +1,6 @@
 <template>
-  <aside class="flex flex-col mr-1 ml-1 justify-center h-fit w-10">
-    <div>
+  <aside class="flex flex-col -mr-1 justify-center h-fit w-10">
+    <div class="flex justify-center">
       <button class="relative" @click="handleProfile">
         <div
           class="flex items-center justify-center bg-gray-700 rounded-full w-12 h-12 justify-center border-2 border-gray-200 overflow-hidden"
@@ -12,7 +12,7 @@
           />
           <i v-else class="fa-solid fa-user text-gray-200 text-2xl"></i>
         </div>
-        <button v-if="showAdd" class="addBtn" @click="addToFriends">
+        <button v-if="showAdd" class="addBtn" @click.stop="addToFriends">
           <i class="fa-solid fa-plus text-gray-300 text-xs"></i>
         </button>
       </button>
@@ -29,6 +29,7 @@
           }`"
         ></i>
         <p
+          v-if="updatedAmountOfLike > 0"
           class="absolute -bottom-1 left-5 text-primary-100 text-xs font-semibold"
         >
           {{ updatedAmountOfLike }}
@@ -84,6 +85,7 @@ export default {
     amountOfLike: {
       type: Number,
       required: true,
+      default: 0,
     },
   },
   name: "SideNav",

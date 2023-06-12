@@ -2,7 +2,7 @@
   <div class="w-full h-screen relative overflow-hidden">
     <HomeHeader />
     <div class="video-wrapper">
-      <template v-if="videos.length > 0">
+      <template v-if="videos.length >= 0">
         <VideoSection @shareClicked="toggleSocialMedia" :videos="videos" />
       </template>
       <template v-else>
@@ -13,7 +13,7 @@
     <div v-if="showSocialMedia">
       <SocialMedia
         :show="showSocialMedia"
-        :videoId="videoId"
+        :videoId="currentVideoId"
         @closeClicked="closeSocialMedia"
       />
     </div>
@@ -21,7 +21,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
@@ -29,7 +29,7 @@ import NavBar from "@/components/NavBar.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
 
 export default {
-  name: "HomePage",
+  name: "ResultPage",
   components: {
     HomeHeader,
     VideoSection,
@@ -41,25 +41,41 @@ export default {
     const showSocialMedia = ref(false);
     const videos = ref([]);
     const route = useRoute();
-    const videoId = route.params.id;
+    const searchedVideoId = ref(null);
 
-    const getAllVideos = async () => {
+    onMounted(() => {
+      searchedVideoId.value = route.params.id;
+      getSearchedVideo();
+    });
+
+    const getSearchedVideo = async () => {
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/videos", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await fetch(
+          `http://localhost:6500/api/videos/result/${searchedVideoId.value}`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         const json = await response.json();
-        const videosArray = json.videos;
-        videos.value = videosArray;
+        const video = json.video;
+        videos.value.push(video);
       } catch (error) {
         console.error(error);
       }
     };
+
+    watch(
+      () => route.params.id,
+      (newVideoId) => {
+        searchedVideoId.value = newVideoId;
+        getSearchedVideo();
+      }
+    );
 
     const toggleSocialMedia = () => {
       showSocialMedia.value = !showSocialMedia.value;
@@ -69,17 +85,13 @@ export default {
       showSocialMedia.value = false;
     };
 
-    onMounted(async () => {
-      await getAllVideos();
-    });
-
     return {
       showSocialMedia,
       videos,
-      videoId,
+      searchedVideoId,
       toggleSocialMedia,
       closeSocialMedia,
-      getAllVideos,
+      getSearchedVideo,
     };
   },
 };

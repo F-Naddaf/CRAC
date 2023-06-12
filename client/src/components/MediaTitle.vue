@@ -102,7 +102,7 @@ export default {
         const json = await response.json();
         if (json.success) {
           props.closeCamera();
-          router.push("/home");
+          router.push(`/${json.newVideo._id}/home`);
         }
       } catch (error) {
         console.error(error);

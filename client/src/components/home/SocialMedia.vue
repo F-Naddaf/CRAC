@@ -96,7 +96,7 @@ export default {
       window.open(state.messengerLink);
     };
     const shareToWhatsapp = () => {
-      const url = "https://example.com";
+      const url = `https://example/${props.videoId}/home.com`;
       const message = "Sharing a video from CRAC";
       state.whatsappLink = `https://wa.me/?text=${message}%20${url}`;
       window.open(state.whatsappLink);

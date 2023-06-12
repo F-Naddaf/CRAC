@@ -9,6 +9,7 @@ import Profile from "../views/Profile.vue";
 import FriendProfile from "../views/FriendProfile.vue";
 import Friends from "../views/Friends.vue";
 import EditProfile from "../views/EditProfile.vue";
+import ResultPage from "../views/ResultPage.vue";
 
 const routes = [
   {
@@ -35,6 +36,11 @@ const routes = [
     path: "/:id/home",
     name: "HomePage",
     component: HomePage,
+  },
+  {
+    path: "/search-result/:id",
+    name: "ResultPage",
+    component: ResultPage,
   },
   {
     path: "/camera",

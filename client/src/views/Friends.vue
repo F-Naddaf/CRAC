@@ -17,7 +17,16 @@
       class="relative flex flex-col w-full h-full pt-4 items-center mx-auto overflow-scroll-auto"
       id="friend-section"
     >
+      <div v-if="isLoading" class="mt-20">
+        <img src="../../public/img/spinner.svg" alt="loading" />
+      </div>
+      <div v-else-if="friendsArray.length === 0">
+        <p class="text-base text-primary-200">
+          Sorry, you don't have Friend in your list.
+        </p>
+      </div>
       <FriendsCard
+        v-else
         v-for="friend in friendsArray"
         :key="friend._id"
         :id="friend._id"
@@ -47,6 +56,7 @@ export default {
     const store = inject("store");
     const userId = ref("");
     const friendsArray = ref([]);
+    const isLoading = ref(true);
 
     onMounted(async () => {
       await store.methods.load();
@@ -75,6 +85,7 @@ export default {
         );
         const json = await response.json();
         friendsArray.value = json.result;
+        isLoading.value = false;
       } catch (error) {
         console.error(error);
       }
@@ -110,6 +121,7 @@ export default {
     return {
       store,
       userId,
+      isLoading,
       getAllFriends,
       friendsArray,
       deleteFriend,

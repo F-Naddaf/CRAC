@@ -1,169 +1,122 @@
 <template>
-  <div class="video-container" ref="videoContainer" @scroll="handleScroll">
-    <div class="video-section">
-      <div
-        class="relative"
-        v-for="(video, index) in videos"
-        :key="video._id"
-        :ref="getVideoRef(index)"
-      >
-        <div class="error-container">
-          <p v-if="showError" class="text-sm text-gray-200">
-            {{ error }}
-          </p>
-        </div>
-        <video loop autoplay class="video" :data-index="index">
-          <source class="source" :src="video.url" type="video/mp4" />
-        </video>
-        <div class="absolute bottom-4 left-4">
-          <p
-            class="text-base text-primary-200"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            #{{ video.username }}
-          </p>
-          <p
-            class="text-sm text-label -mt-1 ml-2"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            {{ video.title }}
-          </p>
-        </div>
-        <div
-          class="absolute bottom-10 right-4 z-30"
-          v-if="index === currentVideoIndex"
-        >
-          <SideNav
-            @shareClicked="toggleSocialMedia"
-            @error-message="handleErrorMessage"
-            :userId="videos[currentVideoIndex].userId"
-            :userImage="videos[currentVideoIndex].userImage"
-            :videoUrl="videos[currentVideoIndex].url"
-            :videoId="currentVideoId"
-            :amountOfLike="videos[currentVideoIndex].amountOfLike"
-          ></SideNav>
-        </div>
-      </div>
-    </div>
+  <div
+    class="video-section"
+    ref="VideoSection"
+    v-if="enableSwipe"
+    v-swipe="onSwipe"
+    :style="state.style"
+  >
+    <Video
+      v-for="(video, index) in videos"
+      :key="video._id"
+      :id="video._id"
+      :video="video"
+      :index="index"
+      :ref="
+        (el) => {
+          videoRefs[index] = el;
+          if (currentVideoIndex.value === index) {
+            currentVideoRef.value = el;
+            if (state.currentSlide === index + 1) {
+              el.play();
+            } else {
+              el.pause();
+            }
+          }
+        }
+      "
+      @shareClicked="toggleSocialMedia"
+    >
+    </Video>
   </div>
 </template>
 
 <script>
-import { onMounted, ref, watch } from "vue";
-import SideNav from "@/components/home/SideNav.vue";
+import { ref, reactive, watch, computed, onBeforeUpdate } from "vue";
+import SocialMedia from "./SocialMedia.vue";
+import swipe from "../directives/swipe.js";
+import Video from "./Video.vue";
 
 export default {
   name: "VideoSection",
-  components: {
-    SideNav,
+  directives: {
+    swipe,
   },
-  props: {
-    error: {
-      type: String,
-    },
+  components: {
+    SocialMedia,
+    Video,
   },
   emits: ["video-id"],
+  props: {
+    videos: Array,
+  },
   setup(props, { emit }) {
-    const currentVideoId = ref(null);
-    const currentVideoIndex = ref(0);
-    const videos = ref([]);
+    const videos = ref(props.videos);
     const videoRefs = ref([]);
-    const videoContainer = ref(null);
-    const showSocialMedia = ref(false);
-    const showError = ref(false);
-    const error = ref("");
+    const currentVideoRef = ref(null);
+    const currentVideoIndex = ref(0);
 
-    onMounted(async () => {
-      await getAllVideos();
+    const state = reactive({
+      currentSlide: 1,
+      amoundOfSlides: 0,
+      style: {
+        transform: computed(
+          () => `translate3d(0, ${-(state.currentSlide - 1) * 100}%, 0)`
+        ),
+      },
     });
 
-    const handleErrorMessage = (value) => {
-      error.value = value;
-      showError.value = true;
-      setTimeout(() => {
-        showError.value = false;
-      }, 2000);
-    };
+    const enableSwipe = computed(() => videos.value.length > 0);
 
-    const getVideoRef = (index) => (el) => {
-      videoRefs.value[index] = el;
-    };
-
-    watch(currentVideoId, (newVideoId) => {
-      const videoIndex = videos.value.findIndex(
-        (video) => video._id === newVideoId
-      );
-      currentVideoIndex.value = videoIndex;
-      emit("video-id", newVideoId);
-    });
-
-    const getAllVideos = async () => {
-      const token = localStorage.getItem("accessToken");
-      try {
-        const response = await fetch("http://localhost:6500/api/videos", {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const json = await response.json();
-        const videosArray = json.videos;
-        console.log("videosArray", videosArray);
-        currentVideoId.value = videosArray[0]._id;
-        videos.value = videosArray;
-      } catch (error) {
-        console.error(error);
+    const onSwipe = (direction) => {
+      if (
+        (direction === 1 && state.currentSlide === state.amoundOfSlides) ||
+        (direction === -1 && state.currentSlide === 1)
+      ) {
+        return;
       }
+
+      const nextSlide = state.currentSlide + direction;
+
+      if (direction === 1 && !videos.value[nextSlide - 1]) {
+        return;
+      }
+
+      state.currentSlide = nextSlide;
     };
 
-    const handleScroll = () => {
-      //   const container = videoContainer.value;
-      //   let video = videoRefs.value[currentVideoIndex.value];
-      //   console.log("video", video);
-      //   const scrollDown = 35;
-      //   const viewportHeight = window.innerHeight;
-      //   const videoViewPoint = (86 / 100) * viewportHeight;
-      //   console.log("videoViewPoint", videoViewPoint);
-      //   const placeVideo = videoViewPoint - scrollDown;
-      //   const videoRect = video.getBoundingClientRect();
-      //   const videoPosition = videoRect.top;
-      //   console.log("videoPosition", videoPosition);
-      //   if (videoPosition <= scrollDown) {
-      //     currentVideoIndex.value++;
-      //     console.log("newVideoIndex", currentVideoIndex.value);
-      //     // if (currentVideoIndex.value >= videos.value.length) {
-      //     //   currentVideoIndex.value = 0;
-      //     // }
-      //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-      //     console.log("currentVideoId.value", currentVideoId.value);
-      //     console.log("currentVideoIndex.value", currentVideoIndex.value);
-      //     container.scrollTop = (placeVideo + scrollDown) * currentVideoIndex;
-      //     console.log("con", container.scrollTop);
-      //   }
-      //   //   else {
-      //   //     currentVideoId.value = videos.value[currentVideoIndex.value]._id;
-      //   //     container.scrollTop = videoViewPoint;
-      //   }
-    };
+    onBeforeUpdate(() => {
+      videoRefs.value = [];
+    });
 
-    const toggleSocialMedia = () => {
-      emit("shareClicked");
+    watch(
+      () => state.currentSlide,
+      (newSlide, oldSlide) => {
+        currentVideoIndex.value = newSlide - 1;
+        if (videoRefs.value[newSlide - 1]) {
+          videoRefs.value[newSlide - 1].play();
+        }
+        if (videoRefs.value[oldSlide - 1]) {
+          videoRefs.value[oldSlide - 1].pause();
+        }
+      },
+      {
+        lazy: false,
+      }
+    );
+
+    const toggleSocialMedia = (videoId) => {
+      emit("shareClicked", videoId);
     };
 
     return {
-      currentVideoId,
-      currentVideoIndex,
       videos,
       videoRefs,
-      showError,
-      error,
-      videoContainer,
-      showSocialMedia,
-      getVideoRef,
-      handleErrorMessage,
-      getAllVideos,
-      handleScroll,
+      currentVideoRef,
+      currentVideoIndex,
+      state,
+      onSwipe,
+      enableSwipe,
       toggleSocialMedia,
     };
   },
@@ -171,42 +124,13 @@ export default {
 </script>
 
 <style scoped>
-.video-container {
-  display: flex;
-  position: relative;
-  overflow: scroll;
-  width: 100%;
-  height: 86vh;
-}
-.error-container {
-  display: grid;
-  position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
-  justify-content: center;
-  width: fit-content;
-  max-width: 95%;
-  background-color: #ba2f74;
-  border-radius: 5px;
-  padding: 0 15px;
-  z-index: 20;
-  white-space: nowrap;
-  overflow: hidden;
-  /* text-overflow: ellipsis; */
-}
-
 .video-section {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
+  position: relative;
   width: 100%;
-}
-video {
-  width: 100%;
-  height: 86vh;
-}
-.video-section video {
-  object-fit: cover;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  transform: translate3d(0, 0, 0);
+  transition: transform 200ms ease;
 }
 </style>
