@@ -12,7 +12,7 @@
           />
           <i v-else class="fa-solid fa-user text-gray-200 text-2xl"></i>
         </div>
-        <button v-if="showAdd" class="addBtn" @click="addToFriends">
+        <button v-if="showAdd" class="addBtn" @click.stop="addToFriends">
           <i class="fa-solid fa-plus text-gray-300 text-xs"></i>
         </button>
       </button>

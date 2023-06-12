@@ -42,7 +42,6 @@ export default {
     const videos = ref([]);
     const route = useRoute();
     const videoId = route.params.id;
-    console.log("id", videoId);
 
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
@@ -56,7 +55,6 @@ export default {
         });
         const json = await response.json();
         const videosArray = json.videos;
-        console.log("videosArray", videosArray);
         videos.value = videosArray;
       } catch (error) {
         console.error(error);
