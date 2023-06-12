@@ -5,6 +5,10 @@
         {{ error }}
       </p>
     </div>
+    <p class="absolute left-20 top-20 text-base text-primary-200">
+      {{ currentVideoId }}
+    </p>
+
     <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
       <source
         class="source"
@@ -41,15 +45,17 @@
     </div>
   </div>
 </template>
-
+<!-- @shareClicked="toggleSocialMedia" -->
 <script>
-import { ref, reactive, onMounted } from "vue";
+import { ref, reactive, onMounted, watch } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
+import { useRouter } from "vue-router";
 
 export default {
   name: "Video",
   props: {
     video: Object,
+    index: Number,
   },
   components: {
     SideNav,
@@ -58,6 +64,8 @@ export default {
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
+    const currentVideoId = ref(props.video._id);
+    const router = useRouter();
 
     const state = reactive({
       playing: false,
@@ -80,7 +88,26 @@ export default {
         play();
       }
       props.video.playing = !props.video.playing;
-      emit("video-clicked", props.video._id);
+      handleVideoId();
+    };
+
+    watch(
+      () => props.video,
+      (newVal) => {
+        currentVideoId.value = newVal._id;
+      },
+      { immediate: true }
+    );
+
+    const handleVideoId = () => {
+      router.push({
+        name: "HomePage",
+        params: { id: currentVideoId.value },
+      });
+    };
+
+    const handleShareClicked = (videoId) => {
+      emit("shareClicked", videoId);
     };
 
     const handleErrorMessage = (value) => {
@@ -91,8 +118,12 @@ export default {
       }, 2000);
     };
 
-    const toggleSocialMedia = () => {
-      emit("shareClicked");
+    onMounted(() => {
+      currentVideoId.value = props.video._id;
+    });
+
+    const toggleSocialMedia = (videoId) => {
+      handleVideoId(videoId);
     };
 
     return {
@@ -102,9 +133,12 @@ export default {
       showError,
       play,
       pause,
+      currentVideoId,
+      handleVideoId,
       togglePlay,
       handleErrorMessage,
       toggleSocialMedia,
+      handleShareClicked,
     };
   },
 };

@@ -24,6 +24,7 @@
 
 <script>
 import { ref } from "vue";
+import { useRouter } from "vue-router";
 import DanceAnimation from "@/components/home/DanceAnimation.vue";
 
 export default {
@@ -34,6 +35,7 @@ export default {
 
   setup(props, { emit }) {
     const searchTitle = ref("");
+    const router = useRouter();
 
     const searchVideos = async (event) => {
       const title = event.target.value;
@@ -44,6 +46,7 @@ export default {
         );
         const result = await response.json();
         const videoId = result.videos[0]._id;
+        router.push(`/search-result/${videoId}`);
         emit("video-id", videoId);
       } catch (error) {
         console.log(error);

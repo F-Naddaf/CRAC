@@ -11,7 +11,7 @@ const mediaRouter = express.Router();
 mediaRouter.get("/", getAllMedia);
 mediaRouter.get("/getMedia/:userId", getUserMedia);
 mediaRouter.get("/search/:title", getMediaByTitle);
-mediaRouter.get("/search/:id", getVideoById);
+mediaRouter.get("/result/:id", getVideoById);
 mediaRouter.post("/postVideo", postVideo);
 
 export default mediaRouter;

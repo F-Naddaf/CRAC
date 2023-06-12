@@ -9,7 +9,7 @@ import Profile from "../views/Profile.vue";
 import FriendProfile from "../views/FriendProfile.vue";
 import Friends from "../views/Friends.vue";
 import EditProfile from "../views/EditProfile.vue";
-import SearchPage from "../views/SearchPage.vue";
+import ResultPage from "../views/ResultPage.vue";
 
 const routes = [
   {
@@ -38,9 +38,9 @@ const routes = [
     component: HomePage,
   },
   {
-    path: "/:id/result",
-    name: "SearchPage",
-    component: SearchPage,
+    path: "/search-result/:id",
+    name: "ResultPage",
+    component: ResultPage,
   },
   {
     path: "/camera",

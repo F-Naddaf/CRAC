@@ -29,6 +29,7 @@ export const getUserMedia = async (req, res) => {
 export const postVideo = async (req, res) => {
   const { media, userId, userImage, username } = req.body;
   try {
+    let newVideo;
     const existingVideo = await Videos.findOne({ url: media.url });
 
     if (existingVideo) {
@@ -44,7 +45,7 @@ export const postVideo = async (req, res) => {
         });
       }
     } else {
-      const newVideo = await Videos.create({
+      newVideo = await Videos.create({
         title: media.title,
         url: media.url,
         posted: media.posted,
@@ -53,9 +54,11 @@ export const postVideo = async (req, res) => {
         username: username,
       });
     }
-    res
-      .status(200)
-      .json({ success: true, message: "Video saved successfully" });
+    res.status(200).json({
+      success: true,
+      message: "Video saved successfully",
+      newVideo: newVideo,
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Internal Error." });
@@ -83,10 +86,9 @@ export const getMediaByTitle = async (req, res) => {
 
 // Get a video by ID
 export const getVideoById = async (req, res) => {
-  const { videoId } = req.params;
-
+  const { id } = req.params;
   try {
-    const video = await Videos.findById(videoId);
+    const video = await Videos.findById(id);
     res.status(200).json({ video });
   } catch (error) {
     console.error(error);
