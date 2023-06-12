@@ -1,19 +1,27 @@
 <template>
   <div class="container">
-      <button
-        class="video-section"
-        v-for="(video, index) in videos"
-        :key="index"
-        @mouseover="playVideo(index)"
-        @mouseout="pauseVideo(index)"
-      >
-        <i class="fa-solid fa-play"></i>
-        <video :src="video.url" type="video/mp4" ref="videos"></video>
-      </button>
+    <button
+      class="video-section"
+      v-for="(video, index) in videos"
+      :key="index"
+      @mouseover="playVideo(index)"
+      @mouseout="pauseVideo(index)"
+      @click="openVideo(video._id)"
+    >
+      <i class="fa-solid fa-play"></i>
+      <video
+        :src="video.url"
+        type="video/mp4"
+        :ref="(el) => (videoRefs[index] = el)"
+      ></video>
+    </button>
   </div>
 </template>
 
 <script>
+import { ref } from "vue";
+import { useRouter } from "vue-router";
+
 export default {
   props: {
     videos: {
@@ -21,28 +29,40 @@ export default {
       required: true,
     },
   },
-  methods: {
-    playVideo(index) {
-      const videoElement = this.$refs.videos[index];
-      if (
-        !videoElement.currentTime ||
-        videoElement.paused ||
-        videoElement.ended
-      ) {
-        setTimeout(() => {
-          videoElement.play().catch((error) => {
-            console.error("Failed to play video:", error);
-          });
-        }, 10);
+  setup() {
+    const videoRefs = ref([]);
+    const router = useRouter();
+
+    const playVideo = (index) => {
+      const videoElement = videoRefs.value[index];
+      if (videoElement && videoElement.readyState === 4) {
+        videoElement.play().catch((error) => {
+          console.error("Failed to play video:", error);
+        });
       }
-    },
-    pauseVideo(index) {
-      const videoElement = this.$refs.videos[index];
-      if (!videoElement.paused && !videoElement.ended) {
+    };
+
+    const pauseVideo = (index) => {
+      const videoElement = videoRefs.value[index];
+      if (videoElement && !videoElement.paused && !videoElement.ended) {
         videoElement.pause();
         videoElement.currentTime = 0;
       }
-    },
+    };
+
+    const openVideo = (videoId) => {
+      router.push({
+        name: "ViewVideo",
+        params: { id: videoId },
+      });
+    };
+
+    return {
+      videoRefs,
+      playVideo,
+      pauseVideo,
+      openVideo,
+    };
   },
 };
 </script>

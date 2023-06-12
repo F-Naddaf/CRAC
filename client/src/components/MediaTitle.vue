@@ -13,6 +13,16 @@
           v-model="input.value"
           @update:value="input.value = $event"
         />
+        <p
+          v-if="success"
+          class="text-base font-semibold"
+          style="color: #00cb5a"
+        >
+          {{ message }}
+        </p>
+        <p v-else class="text-primary-200 font-semibold text-base">
+          {{ message }}
+        </p>
         <div class="flex items-center justify-between w-full mt-5">
           <button
             class="secondaryButtonBorder"
@@ -73,6 +83,8 @@ export default {
         type: "text",
       },
     });
+    const message = ref("");
+    const success = ref(null);
     const router = useRouter();
 
     const saveMedia = async () => {
@@ -100,9 +112,15 @@ export default {
           }
         );
         const json = await response.json();
+        console.log("json.message", json.message);
+        success.value = false;
+        message.value = json.message;
         if (json.success) {
-          props.closeCamera();
-          router.push(`/${json.newVideo._id}/home`);
+          success.value = true;
+          message.value = json.message;
+          setTimeout(() => {
+            router.push(`/profile/${props.userId}`);
+          }, 2000);
         }
       } catch (error) {
         console.error(error);
@@ -111,6 +129,8 @@ export default {
 
     return {
       inputs,
+      success,
+      message,
       saveMedia,
     };
   },

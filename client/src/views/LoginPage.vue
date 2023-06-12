@@ -15,7 +15,11 @@
         v-model="input.value"
         @update:value="input.value = $event"
       />
-      <p class="text-sm font-bold text-primary-200" v-if="loginStatus">
+      <p
+        class="text-sm font-semibold"
+        style="color: #00cb5a"
+        v-if="loginStatus"
+      >
         {{ loginStatus }}
       </p>
       <button
