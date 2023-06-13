@@ -291,9 +291,15 @@ export const addToFriends = async (req, res) => {
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
-
     user.friends.push({ userId: friendId });
     await user.save();
+
+    const friendUser = await User.findById(friendId);
+    if (friendUser) {
+      friendUser.followers.push({ userId });
+      await friendUser.save();
+      user.followers.push({ userId: friendUser._id });
+    }
 
     return res.status(200).json({ message: "Friend added successfully" });
   } catch (error) {
@@ -322,6 +328,18 @@ export const deleteFriend = async (req, res) => {
     }
 
     user.friends.splice(friendIndex, 1);
+
+    const friendUser = await User.findById(friendId);
+    if (friendUser) {
+      const followerIndex = friendUser.followers.findIndex(
+        (follower) => follower.userId === userId
+      );
+      if (followerIndex !== -1) {
+        friendUser.followers.splice(followerIndex, 1);
+      }
+      await friendUser.save();
+    }
+
     await user.save();
 
     res.json({
