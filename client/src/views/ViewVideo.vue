@@ -138,7 +138,6 @@ export default {
     };
 
     const postNow = () => {
-      console.log("hello");
       showModel.value = true;
     };
 

@@ -34,6 +34,8 @@
         :username="friend.username"
         :firstname="friend.firstname"
         :lastname="friend.lastname"
+        :followers="friend.followers"
+        :isActivate="friend.isActivate"
         @deleteFriend="deleteFriend(friend._id)"
       />
     </section>

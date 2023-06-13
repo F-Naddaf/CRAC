@@ -107,7 +107,6 @@ export default {
       friendsArry.value = store.state.userData?.friends;
       currentUserId.value = store.state.userData?._id;
       userId.value = props.userId;
-      console.log("id", props.userId);
       showAddToFriends();
     });
 

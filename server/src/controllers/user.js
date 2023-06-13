@@ -84,6 +84,9 @@ export const login = async (req, res) => {
     if (!isPasswordCorrect) {
       return res.status(400).json({ message: "Invaild Password" });
     }
+    existingUser.isActivate = true;
+    await existingUser.save();
+
     const accessToken = jwt.sign(
       { email: existingUser.email, id: existingUser._id },
       process.env.ACCESS_TOKEN_SECRET
@@ -211,6 +214,30 @@ export const updateUser = async (req, res) => {
   }
 };
 
+// Logout user
+export const logout = async (req, res) => {
+  const { id, isActivate } = req.body;
+  try {
+    const user = await User.findById(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.isActivate = isActivate;
+
+    const updatedUser = await user.save();
+
+    res.status(200).json({
+      message: "Your profile has been successfully updated",
+      success: true,
+      user: updatedUser,
+    });
+  } catch (err) {
+    res.status(500).json({ message: "Internal Error." });
+  }
+};
+
 // Get friends detail
 export const getFriendDetails = async (req, res) => {
   try {
@@ -220,9 +247,29 @@ export const getFriendDetails = async (req, res) => {
     const friendIds = user.friends.map((friend) => friend.userId);
     const friendDetails = await User.find(
       { _id: { $in: friendIds } },
-      "username firstname lastname userImage"
+      "username firstname lastname userImage isActivate followers"
     );
+    res.json({
+      success: true,
+      result: friendDetails,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
+// Get followers details
+export const getFollowersDetail = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    const friendIds = user.followers.map((friend) => friend.userId);
+    const friendDetails = await User.find(
+      { _id: { $in: friendIds } },
+      "username firstname lastname userImage isActivate followers"
+    );
     res.json({
       success: true,
       result: friendDetails,

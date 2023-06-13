@@ -6,7 +6,7 @@
       </div>
       <div class="logout-container">
         <router-link
-          :to="`/${videoId}/home`"
+          :to="`/login`"
           @click="store.methods.logout"
           class="logout-btn"
         >
@@ -15,7 +15,7 @@
         </router-link>
       </div>
     </section>
-    <section class="flex w-full p-8 justify-center">
+    <section class="flex w-full p-8 justify-center items-center">
       <div
         v-if="!userImage"
         class="flex items-center justify-center w-28 h-28 rounded-full bg-background"
@@ -28,23 +28,39 @@
       >
         <img id="user-image" :src="userImage" />
       </div>
-      <div class="px-4 mt-4">
+      <div class="px-4">
         <p class="userDetails">#{{ username }}</p>
         <p class="userDetails">{{ email }}</p>
       </div>
     </section>
-    <section v-if="id">
-      <router-link :to="`/edit/${id}`" class="editProfileBtn">
-        <p class="text-sm font-semibold text-gray-300">Edit Profile</p>
+    <section v-if="id" class="flex w-full items-center justify-center">
+      <router-link :to="`/edit/${id}`" class="m-4">
+        <p class="text-sm font-light text-primary-200 underline">
+          Edit Profile
+        </p>
       </router-link>
+      <span class="text-primary-200">|</span>
+      <button class="flex items-center m-4" @click="showFollowerList">
+        <p class="text-sm font-light text-primary-200 underline pr-2">
+          Followers
+        </p>
+        <p class="font-semibold text-primary-200">{{ numberOfFollowers }}</p>
+      </button>
     </section>
+    <div v-if="showList === true">
+      <FollowerList :show="showList" :id="id" @close="showList = false" />
+    </div>
   </div>
 </template>
 
 <script>
 import { ref, inject, onMounted } from "vue";
+import FollowerList from "@/components/profile/FollowerList.vue";
 
 export default {
+  components: {
+    FollowerList,
+  },
   name: "UserInfo",
   setup() {
     const store = inject("store");
@@ -54,6 +70,9 @@ export default {
     const username = ref("");
     const email = ref("");
     const userImage = ref("");
+    const followers = ref([]);
+    const numberOfFollowers = ref(0);
+    const showList = ref(false);
 
     onMounted(async () => {
       await store.methods.load();
@@ -66,7 +85,17 @@ export default {
       username.value = store.state.userData?.username;
       email.value = store.state.userData?.email;
       userImage.value = store.state.userData?.userImage;
+      followers.value = store.state.userData?.followers;
+      numberOfFollowers.value = followers.value.length;
     });
+
+    const showFollowerList = () => {
+      showList.value = !showList.value;
+    };
+
+    const closeFollowerList = () => {
+      showList.value = false;
+    };
 
     return {
       store,
@@ -76,6 +105,11 @@ export default {
       username,
       email,
       userImage,
+      followers,
+      numberOfFollowers,
+      showList,
+      showFollowerList,
+      closeFollowerList,
     };
   },
 };
@@ -119,31 +153,5 @@ export default {
 #user-image {
   height: 110px;
   max-width: 200%;
-}
-.edit-image-btn {
-  position: absolute;
-  left: -15px;
-  bottom: 5px;
-}
-.edit-image button {
-  display: flex;
-  align-items: center;
-}
-.edit-image i {
-  color: #28bfd2;
-  padding-right: 3px;
-  font-size: 12px;
-  padding-top: 2px;
-}
-.edit-profile-btn {
-  display: flex;
-  align-items: center;
-  background-color: #28bfd2;
-  border-radius: 12px;
-  padding: 6px;
-}
-.edit-profile-btn p {
-  font-size: 18px;
-  color: #e67cb1;
 }
 </style>

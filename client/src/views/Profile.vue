@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div class="relative w-full h-full flex flex-col">
     <section class="w-full h-1/3">
       <UserInfo>
         <template #category>

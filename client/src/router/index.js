@@ -9,7 +9,7 @@ import Profile from "../views/Profile.vue";
 import FriendProfile from "../views/FriendProfile.vue";
 import Friends from "../views/Friends.vue";
 import EditProfile from "../views/EditProfile.vue";
-import ResultPage from "../views/ResultPage.vue";
+import SearchResultPage from "../views/SearchResultPage.vue";
 import ViewVideo from "../views/ViewVideo.vue";
 
 const routes = [
@@ -40,8 +40,8 @@ const routes = [
   },
   {
     path: "/search-result/:id",
-    name: "ResultPage",
-    component: ResultPage,
+    name: "SearchResultPage",
+    component: SearchResultPage,
   },
   {
     path: "/camera",
