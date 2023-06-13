@@ -5,8 +5,11 @@
         {{ error }}
       </p>
     </div>
-    <p class="absolute left-20 top-20 text-base text-primary-200">
+    <!-- <p class="absolute left-20 top-20 text-base text-primary-200">
       {{ currentVideoId }}
+    </p> -->
+    <p class="absolute left-20 top-20 text-base text-primary-200">
+      {{ video.userId }}
     </p>
 
     <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
@@ -122,7 +125,7 @@ export default {
     });
 
     const toggleSocialMedia = (videoId) => {
-        emit("shareClicked", videoId);
+      emit("shareClicked", videoId);
     };
 
     return {

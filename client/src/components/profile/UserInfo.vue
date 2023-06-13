@@ -33,8 +33,8 @@
         <p class="userDetails">{{ email }}</p>
       </div>
     </section>
-    <section>
-      <router-link v-if="id" :to="`/edit/${id}`" class="editProfileBtn">
+    <section v-if="id">
+      <router-link :to="`/edit/${id}`" class="editProfileBtn">
         <p class="text-sm font-semibold text-gray-300">Edit Profile</p>
       </router-link>
     </section>
