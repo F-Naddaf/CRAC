@@ -24,7 +24,7 @@
             #{{ video.username }}
           </p>
           <p
-            class="text-sm text-label -mt-1 ml-2"
+            class="text-sm text-label -mt-1 ml-2 w-4/5"
             style="text-shadow: 0.5px 0.5px #262626"
           >
             {{ video.title }}
