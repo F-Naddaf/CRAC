@@ -29,10 +29,19 @@
         #{{ video.username }}
       </p>
       <p
-        class="text-sm text-label -mt-1 ml-2"
+        class="text-sm text-label -mt-1 ml-2 w-4/5 relative"
         style="text-shadow: 0.5px 0.5px #262626"
       >
-        {{ video.title }}
+        <span v-if="!showFullTitle">{{ shortTitle }}</span>
+        <span v-else>{{ video.title }}</span>
+
+        <button
+          v-if="video.title.length > 45"
+          @click="toggleFullTitle"
+          class="absolute right-0 bottom-0 text-xs ml-2 text-primary-200"
+        >
+          {{ showFullTitle ? "Hide" : "More..." }}
+        </button>
       </p>
     </div>
     <div class="absolute bottom-20 right-4 z-30">
@@ -49,7 +58,7 @@
   </div>
 </template>
 <script>
-import { ref, reactive, onMounted, watch } from "vue";
+import { ref, reactive, onMounted, watch, computed } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 import { useRouter } from "vue-router";
 
@@ -72,6 +81,8 @@ export default {
     const state = reactive({
       playing: false,
     });
+
+    const showFullTitle = ref(false);
 
     const play = () => {
       vidRef.value.play();
@@ -112,6 +123,19 @@ export default {
       emit("shareClicked", videoId);
     };
 
+    const toggleFullTitle = () => {
+      showFullTitle.value = !showFullTitle.value;
+    };
+
+    const shortTitle = computed(() => {
+      const maxCharacters = 45;
+      if (props.video.title.length <= maxCharacters) {
+        return props.video.title;
+      } else {
+        return props.video.title.slice(0, maxCharacters) + "...";
+      }
+    });
+
     const handleErrorMessage = (value) => {
       error.value = value;
       showError.value = true;
@@ -141,6 +165,9 @@ export default {
       handleErrorMessage,
       toggleSocialMedia,
       handleShareClicked,
+      showFullTitle,
+      shortTitle,
+      toggleFullTitle,
     };
   },
 };
