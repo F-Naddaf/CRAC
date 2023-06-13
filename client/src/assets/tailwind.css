@@ -73,7 +73,7 @@
   @apply flex flex-col justify-center items-center w-full relative m-0 p-0;
 }
 .user-name {
-  @apply text-2xl font-semibold text-primary-100 py-2;
+  @apply text-2xl font-semibold text-secondary-200 py-2;
 }
 .userDetails {
   @apply text-sm text-gray-300 font-normal;
@@ -82,10 +82,10 @@
   @apply flex justify-center items-center bg-secondary-100 w-1/2 h-6 rounded-md px-4;
 }
 .friend-card {
-  @apply relative flex items-center bg-background w-full h-14 p-4 mb-1 overflow-hidden bg-opacity-60 border-t border-l border-white border-opacity-30 z-10 hover:bg-hover hover:bg-opacity-30 hover:-translate-y-1;
+  @apply relative flex items-center bg-background w-full h-14 p-4 mb-2 overflow-hidden bg-opacity-60 border-t border-l border-white border-opacity-30 z-10 hover:bg-hover hover:bg-opacity-30 hover:-translate-y-1;
 }
 .friend-card-container {
-  @apply flex flex-col justify-center h-14 ml-16;
+  @apply flex flex-col justify-center h-1/2;
 }
 .editProfileBtn {
   @apply flex items-center justify-center w-full py-1 px-4 bg-secondary-100 font-semibold text-gray-700 rounded-md;

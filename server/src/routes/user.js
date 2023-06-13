@@ -2,6 +2,7 @@ import express from "express";
 import {
   register,
   login,
+  logout,
   loginWithGoogle,
   authenticateToken,
   getUser,
@@ -11,6 +12,7 @@ import {
   addToFriends,
   addToFavorite,
   getFriendDetails,
+  getFollowersDetail,
   addSavedVideos,
   updateUser,
   deleteFriend,
@@ -20,8 +22,10 @@ const userRouter = express.Router();
 userRouter.get("/", authenticateToken, getUser);
 userRouter.get("/:id", authenticateToken, getUserById);
 userRouter.get("/friendDetails/:userId", getFriendDetails);
+userRouter.get("/followersDetail/:userId", getFollowersDetail);
 userRouter.post("/register", register);
 userRouter.post("/login", login);
+userRouter.patch("/:id/logout", logout);
 userRouter.post("/login/google", loginWithGoogle);
 userRouter.post("/phone", authenticateToken, addUserPhone);
 userRouter.post("/phone/verify", authenticateToken, verifyCode);

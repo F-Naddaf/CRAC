@@ -97,6 +97,7 @@ export default {
     const updatedAmountOfLike = ref(props.amountOfLike);
     const currentUserimage = ref(props.userImage);
     const friendsArry = ref([]);
+    const userId = ref("");
     const showAdd = ref(false);
 
     const router = useRouter();
@@ -105,6 +106,7 @@ export default {
       await store.methods.load();
       friendsArry.value = store.state.userData?.friends;
       currentUserId.value = store.state.userData?._id;
+      userId.value = props.userId;
       showAddToFriends();
     });
 
@@ -120,7 +122,11 @@ export default {
     };
 
     const handleProfile = () => {
-      router.push(`/profile/${currentUserId.value}`);
+      if (props.userId !== currentUserId.value) {
+        router.push(`/friend/profile/${props.userId}`);
+      } else {
+        router.push(`/profile/${currentUserId.value}`);
+      }
     };
 
     function isFavorite(favoriteArray) {

@@ -27,9 +27,30 @@ const methods = {
       }
     }
   },
-  logout() {
-    state.userData = null;
-    localStorage.clear();
+
+  async logout() {
+    const token = localStorage.getItem("accessToken");
+    const id = state.userData._id;
+    try {
+      const response = await fetch(
+        `http://localhost:6500/api/users/${id}/logout`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ isActivate: false, id: id }),
+        }
+      );
+      const json = await response.json();
+      if (json.success) {
+        state.userData = null;
+        localStorage.clear();
+      }
+    } catch (error) {
+      state.error = error.message;
+    }
   },
   login(data) {
     state.userData = data;

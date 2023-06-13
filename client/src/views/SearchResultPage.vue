@@ -29,7 +29,7 @@ import NavBar from "@/components/NavBar.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
 
 export default {
-  name: "ResultPage",
+  name: "SearchResultPage",
   components: {
     HomeHeader,
     VideoSection,
