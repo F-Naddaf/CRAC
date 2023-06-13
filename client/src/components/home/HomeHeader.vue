@@ -38,8 +38,7 @@ export default {
     const router = useRouter();
 
     const searchVideos = async (event) => {
-      const title = event.target.value;
-      console.log("title", title);
+      event.target.value;
       try {
         const response = await fetch(
           `http://localhost:6500/api/videos/search/${searchTitle.value}`

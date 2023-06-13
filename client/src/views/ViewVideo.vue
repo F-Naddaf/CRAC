@@ -38,6 +38,14 @@
         >
           Post
         </button>
+        <button
+          v-else
+          class="absolute right-6 bottom-20 text-sm text-label -mb-1 w-10 h-6 bg-primary-100 rounded"
+          style="text-shadow: 0.5px 0.5px #262626"
+          @click="postNow"
+        >
+          Edit
+        </button>
       </div>
       <NavBar />
       <div
