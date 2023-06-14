@@ -9,7 +9,7 @@
       {{ currentVideoId }}
     </p> -->
     <p class="absolute left-20 top-20 text-base text-primary-200">
-      {{ video.userId }}
+      {{ currentVideoId }}
     </p>
 
     <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
@@ -75,6 +75,7 @@ export default {
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
+    const previousVisibality = ref(0);
     const currentVideoId = ref(props.video._id);
     const router = useRouter();
 
@@ -101,7 +102,13 @@ export default {
         play();
       }
       props.video.playing = !props.video.playing;
-      handleVideoId();
+    };
+
+    const handleVideoId = () => {
+      router.push({
+        name: "HomePage",
+        params: { id: currentVideoId.value },
+      });
     };
 
     watch(
@@ -111,13 +118,6 @@ export default {
       },
       { immediate: true }
     );
-
-    const handleVideoId = () => {
-      router.push({
-        name: "HomePage",
-        params: { id: currentVideoId.value },
-      });
-    };
 
     const handleShareClicked = (videoId) => {
       emit("shareClicked", videoId);
@@ -146,6 +146,20 @@ export default {
 
     onMounted(() => {
       currentVideoId.value = props.video._id;
+      const observer = new IntersectionObserver(
+        (enteries) => {
+          enteries.forEach((entry) => {
+            if (entry.intersectionRatio > previousVisibality.value) {
+              handleVideoId();
+            }
+            previousVisibality.value = entry.intersectionRatio;
+          });
+        },
+        {
+          threshold: 0.5,
+        }
+      );
+      observer.observe(vidRef.value);
     });
 
     const toggleSocialMedia = (videoId) => {
@@ -157,6 +171,7 @@ export default {
       error,
       state,
       showError,
+      previousVisibality,
       play,
       pause,
       currentVideoId,

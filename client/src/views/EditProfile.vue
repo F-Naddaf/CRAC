@@ -112,12 +112,10 @@ export default {
           }
         );
         const result = await response.json();
-        console.log("res", result);
         resultMessage.value = result.message;
         setTimeout(() => {
           router.push(`/profile/${id.value}`);
         }, 3000);
-        console.log(result);
       } catch (error) {
         console.log(error);
       }

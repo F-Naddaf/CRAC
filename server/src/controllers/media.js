@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { Videos } from "../models/Media.js";
 
 export const getAllMedia = async (req, res) => {
@@ -68,6 +69,28 @@ export const postVideo = async (req, res) => {
       success: true,
       message: "Video saved successfully",
       newVideo: newVideo,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Internal Error." });
+  }
+};
+
+export const deleteVideo = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const videoId = new mongoose.Types.ObjectId(id);
+    const deletedVideo = await Videos.findByIdAndDelete(videoId);
+    if (!deletedVideo) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Video not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Video deleted successfully",
+      deletedVideo: deletedVideo,
     });
   } catch (error) {
     console.log(error);
