@@ -26,6 +26,7 @@
         }
       "
       @shareClicked="toggleSocialMedia"
+      @commentClicked="toggleComment"
     >
     </Video>
   </div>
@@ -109,6 +110,10 @@ export default {
       emit("shareClicked", videoId);
     };
 
+    const toggleComment = (videoId) => {
+      emit("commentClicked", videoId);
+    };
+
     return {
       videos,
       videoRefs,
@@ -118,6 +123,7 @@ export default {
       onSwipe,
       enableSwipe,
       toggleSocialMedia,
+      toggleComment,
     };
   },
 };

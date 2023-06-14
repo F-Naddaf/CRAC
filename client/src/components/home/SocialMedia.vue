@@ -170,12 +170,10 @@ export default {
   background-color: rgba(255, 255, 255, 0.9);
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
-  transition: bottom 0.3s ease-in-out;
   z-index: 100;
 }
 .slide-up {
   bottom: -2px;
-  transition: bottom 0.3s ease-in-out;
   z-index: 100;
 }
 .social-media-header {

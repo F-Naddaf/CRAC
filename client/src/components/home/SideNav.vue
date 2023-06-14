@@ -38,7 +38,7 @@
     </div>
 
     <div class="mt-10">
-      <button class="iconCard">
+      <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
       </button>
     </div>
@@ -89,7 +89,7 @@ export default {
     },
   },
   name: "SideNav",
-  emits: ["error-message", "shareClicked"],
+  emits: ["error-message", "shareClicked", "commentClicked"],
 
   setup(props, { emit }) {
     const store = inject("store");

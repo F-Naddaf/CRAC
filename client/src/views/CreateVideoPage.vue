@@ -252,7 +252,6 @@ export default {
     };
 
     const postLater = async () => {
-      console.log("username", username.value);
       toPost.value = false;
       const token = localStorage.getItem("accessToken");
       try {
@@ -275,7 +274,10 @@ export default {
         const json = await response.json();
         if (json.success) {
           closeCamera();
-          router.push("/home");
+          router.push({
+            name: "Profile",
+            params: { id: userId.value },
+          });
         }
       } catch (error) {
         console.error(error);

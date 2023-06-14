@@ -112,7 +112,6 @@ export default {
           }
         );
         const json = await response.json();
-        console.log("json.message", json.message);
         success.value = false;
         message.value = json.message;
         if (json.success) {

@@ -6,7 +6,7 @@
       :key="index"
       @mouseover="playVideo(index)"
       @mouseout="pauseVideo(index)"
-      @click="openVideo(video._id)"
+      @click="openVideo(video._id, video.userId)"
     >
       <i class="fa-solid fa-play"></i>
       <video
@@ -50,10 +50,10 @@ export default {
       }
     };
 
-    const openVideo = (videoId) => {
+    const openVideo = (videoId, userId) => {
       router.push({
         name: "ViewVideo",
-        params: { id: videoId },
+        params: { video: videoId, id: userId },
       });
     };
 

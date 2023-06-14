@@ -3,7 +3,11 @@
     <HomeHeader />
     <div class="video-wrapper">
       <template v-if="videos.length > 0">
-        <VideoSection @shareClicked="toggleSocialMedia" :videos="videos" />
+        <VideoSection
+          @shareClicked="toggleSocialMedia"
+          @commentClicked="toggleComment"
+          :videos="videos"
+        />
       </template>
       <template v-else>
         <div>Loading...</div>
@@ -17,6 +21,13 @@
         @closeClicked="closeSocialMedia"
       />
     </div>
+    <div v-if="showComment">
+      <Comment
+        :show="showComment"
+        :videoId="videoId"
+        @closeClicked="closeComment"
+      />
+    </div>
   </div>
 </template>
 
@@ -27,6 +38,7 @@ import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
 import NavBar from "@/components/NavBar.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
+import Comment from "@/components/home/Comment.vue";
 
 export default {
   name: "HomePage",
@@ -35,10 +47,12 @@ export default {
     VideoSection,
     NavBar,
     SocialMedia,
+    Comment,
   },
 
   setup(props) {
     const showSocialMedia = ref(false);
+    const showComment = ref(false);
     const videos = ref([]);
     const route = useRoute();
     const videoId = route.params.id;
@@ -65,8 +79,16 @@ export default {
       showSocialMedia.value = !showSocialMedia.value;
     };
 
+    const toggleComment = () => {
+      showComment.value = !showComment.value;
+    };
+
     const closeSocialMedia = () => {
       showSocialMedia.value = false;
+    };
+
+    const closeComment = () => {
+      showComment.value = false;
     };
 
     onMounted(async () => {
@@ -75,10 +97,13 @@ export default {
 
     return {
       showSocialMedia,
+      showComment,
       videos,
       videoId,
       toggleSocialMedia,
+      toggleComment,
       closeSocialMedia,
+      closeComment,
       getAllVideos,
     };
   },
