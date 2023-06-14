@@ -149,3 +149,33 @@ export const getVideoById = async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve video" });
   }
 };
+
+// Adding a comment
+export const addComment = async (req, res) => {
+  try {
+    const { videoId, userId, userImage, username, comment } = req.body;
+    const video = await Videos.findById(videoId);
+
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+    const newComment = {
+      videoId,
+      userId,
+      userImage,
+      username,
+      comment,
+    };
+    video.comments.push(newComment);
+    await video.save();
+    res.status(200).json({
+      success: true,
+      message: "Post added successfully",
+      comment: newComment,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to add post", error: error.message });
+  }
+};

@@ -6,6 +6,7 @@ import {
   getMediaByTitle,
   getVideoById,
   postLater,
+  addComment,
   deleteVideo,
 } from "../controllers/media.js";
 const mediaRouter = express.Router();
@@ -16,6 +17,7 @@ mediaRouter.get("/search/:title", getMediaByTitle);
 mediaRouter.get("/result/:id", getVideoById);
 mediaRouter.post("/postVideo", postVideo);
 mediaRouter.post("/postLater", postLater);
+mediaRouter.post("/comment", addComment);
 mediaRouter.delete("/deleteVideo/:id", deleteVideo);
 
 export default mediaRouter;

@@ -8,6 +8,15 @@ export const mediaSchema = new mongoose.Schema({
   userImage: String,
   username: String,
   amountOfLike: Number,
+  comments: [
+    {
+      videoId: String,
+      userId: String,
+      userImage: String,
+      username: String,
+      comment: String,
+    },
+  ],
 });
 
 export const Videos = mongoose.model("Videos", mediaSchema);
