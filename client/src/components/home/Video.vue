@@ -47,6 +47,7 @@
     <div class="absolute bottom-20 right-4 z-30">
       <SideNav
         @shareClicked="toggleSocialMedia"
+        @commentClicked="toggleComment"
         @error-message="handleErrorMessage"
         :userId="video.userId"
         :userImage="video.userImage"
@@ -166,6 +167,10 @@ export default {
       emit("shareClicked", videoId);
     };
 
+    const toggleComment = (videoId) => {
+      emit("commentClicked", videoId);
+    };
+
     return {
       vidRef,
       error,
@@ -179,6 +184,7 @@ export default {
       togglePlay,
       handleErrorMessage,
       toggleSocialMedia,
+      toggleComment,
       handleShareClicked,
       showFullTitle,
       shortTitle,
