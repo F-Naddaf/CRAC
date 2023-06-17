@@ -55,8 +55,8 @@
         :userImage="video.userImage"
         :videoUrl="video.url"
         :videoId="video._id"
-        :amountOfLike="video.amountOfLike"
-        :amountOfComments="amountOfComments"
+        :amountOfFavorite="video.favorite"
+        :commentCount="video.comments.length"
       ></SideNav>
     </div>
   </div>
@@ -71,7 +71,6 @@ export default {
   props: {
     video: Object,
     index: Number,
-    amountOfComments: Number,
   },
   components: {
     SideNav,

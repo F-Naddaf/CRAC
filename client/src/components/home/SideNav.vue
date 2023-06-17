@@ -6,8 +6,8 @@
           class="flex items-center justify-center bg-gray-700 rounded-full w-12 h-12 justify-center border-2 border-gray-200 overflow-hidden"
         >
           <img
-            v-if="currentUserimage"
-            :src="currentUserimage"
+            v-if="currentUserImage"
+            :src="currentUserImage"
             class="h-12 object-cover"
           />
           <i v-else class="fa-solid fa-user text-gray-200 text-2xl"></i>
@@ -28,11 +28,8 @@
               : 'text-gray-200'
           }`"
         ></i>
-        <p
-          v-if="updatedAmountOfLike > 0"
-          class="absolute -bottom-1 left-5 text-primary-100 text-xs font-semibold"
-        >
-          {{ updatedAmountOfLike }}
+        <p class="text-primary-200 text-xs font-semibold">
+          {{ updatedAmountOfFavorite }}
         </p>
       </button>
     </div>
@@ -40,7 +37,9 @@
     <div class="mt-8">
       <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
-        <p class="text-primary-200 text-xs font-semibold">{{ amountOfComments }}</p>
+        <p class="text-primary-200 text-xs font-semibold">
+          {{ amountOfComments }}
+        </p>
       </button>
     </div>
 
@@ -83,12 +82,8 @@ export default {
     videoUrl: {
       type: String,
     },
-    amountOfLike: {
-      type: Number,
-      required: true,
-      default: 0,
-    },
-    amountOfComments: Number,
+    commentCount: Number,
+    amountOfFavorite: Number,
   },
   name: "SideNav",
   emits: ["error-message", "shareClicked", "commentClicked"],
@@ -96,8 +91,9 @@ export default {
   setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
-    const updatedAmountOfLike = ref(props.amountOfLike);
-    const currentUserimage = ref(props.userImage);
+    const updatedAmountOfFavorite = ref(props.amountOfFavorite);
+    const currentUserImage = ref(props.userImage);
+    const amountOfComments = ref(props.commentCount);
     const friendsArry = ref([]);
     const userId = ref("");
     const showAdd = ref(false);
@@ -203,14 +199,14 @@ export default {
           emit("error-message", error);
         }
         if (json.message === "Video is removed from favorites successfully") {
-          updatedAmountOfLike.value -= 1;
+          updatedAmountOfFavorite.value -= 1;
         } else if (
           json.message === "Video is added to favorites successfully"
         ) {
           isFavorite.value = true;
-          updatedAmountOfLike.value += 1;
+          updatedAmountOfFavorite.value += 1;
         } else {
-          updatedAmountOfLike.value = props.amountOfLike;
+          updatedAmountOfFavorite.value = props.amountOfFavorite;
         }
       } catch (error) {
         console.error(error);
@@ -253,8 +249,9 @@ export default {
       isFavorite,
       isSaved,
       currentUserId,
-      updatedAmountOfLike,
-      currentUserimage,
+      amountOfComments,
+      updatedAmountOfFavorite,
+      currentUserImage,
       friendsArry,
       showAdd,
       handleProfile,

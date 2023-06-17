@@ -400,6 +400,54 @@ export const deleteFriend = async (req, res) => {
 };
 
 // Add video to favorite
+// export const addToFavorite = async (req, res) => {
+//   const { videoId, userId, url } = req.body;
+//   try {
+//     const user = await User.findById(userId);
+//     const video = await Videos.findById(videoId);
+
+//     if (!user || !video || !url) {
+//       return res.status(404).json({ message: "User or video not found" });
+//     }
+
+//     if (video.userId === userId) {
+//       return res
+//         .status(400)
+//         .json({ success: false, message: "Cannot favorite your own video" });
+//     }
+
+//     const favoriteIndex = user.favoriteVideos.findIndex(
+//       (item) => item.videoId === videoId
+//     );
+
+//     if (favoriteIndex > -1) {
+//       user.favoriteVideos.splice(favoriteIndex, 1);
+//       if (video.amountOfLike && video.amountOfLike > 0) {
+//         video.amountOfLike--;
+//         res.json({
+//           success: true,
+//           result: user,
+//           message: "Video is removed from favorites successfully",
+//         });
+//       }
+//     } else {
+//       user.favoriteVideos.push({ videoId, url });
+//       video.amountOfLike = (video.amountOfLike || 0) + 1;
+//       res.json({
+//         success: true,
+//         result: user,
+//         message: "Video is added to favorites successfully",
+//       });
+//     }
+
+//     await user.save();
+//     await video.save();
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Server error" });
+//   }
+// };
+
 export const addToFavorite = async (req, res) => {
   const { videoId, userId, url } = req.body;
   try {
@@ -422,17 +470,19 @@ export const addToFavorite = async (req, res) => {
 
     if (favoriteIndex > -1) {
       user.favoriteVideos.splice(favoriteIndex, 1);
-      if (video.amountOfLike && video.amountOfLike > 0) {
-        video.amountOfLike--;
-        res.json({
-          success: true,
-          result: user,
-          message: "Video is removed from favorites successfully",
-        });
+      if (video.favorite && video.favorite > 0) {
+        video.favorite--;
+        await video.save();
       }
+      res.json({
+        success: true,
+        result: user,
+        message: "Video is removed from favorites successfully",
+      });
     } else {
       user.favoriteVideos.push({ videoId, url });
-      video.amountOfLike = (video.amountOfLike || 0) + 1;
+      video.favorite = (video.favorite || 0) + 1;
+      await video.save();
       res.json({
         success: true,
         result: user,
@@ -441,7 +491,6 @@ export const addToFavorite = async (req, res) => {
     }
 
     await user.save();
-    await video.save();
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Server error" });

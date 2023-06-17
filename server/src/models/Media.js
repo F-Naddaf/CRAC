@@ -7,6 +7,8 @@ export const mediaSchema = new mongoose.Schema({
   userId: String,
   userImage: String,
   username: String,
+  favorite: Number,
+  saved: Number,
   comments: [
     {
       videoId: String,

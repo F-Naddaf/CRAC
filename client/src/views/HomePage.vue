@@ -7,7 +7,6 @@
           @shareClicked="toggleSocialMedia"
           @commentClicked="toggleComment"
           :videos="videos"
-          :amountOfComments="amountOfComments"
         />
       </template>
       <template v-else>
@@ -27,7 +26,6 @@
       :show="showComment"
       :videoId="videoId"
       @closeClicked="closeComment"
-      @commentCount="handleCommentCount"
     />
   </div>
 </template>
@@ -50,14 +48,12 @@ export default {
     SocialMedia,
     Comment,
   },
-
-  setup(props) {
+  setup() {
     const showSocialMedia = ref(false);
     const showComment = ref(false);
     const videos = ref([]);
     const route = useRoute();
     const videoId = route.params.id;
-    const amountOfComments = ref(0);
 
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
@@ -93,10 +89,6 @@ export default {
       showComment.value = false;
     };
 
-    const handleCommentCount = (count) => {
-      amountOfComments.value = count;
-    };
-
     onMounted(async () => {
       await getAllVideos();
     });
@@ -106,13 +98,11 @@ export default {
       showComment,
       videos,
       videoId,
-      amountOfComments,
       toggleSocialMedia,
       toggleComment,
       closeSocialMedia,
       closeComment,
       getAllVideos,
-      handleCommentCount,
     };
   },
 };

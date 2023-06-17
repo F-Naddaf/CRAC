@@ -11,7 +11,6 @@
       :key="video._id"
       :id="video._id"
       :video="video"
-      :amountOfComments="amountOfComments"
       :index="index"
       :ref="
         (el) => {
@@ -29,6 +28,7 @@
       @shareClicked="toggleSocialMedia"
       @commentClicked="toggleComment"
     >
+      <h1 class="text-primary-100">{{ video.favorite }}</h1>
     </Video>
   </div>
 </template>
@@ -51,7 +51,6 @@ export default {
   emits: ["video-id"],
   props: {
     videos: Array,
-    amountOfComments: Number,
   },
   setup(props, { emit }) {
     const videos = ref(props.videos);

@@ -69,10 +69,6 @@ export default {
       getComments();
     };
 
-    //  computed(() => {
-    //   return comments.value.length;
-    // });
-
     const getComments = async () => {
       try {
         isLoading.value = true;
