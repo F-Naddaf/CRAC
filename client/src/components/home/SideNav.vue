@@ -18,7 +18,7 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-8">
       <button @click="addToFavorite" class="iconCard">
         <i
           class="fa-solid fa-heart text-2xl"
@@ -37,13 +37,14 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-8">
       <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
+        <p class="text-primary-200 text-xs font-semibold">{{ amountOfComments }}</p>
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-8">
       <button @click="saveVideo" class="iconCard">
         <i
           class="fa-solid fa-bookmark text-2xl text-gray-200"
@@ -56,7 +57,7 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-8">
       <button class="iconCard" @click="$emit('shareClicked')">
         <i class="fa-solid fa-share text-2xl text-gray-200"></i>
       </button>
@@ -87,6 +88,7 @@ export default {
       required: true,
       default: 0,
     },
+    amountOfComments: Number,
   },
   name: "SideNav",
   emits: ["error-message", "shareClicked", "commentClicked"],

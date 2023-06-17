@@ -44,6 +44,7 @@ export default {
     const comments = ref([]);
     const isLoading = ref(false);
     const route = useRoute();
+    const commentCount = ref(0);
 
     onMounted(async () => {
       currentVideoId.value = route.params.id;
@@ -68,6 +69,10 @@ export default {
       getComments();
     };
 
+    //  computed(() => {
+    //   return comments.value.length;
+    // });
+
     const getComments = async () => {
       try {
         isLoading.value = true;
@@ -77,6 +82,8 @@ export default {
         const result = await response.json();
         comments.value = result.comments;
         isLoading.value = false;
+        commentCount.value = comments.value.length;
+        emit("commentCount", commentCount.value);
       } catch (error) {
         console.log(error);
       }
@@ -86,6 +93,7 @@ export default {
       currentVideoId,
       isLoading,
       comments,
+      commentCount,
       closeComment,
       handleCommentAdded,
       handleCommentDeleted,

@@ -46,7 +46,7 @@
         </button>
       </div>
     </div>
-    <div class="absolute bottom-20 right-4 z-30">
+    <div class="absolute bottom-24 right-4 z-30">
       <SideNav
         @shareClicked="toggleSocialMedia"
         @commentClicked="toggleComment"
@@ -56,6 +56,7 @@
         :videoUrl="video.url"
         :videoId="video._id"
         :amountOfLike="video.amountOfLike"
+        :amountOfComments="amountOfComments"
       ></SideNav>
     </div>
   </div>
@@ -70,6 +71,7 @@ export default {
   props: {
     video: Object,
     index: Number,
+    amountOfComments: Number,
   },
   components: {
     SideNav,
