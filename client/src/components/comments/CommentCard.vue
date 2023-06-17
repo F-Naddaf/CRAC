@@ -26,9 +26,11 @@
       <div class="relative w-5/6 ml-1">
         <div class="comment-wrapper">
           <p
+            ref="editableComment"
             class="text-left text-sm"
             :contentEditable="comment.editing"
             :class="{ editable: comment.editing }"
+            :data-comment-id="comment._id"
             @input="comment.editedComment = $event.target.innerText"
             @keydown.enter.prevent="saveEditing(comment._id)"
             @keydown="handleKeyDown($event, comment._id)"
@@ -70,7 +72,7 @@
 </template>
 
 <script>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, inject, nextTick } from "vue";
 import LikeUnlikeButton from "./LikeUnlikeButton.vue";
 
 export default {
@@ -81,14 +83,12 @@ export default {
   components: {
     LikeUnlikeButton,
   },
-
   setup(props, { emit }) {
     const store = inject("store");
     const userId = ref("");
 
     onMounted(async () => {
       await store.methods.load();
-      console.log("comments", props.comments);
       userId.value = store.state.userData?._id;
     });
 
@@ -125,6 +125,15 @@ export default {
       if (comment) {
         comment.editing = true;
         comment.editedComment = comment.comment;
+
+        nextTick(() => {
+          const inputField = document.querySelector(
+            `.comment-wrapper [data-comment-id="${comment._id}"]`
+          );
+          if (inputField) {
+            inputField.focus();
+          }
+        });
       }
     };
 
@@ -237,5 +246,9 @@ export default {
 }
 .editable {
   color: #02a2ec;
+}
+.comment-wrapper p:focus {
+  outline: none;
+  border: none;
 }
 </style>
