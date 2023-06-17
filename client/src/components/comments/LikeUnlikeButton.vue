@@ -61,6 +61,7 @@ export default {
       likedBefore();
       unlikedBefore();
     });
+
     const handleLike = async () => {
       try {
         const response = await fetch(

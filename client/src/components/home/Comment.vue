@@ -42,7 +42,7 @@ export default {
   setup(props, { emit }) {
     const currentVideoId = ref("");
     const comments = ref([]);
-    const isLoading = ref(true);
+    const isLoading = ref(false);
     const route = useRoute();
 
     onMounted(async () => {
@@ -70,6 +70,7 @@ export default {
 
     const getComments = async () => {
       try {
+        isLoading.value = true;
         const response = await fetch(
           `http://localhost:6500/api/videos/show-comments/${currentVideoId.value}`
         );
