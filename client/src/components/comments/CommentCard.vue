@@ -26,7 +26,6 @@
       <div class="relative w-5/6 ml-1">
         <div class="comment-wrapper">
           <p
-            ref="editableComment"
             class="text-left text-sm"
             :contentEditable="comment.editing"
             :class="{ editable: comment.editing }"
@@ -35,7 +34,7 @@
             @keydown.enter.prevent="saveEditing(comment._id)"
             @keydown="handleKeyDown($event, comment._id)"
           >
-            {{ comment.comment }}
+            {{ comment.editing ? comment.editedComment : comment.comment }}
           </p>
           <div v-if="userId === comment.userId" class="flex w-full justify-end">
             <div class="w-auto mt-2">
@@ -142,7 +141,7 @@ export default {
       if (comment) {
         const editedComment = comment.editedComment;
         comment.editing = false;
-
+        comment.comment = editedComment;
         try {
           const response = await fetch(
             `http://localhost:6500/api/videos/comment/${comment._id}`,
