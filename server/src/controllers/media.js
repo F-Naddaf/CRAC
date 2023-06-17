@@ -153,7 +153,8 @@ export const getVideoById = async (req, res) => {
 // Adding a comment
 export const addComment = async (req, res) => {
   try {
-    const { videoId, userId, userImage, username, comment } = req.body;
+    const { videoId, userId, userImage, username, comment, createdAt } =
+      req.body;
     const video = await Videos.findById(videoId);
 
     if (!video) {
@@ -165,6 +166,7 @@ export const addComment = async (req, res) => {
       userImage,
       username,
       comment,
+      createdAt,
     };
     video.comments.push(newComment);
     await video.save();
@@ -177,5 +179,125 @@ export const addComment = async (req, res) => {
     res
       .status(500)
       .json({ message: "Failed to add post", error: error.message });
+  }
+};
+
+// Getting all comments of a cuurent video
+export const getComments = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const video = await Videos.findById(id);
+
+    if (!video) {
+      return res.status(404).json({ message: "Video not found" });
+    }
+
+    const comments = video.comments;
+    res.status(200).json({ success: true, comments });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Failed to get comments", error: error.message });
+  }
+};
+
+//Updating the comment
+export const updateComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { editedComment } = req.body;
+
+    const video = await Videos.findOneAndUpdate(
+      { "comments._id": commentId },
+      { $set: { "comments.$.comment": editedComment } },
+      { new: true }
+    );
+
+    if (!video) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    res.json({ success: true, message: "Comment updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Deleting a comment
+export const deleteComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+
+    const video = await Videos.findOneAndUpdate(
+      { "comments._id": commentId },
+      { $pull: { comments: { _id: commentId } } },
+      { new: true }
+    );
+
+    if (!video) {
+      return res.status(404).json({ error: "Comment not found" });
+    }
+
+    res.json({ success: true, message: "Comment deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+// Like a comment
+export const likeComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { videoId, userId } = req.body;
+    const video = await Videos.findById(videoId);
+    const comment = video.comments.find((c) => c._id.toString() === commentId);
+    const userLikedIndex = comment.likes.findIndex(
+      (like) => like.userId === userId
+    );
+
+    if (userLikedIndex !== -1) {
+      const res = comment.likes.splice(userLikedIndex, 1);
+    } else {
+      const reuest = comment.likes.push({ userId });
+    }
+
+    await video.save();
+    res.json({ success: true, message: "Comment liked successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while liking the comment",
+    });
+  }
+};
+
+// Unlike a comment
+export const unlikeComment = async (req, res) => {
+  try {
+    const { commentId } = req.params;
+    const { videoId, userId } = req.body;
+    const video = await Videos.findById(videoId);
+    const comment = video.comments.find((c) => c._id.toString() === commentId);
+    const userLiked = comment.unlikes.find(
+      (unlike) => unlike.userId === userId
+    );
+    if (userLiked) {
+      comment.unlikes = comment.unlikes.filter(
+        (unlike) => unlike.userId !== userId
+      );
+    } else {
+      comment.unlikes.push({ userId });
+    }
+    await video.save();
+    res.json({ success: true, message: "Comment liked successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: "An error occurred while liking the comment",
+    });
   }
 };

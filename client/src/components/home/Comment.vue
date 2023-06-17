@@ -1,31 +1,31 @@
 <template>
   <div class="comments-container" :class="{ 'slide-up': show }">
-    <div class="comment-header">
-      <h3 class="comment-title">Comments</h3>
-      <i class="fa-solid fa-circle-xmark" @click="closeComment"></i>
+    <div v-if="isLoading" class="mt-20 flex justify-center">
+      <img src="../../../public/img/spinner.svg" alt="loading" />
     </div>
-    <div>
-      <form class="flex items-center w-full" @submit.prevent="handleComment">
-        <div
-          class="flex items-center justify-center bg-gray-700 mr-2 rounded-full w-10 h-10 justify-center border-2 border-gray-200 overflow-hidden"
-        >
-          <img v-if="userImage" :src="userImage" class="h-12 object-cover" />
-        </div>
-        <input
-          class="comment-input"
-          type="text"
-          placeholder="Add comment..."
-          v-model="comment"
-          @input="handleCommentUpdate"
+    <div class="relative w-full h-full flex flex-col items-center">
+      <section class="comment-header">
+        <h3 class="comment-title">Comments</h3>
+        <i class="fa-solid fa-circle-xmark" @click="closeComment"></i>
+      </section>
+      <section class="w-full h-full flex flex-col overflow-scroll">
+        <CommentCard
+          :comments="comments"
+          @commentDeleted="handleCommentDeleted"
         />
-      </form>
+      </section>
+      <section class="add-comment">
+        <AddComment @commentAdded="handleCommentAdded" />
+      </section>
     </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, inject } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
+import CommentCard from "@/components/comments/CommentCard.vue";
+import AddComment from "@/components/comments/AddComment.vue";
 
 export default {
   name: "Comment",
@@ -35,72 +35,59 @@ export default {
       required: true,
     },
   },
+  components: {
+    CommentCard,
+    AddComment,
+  },
   setup(props, { emit }) {
-    const store = inject("store");
     const currentVideoId = ref("");
-    const userId = ref("");
-    const userImage = ref("");
-    const username = ref("");
-    const comment = ref("");
+    const comments = ref([]);
+    const isLoading = ref(true);
     const route = useRoute();
 
     onMounted(async () => {
-      await store.methods.load();
       currentVideoId.value = route.params.id;
-      userId.value = store.state.userData?._id;
-      userImage.value = store.state.userData?.userImage;
-      username.value = store.state.userData?.username;
-      console.log("videoId", currentVideoId.value);
-      console.log("userId", userId.value);
-      console.log("userImage", userImage.value);
-      console.log("username", username.value);
+      await getComments();
+    });
+
+    watch(currentVideoId, async (newVideoId) => {
+      comments.value = [];
+      isLoading.value = true;
+      await getComments();
     });
 
     const closeComment = () => {
       emit("closeClicked");
     };
 
-    const handleCommentUpdate = (e) => {
-      comment.value = e.target.value;
+    const handleCommentAdded = () => {
+      getComments();
     };
 
-    const handleComment = async () => {
+    const handleCommentDeleted = () => {
+      getComments();
+    };
+
+    const getComments = async () => {
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/comment`,
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              videoId: currentVideoId.value,
-              userId: userId.value,
-              userImage: userImage.value,
-              username: username.value,
-              comment: comment.value,
-            }),
-          }
+          `http://localhost:6500/api/videos/show-comments/${currentVideoId.value}`
         );
         const result = await response.json();
-        if (result.success) {
-          comment.value = "";
-        }
+        comments.value = result.comments;
+        isLoading.value = false;
       } catch (error) {
         console.log(error);
       }
     };
 
     return {
-      store,
-      userId,
-      userImage,
-      username,
-      comment,
       currentVideoId,
-      handleCommentUpdate,
+      isLoading,
+      comments,
       closeComment,
-      handleComment,
+      handleCommentAdded,
+      handleCommentDeleted,
     };
   },
 };
@@ -109,40 +96,45 @@ export default {
 <style scoped>
 .comments-container {
   position: absolute;
-  bottom: -40vh;
   left: 0;
   display: flex;
   flex-direction: column;
   justify-items: center;
-  justify-content: space-between;
-  align-content: center;
   width: 100%;
   height: 45vh;
-  padding: 8px 25px;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgb(243, 243, 243);
   border-top-right-radius: 15px;
   border-top-left-radius: 15px;
-  transition: bottom 0.3s ease-in-out;
-  z-index: 100;
+  overflow: hidden;
+}
+
+.overflow-scroll::-webkit-scrollbar {
+  display: none;
 }
 .comment-header {
   display: grid;
-  position: relative;
+  position: sticky;
+  top: 0;
+  height: 30px;
   width: 100%;
   grid-column: 1 / -1;
   justify-content: center;
+  margin-bottom: 20px;
+  background-color: rgb(243, 243, 243);
+  z-index: 10;
 }
 .comment-title {
   align-self: center;
   margin-top: -10px;
-  padding: 10px;
+  padding: 15px;
   font-size: 12px;
 }
 .fa-circle-xmark {
   position: absolute;
-  right: -15px;
+  right: 8px;
   color: #ba2f74;
   cursor: pointer;
+  top: 5px;
 }
 .comment-container > .comment {
   display: flex;
@@ -160,19 +152,12 @@ export default {
   transition: bottom 0.3s ease-in-out;
   z-index: 100;
 }
-input {
-  position: relative;
-  width: 85%;
-  border-radius: 6px;
-  font-size: 12px;
-  padding: 6px;
-  border: 1px solid #ba2f74;
-}
-input::placeholder {
-  font-size: 12px;
-  padding-left: 6px;
-}
-input:focus {
-  outline: none;
+.add-comment {
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  height: 60px;
+  padding: 8px 20px;
+  background-color: rgb(243, 243, 243);
 }
 </style>
