@@ -139,25 +139,30 @@ export default {
     const saveEditing = async (commentId) => {
       const comment = props.comments.find((c) => c._id === commentId);
       if (comment) {
-        const editedComment = comment.editedComment;
-        comment.editing = false;
-        comment.comment = editedComment;
-        try {
-          const response = await fetch(
-            `http://localhost:6500/api/videos/comment/${comment._id}`,
-            {
-              method: "PATCH",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify({
-                editedComment: editedComment,
-              }),
-            }
-          );
-          await response.json();
-        } catch (error) {
-          console.log(error);
+        const editedComment = comment.editedComment.trim();
+        if (editedComment === "") {
+          await deleteComment(commentId);
+        } else {
+          const editedComment = comment.editedComment;
+          comment.editing = false;
+          comment.comment = editedComment;
+          try {
+            const response = await fetch(
+              `http://localhost:6500/api/videos/comment/${comment._id}`,
+              {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  editedComment: editedComment,
+                }),
+              }
+            );
+            await response.json();
+          } catch (error) {
+            console.log(error);
+          }
         }
       }
     };
