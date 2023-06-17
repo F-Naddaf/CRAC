@@ -21,13 +21,12 @@
         @closeClicked="closeSocialMedia"
       />
     </div>
-    <div v-if="showComment">
-      <Comment
-        :show="showComment"
-        :videoId="videoId"
-        @closeClicked="closeComment"
-      />
-    </div>
+    <Comment
+      v-if="showComment"
+      :show="showComment"
+      :videoId="videoId"
+      @closeClicked="closeComment"
+    />
   </div>
 </template>
 

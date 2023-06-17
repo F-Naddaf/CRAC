@@ -5,13 +5,6 @@
         {{ error }}
       </p>
     </div>
-    <!-- <p class="absolute left-20 top-20 text-base text-primary-200">
-      {{ currentVideoId }}
-    </p> -->
-    <p class="absolute left-20 top-20 text-base text-primary-200">
-      {{ currentVideoId }}
-    </p>
-
     <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
       <source
         class="source"

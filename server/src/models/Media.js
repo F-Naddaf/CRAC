@@ -7,7 +7,21 @@ export const mediaSchema = new mongoose.Schema({
   userId: String,
   userImage: String,
   username: String,
-  amountOfLike: Number,
+  comments: [
+    {
+      videoId: String,
+      userId: String,
+      userImage: String,
+      username: String,
+      comment: String,
+      likes: [{ userId: String }],
+      unlikes: [{ userId: String }],
+      createdAt: {
+        type: Date,
+        default: Date.now,
+      },
+    },
+  ],
 });
 
 export const Videos = mongoose.model("Videos", mediaSchema);
