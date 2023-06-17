@@ -14,28 +14,37 @@
         v-show="!state.playing"
       />
     </video>
-    <div class="absolute bottom-20 left-4">
+    <div class="absolute bottom-20 left-4 w-full">
       <p
         class="text-base text-primary-200"
         style="text-shadow: 0.5px 0.5px #262626"
       >
         #{{ video.username }}
       </p>
-      <p
-        class="text-sm text-label -mt-1 ml-2 w-4/5 relative"
-        style="text-shadow: 0.5px 0.5px #262626"
-      >
-        <span v-if="!showFullTitle">{{ shortTitle }}</span>
-        <span v-else>{{ video.title }}</span>
-
+      <div class="w-8/12 relative">
+        <div
+          v-if="!showFullTitle"
+          class="-mt-1 ml-2 relative w-full"
+          style="text-shadow: 0.5px 0.5px #262626"
+        >
+          <p class="text-sm text-label">{{ shortTitle }}</p>
+        </div>
+        <div
+          v-else
+          class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
+          id="long-title"
+          style="text-shadow: 0.5px 0.5px #262626"
+        >
+          <p class="text-sm text-label w-full">{{ video.title }}</p>
+        </div>
         <button
           v-if="video.title.length > 45"
           @click="toggleFullTitle"
-          class="absolute right-0 bottom-0 text-xs ml-2 text-primary-200"
+          class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
         >
           {{ showFullTitle ? "Hide" : "More..." }}
         </button>
-      </p>
+      </div>
     </div>
     <div class="absolute bottom-20 right-4 z-30">
       <SideNav
@@ -207,6 +216,15 @@ export default {
   z-index: 20;
   white-space: nowrap;
   overflow: hidden;
-  /* text-overflow: ellipsis; */
+}
+#long-title::-webkit-scrollbar {
+  width: 5px;
+}
+#long-title::-webkit-scrollbar-thumb {
+  background: #ba2f74;
+  border-radius: 2px;
+}
+#long-title::-webkit-scrollbar-track {
+  background: rgba(187, 174, 174, 0.2);
 }
 </style>
