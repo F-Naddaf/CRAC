@@ -46,7 +46,7 @@
         </button>
       </div>
     </div>
-    <div class="absolute bottom-20 right-4 z-30">
+    <div class="absolute bottom-24 right-4 z-30">
       <SideNav
         @shareClicked="toggleSocialMedia"
         @commentClicked="toggleComment"
@@ -58,6 +58,7 @@
         :videoFavorite="videoFavorite"
         :amountOfComments="video.amountOfComments"
         :commentAmount="commentAmount"
+        :saved="video.saved"
       ></SideNav>
     </div>
   </div>
@@ -85,7 +86,6 @@ export default {
     const previousVisibality = ref(0);
     const currentVideoId = ref(props.video._id);
     const videoFavorite = ref(props.video.favorite);
-    // const amountOfComments = ref(props.commentAmount);
 
     watchEffect(() => {
       videoFavorite.value = props.video.favorite;
@@ -191,8 +191,6 @@ export default {
       play,
       pause,
       videoFavorite,
-      // amountOfComments,
-      // updatedAmountOfComments,
       currentVideoId,
       handleVideoId,
       togglePlay,

@@ -449,7 +449,7 @@ export const addToFavorite = async (req, res) => {
   }
 };
 
-// Adding video to user
+// Saving video to user
 export const addSavedVideos = async (req, res) => {
   const { videoId, userId, url } = req.body;
 
@@ -473,6 +473,10 @@ export const addSavedVideos = async (req, res) => {
 
     if (savedIndex > -1) {
       user.savedVideos.splice(savedIndex, 1);
+      if (video.saved && video.saved > 0) {
+        video.saved--;
+        await video.save();
+      }
       res.json({
         success: true,
         result: user,
@@ -480,6 +484,8 @@ export const addSavedVideos = async (req, res) => {
       });
     } else {
       user.savedVideos.push({ videoId, url });
+      video.saved = (video.saved || 0) + 1;
+      await video.save();
       res.json({
         success: true,
         result: user,

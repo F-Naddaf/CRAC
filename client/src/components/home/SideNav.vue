@@ -33,7 +33,7 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-6">
       <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
         <p class="text-primary-200 text-xs font-semibold">
@@ -42,7 +42,7 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <div class="mt-6">
       <button @click="saveVideo" class="iconCard">
         <i
           class="fa-solid fa-bookmark text-2xl text-gray-200"
@@ -52,10 +52,12 @@
               : 'text-gray-200'
           }`"
         ></i>
+        <p class="text-primary-200 text-xs font-semibold">
+          {{ updatedAmountOfSaved }}
+        </p>
       </button>
     </div>
-
-    <div class="mt-10">
+    <div class="mt-6">
       <button class="iconCard" @click="$emit('shareClicked')">
         <i class="fa-solid fa-share text-2xl text-gray-200"></i>
       </button>
@@ -93,6 +95,10 @@ export default {
       type: Number,
       default: 0,
     },
+    saved: {
+      type: Number,
+      default: 0,
+    },
   },
   name: "SideNav",
   emits: ["error-message", "shareClicked", "commentClicked"],
@@ -107,6 +113,7 @@ export default {
     const updatedAmountOfFavorite = ref(props.videoFavorite);
     const currentAmountOfComments = ref(props.amountOfComments);
     const updatedAmountOfComments = ref(props.commentAmount);
+    const updatedAmountOfSaved = ref(props.saved);
 
     const router = useRouter();
 
@@ -263,6 +270,18 @@ export default {
           const error = json.message;
           emit("error-message", error);
         }
+        if (
+          json.message === "Video is removed from saved videos successfully"
+        ) {
+          updatedAmountOfSaved.value -= 1;
+        } else if (
+          json.message === "Video is added to saved videos successfully"
+        ) {
+          isFavorite.value = true;
+          updatedAmountOfSaved.value += 1;
+        } else {
+          updatedAmountOfSaved.value = props.saved;
+        }
         store.methods.updateUser(json.result);
         isSaved.value = true;
       } catch (error) {
@@ -278,6 +297,7 @@ export default {
       updatedAmountOfFavorite,
       currentAmountOfComments,
       updatedAmountOfComments,
+      updatedAmountOfSaved,
       currentUserimage,
       friendsArry,
       showAdd,

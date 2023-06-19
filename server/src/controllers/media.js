@@ -151,37 +151,6 @@ export const getVideoById = async (req, res) => {
 };
 
 // Adding a comment
-// export const addComment = async (req, res) => {
-//   try {
-//     const { videoId, userId, userImage, username, comment, createdAt } =
-//       req.body;
-//     const video = await Videos.findById(videoId);
-
-//     if (!video) {
-//       return res.status(404).json({ message: "Video not found" });
-//     }
-//     const newComment = {
-//       videoId,
-//       userId,
-//       userImage,
-//       username,
-//       comment,
-//       createdAt,
-//     };
-//     video.comments.push(newComment);
-//     await video.save();
-//     res.status(200).json({
-//       success: true,
-//       message: "Post added successfully",
-//       comment: newComment,
-//     });
-//   } catch (error) {
-//     res
-//       .status(500)
-//       .json({ message: "Failed to add post", error: error.message });
-//   }
-// };
-
 export const addComment = async (req, res) => {
   try {
     const { videoId, userId, userImage, username, comment, createdAt } =
@@ -304,9 +273,9 @@ export const likeComment = async (req, res) => {
     );
 
     if (userLikedIndex !== -1) {
-      const res = comment.likes.splice(userLikedIndex, 1);
+      comment.likes.splice(userLikedIndex, 1);
     } else {
-      const reuest = comment.likes.push({ userId });
+      comment.likes.push({ userId });
     }
 
     await video.save();
