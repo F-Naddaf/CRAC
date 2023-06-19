@@ -55,7 +55,7 @@
         :userImage="video.userImage"
         :videoUrl="video.url"
         :videoId="video._id"
-        :amountOfLike="video.amountOfLike"
+        :amountOfFavorite="video.favorite"
       ></SideNav>
     </div>
   </div>

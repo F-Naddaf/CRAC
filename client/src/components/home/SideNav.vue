@@ -18,7 +18,7 @@
       </button>
     </div>
 
-    <div class="mt-10">
+    <!-- <div class="mt-10">
       <button @click="addToFavorite" class="iconCard">
         <i
           class="fa-solid fa-heart text-2xl"
@@ -33,6 +33,21 @@
           class="absolute -bottom-1 left-5 text-primary-100 text-xs font-semibold"
         >
           {{ updatedAmountOfLike }}
+        </p>
+      </button>
+    </div> -->
+    <div class="mt-8">
+      <button @click="addToFavorite" class="iconCard">
+        <i
+          class="fa-solid fa-heart text-2xl"
+          :class="`${
+            isFavorite(store.state.userData?.favoriteVideos)
+              ? 'text-primary-100'
+              : 'text-gray-200'
+          }`"
+        ></i>
+        <p class="text-primary-200 text-xs font-semibold">
+          {{ updatedAmountOfFavorite }}
         </p>
       </button>
     </div>
@@ -82,9 +97,8 @@ export default {
     videoUrl: {
       type: String,
     },
-    amountOfLike: {
+    amountOfFavorite: {
       type: Number,
-      required: true,
       default: 0,
     },
   },
@@ -94,7 +108,7 @@ export default {
   setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
-    const updatedAmountOfLike = ref(props.amountOfLike);
+    const updatedAmountOfFavorite = ref(props.amountOfFavorite);
     const currentUserimage = ref(props.userImage);
     const friendsArry = ref([]);
     const userId = ref("");
@@ -201,14 +215,14 @@ export default {
           emit("error-message", error);
         }
         if (json.message === "Video is removed from favorites successfully") {
-          updatedAmountOfLike.value -= 1;
+          updatedAmountOfFavorite.value -= 1;
         } else if (
           json.message === "Video is added to favorites successfully"
         ) {
           isFavorite.value = true;
-          updatedAmountOfLike.value += 1;
+          updatedAmountOfFavorite.value += 1;
         } else {
-          updatedAmountOfLike.value = props.amountOfLike;
+          updatedAmountOfFavorite.value = props.amountOfFavorite;
         }
       } catch (error) {
         console.error(error);
@@ -251,7 +265,7 @@ export default {
       isFavorite,
       isSaved,
       currentUserId,
-      updatedAmountOfLike,
+      updatedAmountOfFavorite,
       currentUserimage,
       friendsArry,
       showAdd,
