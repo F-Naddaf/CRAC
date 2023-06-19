@@ -55,6 +55,9 @@
     <div class="mt-10">
       <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
+        <p class="text-primary-200 text-xs font-semibold">
+          {{ updatedAmountOfComments }}
+        </p>
       </button>
     </div>
 
@@ -101,6 +104,10 @@ export default {
       type: Number,
       default: 0,
     },
+    amountOfComments: {
+      type: Number,
+      default: 0,
+    },
   },
   name: "SideNav",
   emits: ["error-message", "shareClicked", "commentClicked"],
@@ -108,7 +115,8 @@ export default {
   setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
-    const updatedAmountOfFavorite = ref(props.amountOfFavorite);
+    const updatedAmountOfFavorite = ref(0);
+    const updatedAmountOfComments = ref(props.amountOfComments);
     const currentUserimage = ref(props.userImage);
     const friendsArry = ref([]);
     const userId = ref("");
@@ -120,8 +128,10 @@ export default {
       await store.methods.load();
       friendsArry.value = store.state.userData?.friends;
       currentUserId.value = store.state.userData?._id;
+      updatedAmountOfFavorite.value = props.amountOfFavorite;
       userId.value = props.userId;
       showAddToFriends();
+      console.log("updatedAmountOfFavorite", props.amountOfFavorite);
     });
 
     const showAddToFriends = () => {
@@ -266,6 +276,7 @@ export default {
       isSaved,
       currentUserId,
       updatedAmountOfFavorite,
+      updatedAmountOfComments,
       currentUserimage,
       friendsArry,
       showAdd,

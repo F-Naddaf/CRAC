@@ -55,9 +55,13 @@
         :userImage="video.userImage"
         :videoUrl="video.url"
         :videoId="video._id"
-        :amountOfFavorite="video.favorite"
+        :amountOfFavorites="video.favorite"
+        :amountOfComments="video.amountOfComments"
       ></SideNav>
     </div>
+    <h1 class="text-primary-100 absolute top-20 left-20 z-500">
+      {{ video.favorite }}
+    </h1>
   </div>
 </template>
 <script>
