@@ -277,15 +277,14 @@ export default {
         } else if (
           json.message === "Video is added to saved videos successfully"
         ) {
-          isFavorite.value = true;
+          isSaved.value = true;
           updatedAmountOfSaved.value += 1;
         } else {
           updatedAmountOfSaved.value = props.saved;
         }
         store.methods.updateUser(json.result);
-        isSaved.value = true;
       } catch (error) {
-        console.error(error);
+        console.log(error);
       }
     };
 
