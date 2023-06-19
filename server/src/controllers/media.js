@@ -187,7 +187,7 @@ export const addComment = async (req, res) => {
     const { videoId, userId, userImage, username, comment, createdAt } =
       req.body;
     const video = await Videos.findById(videoId);
-
+    console.log("video", video);
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
@@ -260,30 +260,10 @@ export const updateComment = async (req, res) => {
 };
 
 // Deleting a comment
-// export const deleteComment = async (req, res) => {
-//   try {
-//     const { commentId } = req.params;
-
-//     const video = await Videos.findOneAndUpdate(
-//       { "comments._id": commentId },
-//       { $pull: { comments: { _id: commentId } } },
-//       { new: true }
-//     );
-
-//     if (!video) {
-//       return res.status(404).json({ error: "Comment not found" });
-//     }
-
-//     res.json({ success: true, message: "Comment deleted successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
-
 export const deleteComment = async (req, res) => {
   try {
-    const { videoId, commentId } = req.body;
+    const { commentId } = req.params;
+    const { videoId } = req.body;
     const video = await Videos.findById(videoId);
 
     if (!video) {
@@ -299,7 +279,7 @@ export const deleteComment = async (req, res) => {
     }
 
     video.comments.splice(commentIndex, 1);
-    video.amountOfComments -= 1; // Decrement amountOfComments
+    video.amountOfComments -= 1;
     await video.save();
 
     res

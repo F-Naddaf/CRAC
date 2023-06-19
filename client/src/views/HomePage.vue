@@ -7,6 +7,7 @@
           @shareClicked="toggleSocialMedia"
           @commentClicked="toggleComment"
           :videos="videos"
+          :commentAmount="commentAmount"
         />
       </template>
       <template v-else>
@@ -26,12 +27,13 @@
       :show="showComment"
       :videoId="videoId"
       @closeClicked="closeComment"
+      @commentsAmount="commentsLength"
     />
   </div>
 </template>
 
 <script>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
@@ -50,10 +52,11 @@ export default {
   },
 
   setup(props) {
+    const route = useRoute();
     const showSocialMedia = ref(false);
     const showComment = ref(false);
     const videos = ref([]);
-    const route = useRoute();
+    const commentAmount = ref(0);
     const videoId = route.params.id;
 
     const getAllVideos = async () => {
@@ -90,6 +93,10 @@ export default {
       showComment.value = false;
     };
 
+    const commentsLength = (amount) => {
+      commentAmount.value = amount;
+    };
+
     onMounted(async () => {
       await getAllVideos();
     });
@@ -104,6 +111,8 @@ export default {
       closeSocialMedia,
       closeComment,
       getAllVideos,
+      commentAmount,
+      commentsLength,
     };
   },
 };

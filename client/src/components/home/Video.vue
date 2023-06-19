@@ -55,17 +55,15 @@
         :userImage="video.userImage"
         :videoUrl="video.url"
         :videoId="video._id"
-        :amountOfFavorites="video.favorite"
+        :videoFavorite="videoFavorite"
         :amountOfComments="video.amountOfComments"
+        :commentAmount="commentAmount"
       ></SideNav>
     </div>
-    <h1 class="text-primary-100 absolute top-20 left-20 z-500">
-      {{ video.favorite }}
-    </h1>
   </div>
 </template>
 <script>
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, reactive, onMounted, watch, computed, watchEffect } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 import { useRouter } from "vue-router";
 
@@ -74,17 +72,24 @@ export default {
   props: {
     video: Object,
     index: Number,
+    commentAmount: Number,
   },
   components: {
     SideNav,
   },
   setup(props, { emit }) {
+    const router = useRouter();
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
     const previousVisibality = ref(0);
     const currentVideoId = ref(props.video._id);
-    const router = useRouter();
+    const videoFavorite = ref(props.video.favorite);
+    // const amountOfComments = ref(props.commentAmount);
+
+    watchEffect(() => {
+      videoFavorite.value = props.video.favorite;
+    });
 
     const state = reactive({
       playing: false,
@@ -185,6 +190,9 @@ export default {
       previousVisibality,
       play,
       pause,
+      videoFavorite,
+      // amountOfComments,
+      // updatedAmountOfComments,
       currentVideoId,
       handleVideoId,
       togglePlay,

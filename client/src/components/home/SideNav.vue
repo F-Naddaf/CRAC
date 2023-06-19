@@ -17,25 +17,6 @@
         </button>
       </button>
     </div>
-
-    <!-- <div class="mt-10">
-      <button @click="addToFavorite" class="iconCard">
-        <i
-          class="fa-solid fa-heart text-2xl"
-          :class="`${
-            isFavorite(store.state.userData?.favoriteVideos)
-              ? 'text-primary-100'
-              : 'text-gray-200'
-          }`"
-        ></i>
-        <p
-          v-if="updatedAmountOfLike > 0"
-          class="absolute -bottom-1 left-5 text-primary-100 text-xs font-semibold"
-        >
-          {{ updatedAmountOfLike }}
-        </p>
-      </button>
-    </div> -->
     <div class="mt-8">
       <button @click="addToFavorite" class="iconCard">
         <i
@@ -56,7 +37,7 @@
       <button class="iconCard" @click="$emit('commentClicked')">
         <i class="fa-solid fa-comment-dots text-2xl text-gray-200"></i>
         <p class="text-primary-200 text-xs font-semibold">
-          {{ updatedAmountOfComments }}
+          {{ currentAmountOfComments }}
         </p>
       </button>
     </div>
@@ -83,7 +64,7 @@
 </template>
 
 <script>
-import { ref, inject, onMounted } from "vue";
+import { ref, inject, onMounted, watch } from "vue";
 import { useRouter } from "vue-router";
 
 export default {
@@ -100,11 +81,15 @@ export default {
     videoUrl: {
       type: String,
     },
-    amountOfFavorite: {
+    videoFavorite: {
       type: Number,
       default: 0,
     },
     amountOfComments: {
+      type: Number,
+      default: 0,
+    },
+    commentAmount: {
       type: Number,
       default: 0,
     },
@@ -115,23 +100,38 @@ export default {
   setup(props, { emit }) {
     const store = inject("store");
     const currentUserId = ref("");
-    const updatedAmountOfFavorite = ref(0);
-    const updatedAmountOfComments = ref(props.amountOfComments);
     const currentUserimage = ref(props.userImage);
     const friendsArry = ref([]);
     const userId = ref("");
     const showAdd = ref(false);
+    const updatedAmountOfFavorite = ref(props.videoFavorite);
+    const currentAmountOfComments = ref(props.amountOfComments);
+    const updatedAmountOfComments = ref(props.commentAmount);
 
     const router = useRouter();
+
+    watch(
+      () => props.videoFavorite,
+      (newVal) => {
+        updatedAmountOfFavorite.value = newVal;
+      }
+    );
+
+    watch(
+      () => props.commentAmount,
+      (newCommentAmount) => {
+        updatedAmountOfComments.value = newCommentAmount;
+        currentAmountOfComments.value = updatedAmountOfComments.value;
+      }
+    );
 
     onMounted(async () => {
       await store.methods.load();
       friendsArry.value = store.state.userData?.friends;
       currentUserId.value = store.state.userData?._id;
-      updatedAmountOfFavorite.value = props.amountOfFavorite;
+      updatedAmountOfFavorite.value = props.videoFavorite;
       userId.value = props.userId;
       showAddToFriends();
-      console.log("updatedAmountOfFavorite", props.amountOfFavorite);
     });
 
     const showAddToFriends = () => {
@@ -276,6 +276,7 @@ export default {
       isSaved,
       currentUserId,
       updatedAmountOfFavorite,
+      currentAmountOfComments,
       updatedAmountOfComments,
       currentUserimage,
       friendsArry,
