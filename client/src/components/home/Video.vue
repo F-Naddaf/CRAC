@@ -86,6 +86,7 @@ export default {
     const previousVisibality = ref(0);
     const currentVideoId = ref(props.video._id);
     const videoFavorite = ref(props.video.favorite);
+    const showFullTitle = ref(false);
 
     watchEffect(() => {
       videoFavorite.value = props.video.favorite;
@@ -95,7 +96,6 @@ export default {
       playing: false,
     });
 
-    const showFullTitle = ref(false);
 
     const play = () => {
       vidRef.value.play();

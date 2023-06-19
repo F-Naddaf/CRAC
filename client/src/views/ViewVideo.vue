@@ -1,6 +1,5 @@
 <template>
   <div class="w-full h-screen relative">
-    <HomeHeader />
     <div class="video-wrapper">
       <div class="message-container">
         <p v-if="showMessage" class="text-sm text-gray-200">
@@ -21,19 +20,37 @@
             v-show="!state.playing"
           />
         </video>
-        <div class="absolute bottom-20 left-4">
+        <div class="absolute bottom-20 left-4 w-full">
           <p
             class="text-base text-primary-200"
             style="text-shadow: 0.5px 0.5px #262626"
           >
             #{{ video.username }}
           </p>
-          <p
-            class="text-sm text-label -mt-1 ml-2 w-4/5"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            {{ video.title }}
-          </p>
+          <div class="w-8/12 relative">
+            <div
+              v-if="!showFullTitle"
+              class="-mt-1 ml-2 relative w-full"
+              style="text-shadow: 0.5px 0.5px #262626"
+            >
+              <p class="text-sm text-label">{{ shortTitle }}</p>
+            </div>
+            <div
+              v-else
+              class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
+              id="long-title"
+              style="text-shadow: 0.5px 0.5px #262626"
+            >
+              <p class="text-sm text-label w-full">{{ video.title }}</p>
+            </div>
+            <button
+              v-if="video.title.length > 45"
+              @click="toggleFullTitle"
+              class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
+            >
+              {{ showFullTitle ? "Hide" : "More..." }}
+            </button>
+          </div>
         </div>
         <div
           v-if="currentUserId === paramsId"
@@ -86,16 +103,14 @@
 </template>
 
 <script>
-import { ref, inject, reactive, onMounted, watch } from "vue";
+import { ref, inject, reactive, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
-import HomeHeader from "@/components/home/HomeHeader.vue";
 import NavBar from "@/components/NavBar.vue";
 import MediaTitle from "@/components/MediaTitle.vue";
 
 export default {
   name: "ViewVideo",
   components: {
-    HomeHeader,
     NavBar,
     MediaTitle,
   },
@@ -117,6 +132,8 @@ export default {
     const currentUserId = ref("");
     const userImage = ref(null);
     const username = ref(null);
+    const videoTitle = ref("");
+    const showFullTitle = ref(false);
     const route = useRoute();
     const router = useRouter();
 
@@ -130,6 +147,19 @@ export default {
       paramsId.value = route.params.id;
       currentUserId.value = store.state.userData?._id;
       getSearchedVideo();
+    });
+
+    const toggleFullTitle = () => {
+      showFullTitle.value = !showFullTitle.value;
+    };
+
+    const shortTitle = computed(() => {
+      const maxCharacters = 45;
+      if (videoTitle.value.length <= maxCharacters) {
+        return videoTitle.value;
+      } else {
+        return videoTitle.value.slice(0, maxCharacters) + "...";
+      }
     });
 
     const getSearchedVideo = async () => {
@@ -151,6 +181,7 @@ export default {
         userId.value = video.userId;
         userImage.value = video.userImage;
         username.value = video.username;
+        videoTitle.value = video.title;
         videos.value.push(video);
       } catch (error) {
         console.error(error);
@@ -219,12 +250,16 @@ export default {
       showMessage,
       url,
       userId,
+      videoTitle,
       paramsId,
       currentUserId,
+      showFullTitle,
+      shortTitle,
       userImage,
       username,
       videoId,
       showModel,
+      toggleFullTitle,
       toggleSocialMedia,
       closeSocialMedia,
       getSearchedVideo,
@@ -268,5 +303,15 @@ export default {
 #delete-btn:hover {
   background-color: #820342;
   color: rgb(206, 206, 206);
+}
+#long-title::-webkit-scrollbar {
+  width: 5px;
+}
+#long-title::-webkit-scrollbar-thumb {
+  background: #ba2f74;
+  border-radius: 2px;
+}
+#long-title::-webkit-scrollbar-track {
+  background: rgba(187, 174, 174, 0.2);
 }
 </style>
