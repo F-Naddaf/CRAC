@@ -156,7 +156,6 @@ export const addComment = async (req, res) => {
     const { videoId, userId, userImage, username, comment, createdAt } =
       req.body;
     const video = await Videos.findById(videoId);
-    console.log("video", video);
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }

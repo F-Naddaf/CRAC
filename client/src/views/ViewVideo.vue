@@ -27,7 +27,7 @@
           >
             #{{ video.username }}
           </p>
-          <div class="w-8/12 relative">
+          <div v-if="video.title" class="w-8/12 relative">
             <div
               v-if="!showFullTitle"
               class="-mt-1 ml-2 relative w-full"
@@ -44,7 +44,7 @@
               <p class="text-sm text-label w-full">{{ video.title }}</p>
             </div>
             <button
-              v-if="video.title.length > 45"
+              v-if="videoTitle.length > 45"
               @click="toggleFullTitle"
               class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
             >
@@ -119,6 +119,8 @@ export default {
   },
 
   setup(props) {
+    const route = useRoute();
+    const router = useRouter();
     const store = inject("store");
     const showSocialMedia = ref(false);
     const videos = ref([]);
@@ -134,8 +136,6 @@ export default {
     const username = ref(null);
     const videoTitle = ref("");
     const showFullTitle = ref(false);
-    const route = useRoute();
-    const router = useRouter();
 
     const state = reactive({
       playing: false,
@@ -146,7 +146,7 @@ export default {
       videoId.value = route.params.video;
       paramsId.value = route.params.id;
       currentUserId.value = store.state.userData?._id;
-      getSearchedVideo();
+      getVideo();
     });
 
     const toggleFullTitle = () => {
@@ -162,7 +162,7 @@ export default {
       }
     });
 
-    const getSearchedVideo = async () => {
+    const getVideo = async () => {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
@@ -221,7 +221,7 @@ export default {
       () => route.params.id,
       (newVideoId) => {
         videoId.value = newVideoId;
-        getSearchedVideo();
+        getVideo();
       }
     );
 
@@ -262,7 +262,7 @@ export default {
       toggleFullTitle,
       toggleSocialMedia,
       closeSocialMedia,
-      getSearchedVideo,
+      getVideo,
       deleteVideo,
       postNow,
       close,

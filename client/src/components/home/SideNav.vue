@@ -220,6 +220,7 @@ export default {
             },
             body: JSON.stringify({
               userId: store.state.userData?._id,
+              id: userId.value,
               videoId: props.videoId,
               url: props.videoUrl,
             }),
@@ -260,6 +261,7 @@ export default {
             },
             body: JSON.stringify({
               userId: store.state.userData?._id,
+              id: userId.value,
               videoId: props.videoId,
               url: props.videoUrl,
             }),

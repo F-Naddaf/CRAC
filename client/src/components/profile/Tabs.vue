@@ -46,7 +46,7 @@
         </button>
       </li>
     </ul>
-    <Videos :videos="filteredVideos"></Videos>
+    <Videos :videos="filteredVideos" :userCate="userCate"></Videos>
   </div>
 </template>
 
@@ -61,18 +61,23 @@ export default {
     Videos,
   },
   setup(props) {
+    const router = useRouter();
     const store = inject("store");
     const unPosted = ref([]);
     const posted = ref([]);
     const saved = ref([]);
     const favorite = ref([]);
     const userId = ref("");
+    const userCate = ref(false);
     const activeCategory = ref("Unposted");
-
-    const router = useRouter();
 
     const selectCategory = (category) => {
       activeCategory.value = category;
+      if (category === "Unposted" || category === "Posted") {
+        userCate.value = false;
+      } else {
+        userCate.value = true;
+      }
     };
 
     const isActiveCategory = (category) => {
@@ -140,6 +145,7 @@ export default {
       userId,
       unPosted,
       posted,
+      userCate,
       saved,
       favorite,
       selectCategory,
