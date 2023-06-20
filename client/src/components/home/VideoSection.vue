@@ -6,6 +6,9 @@
     v-swipe="onSwipe"
     :style="state.style"
   >
+    <!-- <h1 class="text-red-500 absolute top-20 right-20 z-500">
+      {{ amountOfComments }}
+    </h1> -->
     <Video
       v-for="(video, index) in videos"
       :key="video._id"
@@ -27,6 +30,7 @@
       "
       @shareClicked="toggleSocialMedia"
       @commentClicked="toggleComment"
+      :commentAmount="commentAmount"
     >
     </Video>
   </div>
@@ -50,12 +54,22 @@ export default {
   emits: ["video-id"],
   props: {
     videos: Array,
+    commentAmount: Number,
   },
   setup(props, { emit }) {
     const videos = ref(props.videos);
     const videoRefs = ref([]);
     const currentVideoRef = ref(null);
     const currentVideoIndex = ref(0);
+    // const amountOfComments = ref(props.commentAmount);
+
+    // watch(
+    //   () => props.commentAmount,
+    //   (newCommentAmount) => {
+    //     amountOfComments.value = newCommentAmount;
+    //     console.log("New commentAmount:", newCommentAmount);
+    //   }
+    // );
 
     const state = reactive({
       currentSlide: 1,
@@ -124,6 +138,7 @@ export default {
       enableSwipe,
       toggleSocialMedia,
       toggleComment,
+      // amountOfComments,
     };
   },
 };

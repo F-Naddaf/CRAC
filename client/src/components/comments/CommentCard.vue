@@ -78,6 +78,7 @@ export default {
   name: "CommentCard",
   props: {
     comments: Array,
+    currentVideoId: String,
   },
   components: {
     LikeUnlikeButton,
@@ -178,6 +179,9 @@ export default {
               headers: {
                 "Content-Type": "application/json",
               },
+              body: JSON.stringify({
+                videoId: props.currentVideoId,
+              }),
             }
           );
           const result = await response.json();

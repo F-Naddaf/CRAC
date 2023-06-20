@@ -156,10 +156,10 @@ export const addComment = async (req, res) => {
     const { videoId, userId, userImage, username, comment, createdAt } =
       req.body;
     const video = await Videos.findById(videoId);
-
     if (!video) {
       return res.status(404).json({ message: "Video not found" });
     }
+
     const newComment = {
       videoId,
       userId,
@@ -168,17 +168,20 @@ export const addComment = async (req, res) => {
       comment,
       createdAt,
     };
+
     video.comments.push(newComment);
+    video.amountOfComments += 1;
     await video.save();
+
     res.status(200).json({
       success: true,
-      message: "Post added successfully",
+      message: "Comment added successfully",
       comment: newComment,
     });
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Failed to add post", error: error.message });
+      .json({ message: "Failed to add comment", error: error.message });
   }
 };
 
@@ -228,21 +231,32 @@ export const updateComment = async (req, res) => {
 export const deleteComment = async (req, res) => {
   try {
     const { commentId } = req.params;
-
-    const video = await Videos.findOneAndUpdate(
-      { "comments._id": commentId },
-      { $pull: { comments: { _id: commentId } } },
-      { new: true }
-    );
+    const { videoId } = req.body;
+    const video = await Videos.findById(videoId);
 
     if (!video) {
-      return res.status(404).json({ error: "Comment not found" });
+      return res.status(404).json({ message: "Video not found" });
     }
 
-    res.json({ success: true, message: "Comment deleted successfully" });
+    const commentIndex = video.comments.findIndex(
+      (comment) => comment._id.toString() === commentId
+    );
+
+    if (commentIndex === -1) {
+      return res.status(404).json({ message: "Comment not found" });
+    }
+
+    video.comments.splice(commentIndex, 1);
+    video.amountOfComments -= 1;
+    await video.save();
+
+    res
+      .status(200)
+      .json({ success: true, message: "Comment deleted successfully" });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal server error" });
+    res
+      .status(500)
+      .json({ message: "Failed to delete comment", error: error.message });
   }
 };
 
@@ -258,9 +272,9 @@ export const likeComment = async (req, res) => {
     );
 
     if (userLikedIndex !== -1) {
-      const res = comment.likes.splice(userLikedIndex, 1);
+      comment.likes.splice(userLikedIndex, 1);
     } else {
-      const reuest = comment.likes.push({ userId });
+      comment.likes.push({ userId });
     }
 
     await video.save();

@@ -46,7 +46,7 @@
         </button>
       </div>
     </div>
-    <div class="absolute bottom-20 right-4 z-30">
+    <div class="absolute bottom-24 right-4 z-30">
       <SideNav
         @shareClicked="toggleSocialMedia"
         @commentClicked="toggleComment"
@@ -55,13 +55,16 @@
         :userImage="video.userImage"
         :videoUrl="video.url"
         :videoId="video._id"
-        :amountOfFavorite="video.favorite"
+        :videoFavorite="videoFavorite"
+        :amountOfComments="video.amountOfComments"
+        :commentAmount="commentAmount"
+        :saved="video.saved"
       ></SideNav>
     </div>
   </div>
 </template>
 <script>
-import { ref, reactive, onMounted, watch, computed } from "vue";
+import { ref, reactive, onMounted, watch, computed, watchEffect } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 import { useRouter } from "vue-router";
 
@@ -70,23 +73,29 @@ export default {
   props: {
     video: Object,
     index: Number,
+    commentAmount: Number,
   },
   components: {
     SideNav,
   },
   setup(props, { emit }) {
+    const router = useRouter();
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
     const previousVisibality = ref(0);
     const currentVideoId = ref(props.video._id);
-    const router = useRouter();
+    const videoFavorite = ref(props.video.favorite);
+    const showFullTitle = ref(false);
+
+    watchEffect(() => {
+      videoFavorite.value = props.video.favorite;
+    });
 
     const state = reactive({
       playing: false,
     });
 
-    const showFullTitle = ref(false);
 
     const play = () => {
       vidRef.value.play();
@@ -181,6 +190,7 @@ export default {
       previousVisibality,
       play,
       pause,
+      videoFavorite,
       currentVideoId,
       handleVideoId,
       togglePlay,

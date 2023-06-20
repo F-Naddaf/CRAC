@@ -401,12 +401,12 @@ export const deleteFriend = async (req, res) => {
 
 // Add video to favorite
 export const addToFavorite = async (req, res) => {
-  const { videoId, userId, url } = req.body;
+  const { videoId, userId, url, id } = req.body;
   try {
     const user = await User.findById(userId);
     const video = await Videos.findById(videoId);
 
-    if (!user || !video || !url) {
+    if (!user || !video || !url || !id) {
       return res.status(404).json({ message: "User or video not found" });
     }
 
@@ -432,7 +432,7 @@ export const addToFavorite = async (req, res) => {
         message: "Video is removed from favorites successfully",
       });
     } else {
-      user.favoriteVideos.push({ videoId, url });
+      user.favoriteVideos.push({ videoId, url, userId: id });
       video.favorite = (video.favorite || 0) + 1;
       await video.save();
       res.json({
@@ -449,15 +449,15 @@ export const addToFavorite = async (req, res) => {
   }
 };
 
-// Adding video to user
+// Saving video to user
 export const addSavedVideos = async (req, res) => {
-  const { videoId, userId, url } = req.body;
+  const { videoId, userId, url, id } = req.body;
 
   try {
     const user = await User.findById(userId);
     const video = await Videos.findById(videoId);
 
-    if (!user || !video || !url) {
+    if (!user || !video || !url || !id) {
       return res.status(404).json({ message: "User or video not found" });
     }
 
@@ -473,13 +473,19 @@ export const addSavedVideos = async (req, res) => {
 
     if (savedIndex > -1) {
       user.savedVideos.splice(savedIndex, 1);
+      if (video.saved && video.saved > 0) {
+        video.saved--;
+        await video.save();
+      }
       res.json({
         success: true,
         result: user,
         message: "Video is removed from saved videos successfully",
       });
     } else {
-      user.savedVideos.push({ videoId, url });
+      user.savedVideos.push({ videoId, url, userId: id });
+      video.saved = (video.saved || 0) + 1;
+      await video.save();
       res.json({
         success: true,
         result: user,

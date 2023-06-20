@@ -3,6 +3,9 @@
     <div v-if="isLoading" class="mt-20 flex justify-center">
       <img src="../../../public/img/spinner.svg" alt="loading" />
     </div>
+    <!-- <h1 class="text-red-500 absolute top-20 left-20 z-500">
+      {{ comments.length }}
+    </h1> -->
     <div class="relative w-full h-full flex flex-col items-center">
       <section class="comment-header">
         <h3 class="comment-title">Comments</h3>
@@ -11,6 +14,7 @@
       <section class="w-full h-full flex flex-col overflow-scroll">
         <CommentCard
           :comments="comments"
+          :currentVideoId="currentVideoId"
           @commentDeleted="handleCommentDeleted"
         />
       </section>
@@ -76,6 +80,7 @@ export default {
         );
         const result = await response.json();
         comments.value = result.comments;
+        emit("commentsAmount", comments.value.length);
         isLoading.value = false;
       } catch (error) {
         console.log(error);

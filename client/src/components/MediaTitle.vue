@@ -117,6 +117,9 @@ export default {
         if (json.success) {
           success.value = true;
           message.value = json.message;
+          if (props.closeCamera) {
+            props.closeCamera();
+          }
           setTimeout(() => {
             router.push(`/profile/${props.userId}`);
           }, 2000);

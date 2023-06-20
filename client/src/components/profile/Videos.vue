@@ -6,7 +6,11 @@
       :key="index"
       @mouseover="playVideo(index)"
       @mouseout="pauseVideo(index)"
-      @click="openVideo(video._id, video.userId)"
+      @click="
+        userCate
+          ? openVideo(video.videoId, video.userId)
+          : openVideo(video._id, video.userId)
+      "
     >
       <i class="fa-solid fa-play"></i>
       <video
@@ -27,6 +31,9 @@ export default {
     videos: {
       type: Array,
       required: true,
+    },
+    userCate: {
+      type: Boolean,
     },
   },
   setup() {
