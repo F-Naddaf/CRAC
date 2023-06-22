@@ -20,38 +20,49 @@
             v-show="!state.playing"
           />
         </video>
-        <div class="absolute bottom-20 left-4 w-full">
-          <p
-            class="text-base text-primary-200"
-            style="text-shadow: 0.5px 0.5px #262626"
-          >
-            #{{ video.username }}
-          </p>
-          <div v-if="video.title" class="w-8/12 relative">
-            <div
-              v-if="!showFullTitle"
-              class="-mt-1 ml-2 relative w-full"
+        <section
+          class="absolute bottom-20 left-0 w-full items-center flex justify-between"
+        >
+          <aside class="ml-4">
+            <p
+              class="text-base text-primary-200"
               style="text-shadow: 0.5px 0.5px #262626"
             >
-              <p class="text-sm text-label">{{ shortTitle }}</p>
+              #{{ video.username }}
+            </p>
+            <div v-if="video.title" class="w-8/12 relative">
+              <div
+                v-if="!showFullTitle"
+                class="-mt-1 ml-2 relative w-full"
+                style="text-shadow: 0.5px 0.5px #262626"
+              >
+                <p class="text-sm text-label">{{ shortTitle }}</p>
+              </div>
+              <div
+                v-else
+                class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
+                id="long-title"
+                style="text-shadow: 0.5px 0.5px #262626"
+              >
+                <p class="text-sm text-label w-full">{{ video.title }}</p>
+              </div>
+              <button
+                v-if="videoTitle.length > 45"
+                @click="toggleFullTitle"
+                class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
+              >
+                {{ showFullTitle ? "Hide" : "More..." }}
+              </button>
             </div>
+          </aside>
+          <aside class="mr-4" v-if="currentUserId !== paramsId">
             <div
-              v-else
-              class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
-              id="long-title"
-              style="text-shadow: 0.5px 0.5px #262626"
+              class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
             >
-              <p class="text-sm text-label w-full">{{ video.title }}</p>
+              <img :src="video.userImage" class="h-10 object-cover spin" />
             </div>
-            <button
-              v-if="videoTitle.length > 45"
-              @click="toggleFullTitle"
-              class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
-            >
-              {{ showFullTitle ? "Hide" : "More..." }}
-            </button>
-          </div>
-        </div>
+          </aside>
+        </section>
         <div
           v-if="currentUserId === paramsId"
           class="absolute right-2 bottom-20 flex w-28 items-center justify-between"
@@ -290,8 +301,21 @@ export default {
   z-index: 20;
   white-space: nowrap;
   overflow: hidden;
-  /* text-overflow: ellipsis; */
 }
+
+.spin {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 #post-btn:hover {
   background-color: #034663;
   color: rgb(206, 206, 206);
