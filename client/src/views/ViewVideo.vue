@@ -56,11 +56,13 @@
             </div>
           </aside>
           <aside class="mr-4" v-if="currentUserId !== paramsId">
-            <div
-              class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
-            >
-              <img :src="video.userImage" class="h-10 object-cover spin" />
-            </div>
+            <button class="relative" @click="handleProfile">
+              <div
+                class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
+              >
+                <img :src="video.userImage" class="h-10 object-cover spin" />
+              </div>
+            </button>
           </aside>
         </section>
         <div
@@ -157,6 +159,7 @@ export default {
       videoId.value = route.params.video;
       paramsId.value = route.params.id;
       currentUserId.value = store.state.userData?._id;
+      console.log("userId", paramsId.value);
       getVideo();
     });
 
@@ -236,6 +239,14 @@ export default {
       }
     );
 
+    const handleProfile = () => {
+      if (paramsId.value !== currentUserId.value) {
+        router.push(`/friend/profile/${paramsId.value}`);
+      } else {
+        router.push(`/profile/${currentUserId.value}`);
+      }
+    };
+
     const toggleSocialMedia = () => {
       showSocialMedia.value = !showSocialMedia.value;
     };
@@ -274,6 +285,7 @@ export default {
       toggleSocialMedia,
       closeSocialMedia,
       getVideo,
+      handleProfile,
       deleteVideo,
       postNow,
       close,
