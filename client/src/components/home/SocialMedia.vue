@@ -58,7 +58,7 @@
 </template>
 
 <script>
-import { reactive } from "vue";
+import { onMounted, reactive } from "vue";
 
 export default {
   name: "SocialMedia",
@@ -86,37 +86,37 @@ export default {
     });
 
     const shareToFacebook = () => {
-      const url = `https://example/${props.videoId}/home.com`;
+      const url = `https://localhost:8080/${props.videoId}/home`;
       state.facebookLink = `https://www.facebook.com/share.php?u=${url}`;
       window.open(state.facebookLink);
     };
     const shareToMessenger = () => {
-      const url = "https://example.com";
+      const url = "https://localhost:8080/${props.videoId}/home";
       state.messengerLink = `https://www.facebook.com/dialog/send?link=${url}&app_id=1234567890`;
       window.open(state.messengerLink);
     };
     const shareToWhatsapp = () => {
-      const url = `https://example/${props.videoId}/home.com`;
+      const url = `https://localhost:8080/${props.videoId}/home`;
       const message = "Sharing a video from CRAC";
       state.whatsappLink = `https://wa.me/?text=${message}%20${url}`;
       window.open(state.whatsappLink);
     };
 
     const shareToTwitter = () => {
-      const url = "https://example.com";
+      const url = "https://localhost:8080/${props.videoId}/home";
       const message = "Sharing a video from CRAC";
       state.twitterLink = `https://twitter.com/share?url=${url}&text=${message}&hashtags=${""}`;
       window.open(state.twitterLink);
     };
 
     const shareToInstagram = () => {
-      const url = "https://example.com";
+      const url = "https://localhost:8080/${props.videoId}/home";
       state.instagramLink = `https://www.instagram.com/share?url=${url}&caption=${""}`;
       window.open(state.instagramLink);
     };
 
     const shareToEmail = () => {
-      const url = "https://example.com";
+      const url = "https://localhost:8080/${props.videoId}/home";
       const body = encodeURIComponent(
         `Hi,\n\nI wanted to share this link with you: ${url}\n\nEnjoy!`
       );
@@ -129,7 +129,7 @@ export default {
         alert("This feature is available for mobile devices only");
         return;
       }
-      const url = "https://example.com";
+      const url = "https://localhost:8080/${props.videoId}/home";
       const message = "Sharing a video from CRAC";
       state.smsLink = `sms:?body=${message} ${url}`;
       window.open(state.smsLink);
