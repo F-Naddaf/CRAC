@@ -16,9 +16,13 @@
         <p class="search">Search...</p>
       </div>
     </div>
-    <div class="logo-container">
-      <DanceAnimation />
-    </div>
+    <button @click="$emit('active-users-clicked')" class="logo-container">
+      <img
+        class="w-12 mb-1"
+        src="../../../public/img/online-logo.png"
+        alt="online"
+      />
+    </button>
   </div>
 </template>
 
@@ -123,6 +127,9 @@ export default {
   align-items: center;
   height: 40px;
   width: 40px;
-  margin: 8px;
+  margin-right: 8px;
+  margin-bottom: 1px;
+  z-index: 10;
+  cursor: pointer;
 }
 </style>

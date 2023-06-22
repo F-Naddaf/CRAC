@@ -6,6 +6,7 @@ import {
   loginWithGoogle,
   authenticateToken,
   getUser,
+  getActiveUsers,
   getUserById,
   addUserPhone,
   verifyCode,
@@ -20,6 +21,7 @@ import {
 const userRouter = express.Router();
 
 userRouter.get("/", authenticateToken, getUser);
+userRouter.get("/active", getActiveUsers);
 userRouter.get("/:id", authenticateToken, getUserById);
 userRouter.get("/friendDetails/:userId", getFriendDetails);
 userRouter.get("/followersDetail/:userId", getFollowersDetail);

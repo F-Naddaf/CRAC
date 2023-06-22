@@ -135,6 +135,16 @@ export const loginWithGoogle = async (req, res) => {
   }
 };
 
+// Get Active users
+export const getActiveUsers = async (req, res) => {
+  try {
+    const activeUsers = await User.find({ isActivate: true });
+    res.status(200).json(activeUsers);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 //Get the user details
 export const getUser = async (req, res) => {
   const email = req.user.email;

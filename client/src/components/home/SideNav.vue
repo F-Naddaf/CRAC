@@ -142,13 +142,15 @@ export default {
     });
 
     const showAddToFriends = () => {
-      const findFriend = friendsArry.value.some(
-        (friend) => friend.userId === props.userId
-      );
-      if (currentUserId.value === props.userId || findFriend) {
-        showAdd.value = false;
-      } else {
-        showAdd.value = true;
+      if (store.state.userData && store.state.userData.friends) {
+        const findFriend = store.state.userData.friends.some(
+          (friend) => friend.userId === props.userId
+        );
+        if (currentUserId.value === props.userId || findFriend) {
+          showAdd.value = false;
+        } else {
+          showAdd.value = true;
+        }
       }
     };
 
