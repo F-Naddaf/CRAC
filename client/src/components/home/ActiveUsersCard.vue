@@ -1,6 +1,6 @@
 <template>
   <div class="active-user-container">
-    <div class="active-card" :class="{ 'slide-down': showActiveUsersCard }">
+    <div class="active-card" :class="{ 'slide-down': showCard }">
       <button class="close-active-users" @click="$emit('close-clicked')">
         <p class="text-primary-100 text-sm font-semibold">Close</p>
       </button>
@@ -64,10 +64,18 @@ export default {
   props: {
     showActiveUsersCard: Boolean,
   },
-  setup(props) {
+  setup(props, { emit }) {
     const users = ref([]);
+    const showCard = ref(props.showActiveUsersCard);
+
+    const handleKeydown = (event) => {
+      if (event.key === "Escape") {
+        emit("close-clicked");
+      }
+    };
 
     onMounted(() => {
+      document.addEventListener("keydown", handleKeydown);
       activeUsers();
     });
 
@@ -75,7 +83,6 @@ export default {
       try {
         const response = await fetch(`http://localhost:6500/api/users/active`);
         const result = await response.json();
-        console.log("res", result);
         users.value = result;
       } catch (error) {
         console.log(error);
@@ -94,6 +101,7 @@ export default {
 
     return {
       users,
+      showCard,
       activeUsers,
       getCardStyle,
     };

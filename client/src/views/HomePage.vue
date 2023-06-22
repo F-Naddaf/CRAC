@@ -31,7 +31,7 @@
     />
     <div class="card-container" v-if="showActiveUsersCard">
       <ActiveUsersCard
-        :showActiveUsersCard="showActiveUsersCard"
+        :showCard="showActiveUsersCard"
         @close-clicked="handleCloseActiveUsers"
       />
     </div>
@@ -39,7 +39,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";

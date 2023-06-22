@@ -325,8 +325,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
   background-color: #ba2f74;
   border-radius: 50%;
   left: 50%;
