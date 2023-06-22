@@ -38,14 +38,21 @@
 
 <script>
 import { ref, inject, onMounted } from "vue";
-import router from "../router";
+import { useRouter } from "vue-router";
 
 export default {
   name: "NavBar",
   setup() {
+    const router = useRouter();
     const store = inject("store");
     const id = ref("");
     const videoId = ref("");
+
+    onMounted(async () => {
+      await store.methods.load();
+      id.value = store.state.userData?._id;
+      videoId.value = store.state.userData?.videoId;
+    });
 
     const goHome = () => {
       router.push(`/${videoId}/home`);
@@ -60,12 +67,6 @@ export default {
     const goFriends = () => {
       router.push("/friends");
     };
-
-    onMounted(async () => {
-      await store.methods.load();
-      id.value = store.state.userData?._id;
-      videoId.value = store.state.userData?.videoId;
-    });
 
     return {
       store,

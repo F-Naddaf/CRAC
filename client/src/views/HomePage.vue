@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-screen relative overflow-hidden">
-    <HomeHeader />
+    <HomeHeader @active-users-clicked="handleShowActiveUsers" />
     <div class="video-wrapper">
       <template v-if="videos.length > 0">
         <VideoSection
@@ -29,17 +29,24 @@
       @closeClicked="closeComment"
       @commentsAmount="commentsLength"
     />
+    <div class="card-container" v-if="showActiveUsersCard">
+      <ActiveUsersCard
+        :showCard="showActiveUsersCard"
+        @close-clicked="handleCloseActiveUsers"
+      />
+    </div>
   </div>
 </template>
 
 <script>
-import { ref, onMounted, watch } from "vue";
+import { ref, onMounted } from "vue";
 import { useRoute } from "vue-router";
 import HomeHeader from "@/components/home/HomeHeader.vue";
 import VideoSection from "@/components/home/VideoSection.vue";
 import NavBar from "@/components/NavBar.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
 import Comment from "@/components/home/Comment.vue";
+import ActiveUsersCard from "@/components/home/ActiveUsersCard.vue";
 
 export default {
   name: "HomePage",
@@ -49,6 +56,7 @@ export default {
     NavBar,
     SocialMedia,
     Comment,
+    ActiveUsersCard,
   },
 
   setup(props) {
@@ -58,6 +66,7 @@ export default {
     const videos = ref([]);
     const commentAmount = ref(0);
     const videoId = route.params.id;
+    const showActiveUsersCard = ref(false);
 
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
@@ -75,6 +84,10 @@ export default {
       } catch (error) {
         console.error(error);
       }
+    };
+
+    const handleShowActiveUsers = () => {
+      showActiveUsersCard.value = true;
     };
 
     const toggleSocialMedia = () => {
@@ -97,6 +110,10 @@ export default {
       commentAmount.value = amount;
     };
 
+    const handleCloseActiveUsers = () => {
+      showActiveUsersCard.value = false;
+    };
+
     onMounted(async () => {
       await getAllVideos();
     });
@@ -106,6 +123,7 @@ export default {
       showComment,
       videos,
       videoId,
+      showActiveUsersCard,
       toggleSocialMedia,
       toggleComment,
       closeSocialMedia,
@@ -113,6 +131,8 @@ export default {
       getAllVideos,
       commentAmount,
       commentsLength,
+      handleShowActiveUsers,
+      handleCloseActiveUsers,
     };
   },
 };
@@ -122,4 +142,24 @@ export default {
 .video-wrapper {
   height: 86vh;
 }
+.card-container {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 150;
+}
+/* .close-active-users {
+  position: absolute;
+  top: 5%;
+  left: 10%;
+  color: #ba2f74;
+  cursor: pointer;
+  z-index: 200;
+} */
 </style>

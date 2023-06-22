@@ -142,13 +142,15 @@ export default {
     });
 
     const showAddToFriends = () => {
-      const findFriend = friendsArry.value.some(
-        (friend) => friend.userId === props.userId
-      );
-      if (currentUserId.value === props.userId || findFriend) {
-        showAdd.value = false;
-      } else {
-        showAdd.value = true;
+      if (store.state.userData && store.state.userData.friends) {
+        const findFriend = store.state.userData.friends.some(
+          (friend) => friend.userId === props.userId
+        );
+        if (currentUserId.value === props.userId || findFriend) {
+          showAdd.value = false;
+        } else {
+          showAdd.value = true;
+        }
       }
     };
 
@@ -323,8 +325,8 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 16px;
-  width: 16px;
+  height: 18px;
+  width: 18px;
   background-color: #ba2f74;
   border-radius: 50%;
   left: 50%;

@@ -16,9 +16,14 @@
         <p class="search">Search...</p>
       </div>
     </div>
-    <div class="logo-container">
-      <DanceAnimation />
-    </div>
+    <button @click="$emit('active-users-clicked')" class="logo-container">
+      <img
+        class="w-12 mb-1"
+        src="../../../public/img/online-logo.png"
+        alt="online"
+      />
+      <div class="logo-shadow"></div>
+    </button>
   </div>
 </template>
 
@@ -123,6 +128,44 @@ export default {
   align-items: center;
   height: 40px;
   width: 40px;
-  margin: 8px;
+  margin-right: 8px;
+  margin-bottom: 1px;
+  z-index: 10;
+  cursor: pointer;
+}
+.logo-shadow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  transform: scale(1.2);
+  animation: animate 1s linear infinite;
+  background: radial-gradient(circle, #ba2f74 0%, rgba(186, 47, 116, 0) 70%);
+  z-index: -1;
+}
+
+@keyframes animate {
+  0% {
+    color: #fff;
+    filter: blur(8px) hue-rotate(0deg);
+    text-shadow: 0 0 10px #ba2f74,
+      0 0 20px #ba2f74 0 0 40px #ba2f74 0 0 80px #ba2f74 0 0 120px #ba2f74 0 0
+        200px #ba2f74 0 0 300px #ba2f74 0 0 400px #ba2f74;
+  }
+  30%,
+  70% {
+    color: #fff;
+    filter: blur(8px) hue-rotate(360deg);
+    text-shadow: 0 0 10px #ba2f74,
+      0 0 20px #ba2f74 0 0 40px #ba2f74 0 0 80px #ba2f74 0 0 120px #ba2f74 0 0
+        200px #ba2f74 0 0 300px #ba2f74 0 0 400px #ba2f74;
+  }
+  100% {
+    color: transparent;
+    box-shadow: none;
+    filter: blur(8px) hue-rotate(0deg);
+  }
 }
 </style>
