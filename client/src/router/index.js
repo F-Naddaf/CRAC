@@ -39,7 +39,7 @@ const routes = [
     component: HomePage,
   },
   {
-    path: "/search-result/:id",
+    path: "/search-result/:title",
     name: "SearchResultPage",
     component: SearchResultPage,
   },
