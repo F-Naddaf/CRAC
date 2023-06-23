@@ -4,7 +4,6 @@
       v-for="video in videos"
       :key="video._id"
       :to="`/view-video/${video._id}/${video.userId}`"
-      class="h-10"
     >
       <video loop autoplay class="video" ref="vidRef">
         <source class="source" :src="video.url" type="video/mp4" />
