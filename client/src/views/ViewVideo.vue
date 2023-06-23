@@ -23,51 +23,71 @@
         <section
           class="absolute bottom-20 left-0 w-full items-center flex justify-between"
         >
-          <aside class="ml-4">
-            <p
-              class="text-base text-primary-200"
-              style="text-shadow: 0.5px 0.5px #262626"
+          <div class="relative w-full">
+            <aside class="ml-4 w-full">
+              <p
+                class="text-base text-primary-200"
+                style="text-shadow: 0.5px 0.5px #262626"
+              >
+                #{{ video.username }}
+              </p>
+              <div v-if="video.title" class="w-8/12 relative">
+                <div
+                  v-if="!showFullTitle"
+                  class="-mt-1 ml-2 relative w-full"
+                  style="text-shadow: 0.5px 0.5px #262626"
+                >
+                  <p class="text-sm text-label">{{ shortTitle }}</p>
+                </div>
+                <div
+                  v-else
+                  class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
+                  id="long-title"
+                  style="text-shadow: 0.5px 0.5px #262626"
+                >
+                  <p class="text-sm text-label w-full">{{ video.title }}</p>
+                </div>
+                <button
+                  v-if="videoTitle.length > 35"
+                  @click="toggleFullTitle"
+                  class="absolute right-0 -bottom-2 text-xs ml-2 text-primary-200"
+                >
+                  {{ showFullTitle ? "Hide" : "More..." }}
+                </button>
+              </div>
+            </aside>
+            <aside
+              class="absolute -bottom-1 right-20"
+              v-if="currentUserId !== paramsId"
             >
-              #{{ video.username }}
-            </p>
-            <div v-if="video.title" class="w-8/12 relative">
-              <div
-                v-if="!showFullTitle"
-                class="-mt-1 ml-2 relative w-full"
-                style="text-shadow: 0.5px 0.5px #262626"
-              >
-                <p class="text-sm text-label">{{ shortTitle }}</p>
-              </div>
-              <div
-                v-else
-                class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
-                id="long-title"
-                style="text-shadow: 0.5px 0.5px #262626"
-              >
-                <p class="text-sm text-label w-full">{{ video.title }}</p>
-              </div>
-              <button
-                v-if="videoTitle.length > 45"
-                @click="toggleFullTitle"
-                class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
-              >
-                {{ showFullTitle ? "Hide" : "More..." }}
+              <button class="relative" @click="handleProfile">
+                <div
+                  class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
+                >
+                  <img :src="video.userImage" class="h-10 object-cover spin" />
+                </div>
               </button>
-            </div>
-          </aside>
-          <aside class="mr-4" v-if="currentUserId !== paramsId">
-            <button class="relative" @click="handleProfile">
-              <div
-                class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
-              >
-                <img :src="video.userImage" class="h-10 object-cover spin" />
-              </div>
-            </button>
-          </aside>
+            </aside>
+          </div>
         </section>
+        <div class="absolute right-4 z-30" style="bottom: 86px">
+          <SideNav
+            @shareClicked="toggleSocialMedia"
+            @commentClicked="toggleComment"
+            @error-message="handleErrorMessage"
+            :userId="video.userId"
+            :userImage="video.userImage"
+            :videoUrl="video.url"
+            :videoId="video._id"
+            :videoFavorite="videoFavorite"
+            :amountOfComments="video.amountOfComments"
+            :commentAmount="commentAmount"
+            :saved="video.saved"
+          ></SideNav>
+        </div>
         <div
           v-if="currentUserId === paramsId"
-          class="absolute right-2 bottom-20 flex w-28 items-center justify-between"
+          class="absolute right-2 top-4 flex w-28 items-center justify-between"
         >
           <button
             v-if="!video.posted"
@@ -98,6 +118,13 @@
         </div>
       </div>
       <NavBar />
+      <div v-if="showSocialMedia">
+        <SocialMedia
+          :show="showSocialMedia"
+          :videoId="videoId"
+          @closeClicked="closeSocialMedia"
+        />
+      </div>
       <div
         class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-70"
         v-if="showModel"
@@ -120,12 +147,16 @@ import { ref, inject, reactive, onMounted, watch, computed } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import NavBar from "@/components/NavBar.vue";
 import MediaTitle from "@/components/MediaTitle.vue";
+import SideNav from "@/components/home/SideNav.vue";
+import SocialMedia from "@/components/home/SocialMedia.vue";
 
 export default {
   name: "ViewVideo",
   components: {
     NavBar,
+    SideNav,
     MediaTitle,
+    SocialMedia,
   },
   props: {
     id: String,
@@ -168,7 +199,7 @@ export default {
     };
 
     const shortTitle = computed(() => {
-      const maxCharacters = 45;
+      const maxCharacters = 35;
       if (videoTitle.value.length <= maxCharacters) {
         return videoTitle.value;
       } else {

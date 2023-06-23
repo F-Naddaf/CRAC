@@ -38,7 +38,7 @@
           <p class="text-sm text-label w-full">{{ video.title }}</p>
         </div>
         <button
-          v-if="video.title.length > 45"
+          v-if="video.title.length > 35"
           @click="toggleFullTitle"
           class="absolute -right-4 -bottom-2 text-xs ml-2 text-primary-200"
         >
@@ -96,7 +96,6 @@ export default {
       playing: false,
     });
 
-
     const play = () => {
       vidRef.value.play();
       state.playing = true;
@@ -140,7 +139,7 @@ export default {
     };
 
     const shortTitle = computed(() => {
-      const maxCharacters = 45;
+      const maxCharacters = 35;
       if (props.video.title.length <= maxCharacters) {
         return props.video.title;
       } else {
