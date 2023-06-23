@@ -4,18 +4,20 @@
       v-for="video in videos"
       :key="video._id"
       :to="`/view-video/${video._id}/${video.userId}`"
-      class="video-wrapper"
+      class="h-10"
     >
       <video loop autoplay class="video" ref="vidRef">
         <source class="source" :src="video.url" type="video/mp4" />
       </video>
-      <p class="text-xs text-primary-200 pl-2">{{ video.title }}</p>
+      <p v-if="video.title.length > 45" class="text-xs text-primary-200 pl-2">
+        {{ video.title.slice(0, 16) + "..." }}
+      </p>
+      <p v-else class="text-xs text-primary-200 pl-2">{{ video.title }}</p>
     </router-link>
   </div>
 </template>
 
 <script>
-
 export default {
   name: "VideoCard",
   props: {
@@ -28,6 +30,7 @@ export default {
 .video-card-container {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   height: 100%;
   width: 100%;
   gap: 10px;
@@ -38,5 +41,8 @@ export default {
 .video {
   border: 1px solid #28bfd2;
   border-radius: 10px;
+}
+.video-card-container::-webkit-scrollbar {
+  display: none;
 }
 </style>
