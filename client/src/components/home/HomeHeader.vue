@@ -42,20 +42,27 @@ export default {
     const searchTitle = ref("");
     const router = useRouter();
 
-    const searchVideos = async (event) => {
-      event.target.value;
-      try {
-        const response = await fetch(
-          `http://localhost:6500/api/videos/search/${searchTitle.value}`
-        );
-        const result = await response.json();
-        const videoId = result.videos[0]._id;
-        router.push(`/search-result/${videoId}`);
-        emit("video-id", videoId);
-      } catch (error) {
-        console.log(error);
+    const searchVideos = () => {
+      if (searchTitle.value.trim() !== "") {
+        const title = encodeURIComponent(searchTitle.value.trim());
+        router.push(`/search-result/${title}`);
       }
     };
+
+    // const searchVideos = async (event) => {
+    //   event.target.value;
+    //   try {
+    //     const response = await fetch(
+    //       `http://localhost:6500/api/videos/search/${searchTitle.value}`
+    //     );
+    //     const result = await response.json();
+    //     const videoId = result.videos[0]._id;
+    //     router.push(`/search-result/${videoId}`);
+    //     emit("video-id", videoId);
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
     const clearSearchText = () => {
       searchTitle.value = "";
     };
