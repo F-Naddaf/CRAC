@@ -1,8 +1,19 @@
 <template>
   <div class="relative w-full h-full">
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
-    <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
-    <div v-if="!isPosting" class="time-container">
+    <p class="recording" v-if="recording">{{ timeRemaining }}</p>
+    <div v-if="!selectedValue" class="audio-btn">
+      <button @click="handleShowAudio">
+        <i class="fa-solid fa-music text-xs text-gray-300"></i>
+        <p class="text-gray-300 text-xs">Add Sound</p>
+      </button>
+    </div>
+    <div v-if="selectedValue" class="audio-btn">
+      <p class="text-primary-100 text-xs font-bold">
+        Sound: {{ selectedValue.slice(0, 8) + "..." }}
+      </p>
+    </div>
+    <div v-if="!selectedValue" class="time-container">
       <button class="time-btn" @click="selectedTime = 30">
         30 Sec
         <span v-if="selectedTime === 30" class="under-line"></span>
@@ -16,8 +27,14 @@
         <span v-if="selectedTime === 90" class="under-line"></span>
       </button>
     </div>
-    <div class="music-container">
-      <AudioSelector />
+    <div class="music-container" v-if="showAudioCard">
+      <AudioSelector
+        v-model="selectedValue"
+        :showAudio="showAudioCard"
+        @update:selectedValue="updateSelectedValue"
+        @closeClicked="handleCloseAudio"
+        @update:selectedSongUrl="updategetSelectedSongUrl"
+      />
     </div>
     <video
       v-if="toggleCamera"
@@ -30,16 +47,16 @@
       type="button"
       id="startRecord"
       v-if="cameraEnabled"
-      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-primary-100"
       @click="startRecording"
     >
-      <span class="bg-red-700 w-6 h-6 rounded-full"></span>
+      <span class="bg-primary-100 w-6 h-6 rounded-full"></span>
     </button>
     <button
       type="button"
       id="stopRecord"
       v-if="isRecordStop"
-      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-red-700"
+      class="flex items-center justify-center w-11 h-11 rounded-full border-2 border-primary-100"
       @click="stopRecording"
     >
       <span class="bg-gray-400 w-4 h-4 rounded-sm"></span>
@@ -98,6 +115,7 @@ export default {
   },
 
   setup() {
+    const router = useRouter();
     const store = inject("store");
     const userId = computed(() => store.state.userData?._id);
     const userImage = computed(() => store.state.userData?.userImage);
@@ -115,26 +133,46 @@ export default {
     const url = toRef("");
     const toPost = toRef(false);
     const showModel = toRef(false);
-    const router = useRouter();
+    const selectedValue = toRef(null);
+    const showAudioCard = toRef(false);
+    const getSelectedSongUrl = toRef(null);
 
     const toggleCamera = async () => {
-      try {
-        videoStream.value = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: true,
-        });
-        document.getElementById("video").srcObject = videoStream.value;
-        cameraEnabled.value = true;
-      } catch (err) {
-        console.error("Error accessing user media:", err);
-        cameraEnabled.value = false;
+      if (selectedValue.value !== null && selectedValue.value !== "") {
+        try {
+          videoStream.value = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true,
+          });
+          document.getElementById("video").srcObject = videoStream.value;
+          cameraEnabled.value = true;
+        } catch (err) {
+          console.error("Error accessing user media:", err);
+          cameraEnabled.value = false;
+        }
       }
     };
 
     onMounted(() => {
-      toggleCamera();
       store.methods.load();
     });
+
+    const updateSelectedValue = (value) => {
+      selectedValue.value = value;
+      toggleCamera();
+    };
+
+    const handleShowAudio = () => {
+      showAudioCard.value = true;
+    };
+
+    const updategetSelectedSongUrl = (url) => {
+      getSelectedSongUrl.value = url;
+    };
+
+    const handleCloseAudio = () => {
+      showAudioCard.value = false;
+    };
 
     const goBack = async () => {
       if (isRecordStop.value === true) {
@@ -162,7 +200,7 @@ export default {
         }
 
         closeCamera();
-        router.push("/home");
+        router.go(-1);
       } catch (error) {
         console.error("Error deleting video:", error);
       }
@@ -300,12 +338,14 @@ export default {
       username,
       url,
       toPost,
+      showAudioCard,
       selectedTime,
       timeoutID,
       timeRemaining,
       isRecordStop,
       isPosting,
       showModel,
+      selectedValue,
       store,
       goBack,
       toggleCamera,
@@ -315,6 +355,11 @@ export default {
       postNow,
       postLater,
       close,
+      updateSelectedValue,
+      updategetSelectedSongUrl,
+      getSelectedSongUrl,
+      handleShowAudio,
+      handleCloseAudio,
     };
   },
 };
@@ -333,6 +378,23 @@ export default {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 150;
+}
+.audio-btn {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+.audio-btn button {
+  display: flex;
+  align-items: center;
+  background-color: #ba2f74;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+.audio-btn button p {
+  padding-left: 8px;
 }
 .fa-circle-xmark {
   position: absolute;
@@ -363,7 +425,8 @@ video {
 }
 .time-btn {
   position: relative;
-  color: rgb(156 163 175);
+  color: #e67cb1;
+  text-shadow: 0.5px 0.5px #ba2f74;
   cursor: pointer;
   margin-left: 15px;
   padding: 5px;
@@ -387,7 +450,8 @@ video {
   transform: translate(-50%);
   height: 2px;
   width: 50%;
-  background-color: rgb(156 163 175);
+  background-color: #e67cb1;
+  box-shadow: 0.5px 0.5px #ba2f74;
   z-index: 100;
 }
 #startRecord,
@@ -404,11 +468,18 @@ video {
 }
 .recording {
   position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translate(-50%);
-  font-size: 12px;
-  color: red;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 12px;
+  right: 12px;
+  border: 2px solid #ba2f74;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ba2f74;
   z-index: 1;
 }
 </style>
