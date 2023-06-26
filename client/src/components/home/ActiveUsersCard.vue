@@ -2,7 +2,8 @@
   <div class="active-user-container">
     <div class="active-card" :class="{ 'slide-down': showCard }">
       <button class="close-active-users" @click="$emit('close-clicked')">
-        <p class="text-primary-100 text-sm font-semibold">Close</p>
+        <i class="fa-solid fa-circle-xmark"></i>
+        <p class="text-primary-100 text-sm font-bold">Close</p>
       </button>
       <div class="user-card" v-for="(user, index) in users" :key="user._id">
         <router-link
@@ -138,7 +139,7 @@ button i {
   width: 100%;
   height: auto;
   height: 100%;
-  padding-top: 8px;
+  padding: 20px 0 12px 0;
   overflow: auto;
   border: 1px solid white;
   border-radius: 10px;
@@ -158,10 +159,15 @@ button i {
   }
 }
 .close-active-users {
+  display: flex;
+  align-items: center;
   position: absolute;
-  top: -20px;
-  right: 10px;
+  top: -28px;
+  left: 0;
   cursor: pointer;
   z-index: 200;
+}
+.fa-circle-xmark {
+  font-size: 14px;
 }
 </style>
