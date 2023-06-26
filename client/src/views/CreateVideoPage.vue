@@ -16,6 +16,9 @@
         <span v-if="selectedTime === 90" class="under-line"></span>
       </button>
     </div>
+    <div class="music-container">
+      <AudioSelector />
+    </div>
     <video
       v-if="toggleCamera"
       class="max-w-md h-screen m-auto"
@@ -84,11 +87,13 @@ import { onMounted, ref as toRef, inject, computed } from "vue";
 import { useRouter } from "vue-router";
 import "firebase/storage";
 import MediaTitle from "../components/MediaTitle.vue";
+import AudioSelector from "../components/created-video-sound/AudioSelector.vue";
 
 export default {
   name: "CreateVideoPage",
 
   components: {
+    AudioSelector,
     MediaTitle,
   },
 
@@ -316,6 +321,19 @@ export default {
 </script>
 
 <style scoped>
+.music-container {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding-top: 40px;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  z-index: 150;
+}
 .fa-circle-xmark {
   position: absolute;
   top: 10px;
