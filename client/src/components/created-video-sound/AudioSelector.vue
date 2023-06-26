@@ -21,7 +21,8 @@
         <input
           type="radio"
           :id="song._id"
-          :value="song._id"
+          :value="song.title"
+          :url="song.url"
           v-model="picked"
           class="-ml-1"
         />
@@ -76,16 +77,20 @@
 </template>
 
 <script>
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect, watch, onUnmounted } from "vue";
 
 export default {
   name: "AudioSelector",
-
-  setup() {
+  props: {
+    showAudioCard: Boolean,
+  },
+  setup(props, { emit }) {
     const allSongs = ref([]);
-    const picked = ref("Mute");
+    const showAudio = ref(props.showAudioCard);
+    const picked = ref(null);
     const currentSong = ref(null);
     const audioPlayer = ref(null);
+    let emitTimeout = null;
 
     onMounted(async () => {
       await getAllSongs();
@@ -95,7 +100,10 @@ export default {
       try {
         const response = await fetch(`http://localhost:6500/api/music`);
         const json = await response.json();
-        allSongs.value = json.songs;
+        allSongs.value = json.songs.map((song) => ({
+          ...song,
+          url: song.url,
+        }));
       } catch (error) {
         console.log(error);
       }
@@ -124,6 +132,24 @@ export default {
       return song === currentSong.value;
     };
 
+    const emitSelectedValue = () => {
+      clearTimeout(emitTimeout);
+      if (currentSong.value) {
+        audioPlayer.value.pause();
+        currentSong.value = null;
+      }
+      emit("update:selectedValue", picked.value);
+      emit("update:selectedSongUrl", getSelectedSongUrl());
+      emitTimeout = setTimeout(() => {
+        emit("close-clicked");
+      }, 1500);
+    };
+
+    const getSelectedSongUrl = () => {
+      const song = allSongs.value.find((s) => s.title === picked.value);
+      return song ? song.url : null;
+    };
+
     watchEffect(() => {
       const newSong = currentSong.value;
       if (newSong) {
@@ -148,7 +174,28 @@ export default {
       }
     });
 
+    watch(picked, (newValue, oldValue) => {
+      if (newValue !== oldValue) {
+        if (newValue === "Mute" || newValue === "Original") {
+          if (currentSong.value) {
+            audioPlayer.value.pause();
+            currentSong.value = null;
+          }
+          emitSelectedValue();
+        } else {
+          const song = allSongs.value.find((s) => s.title === newValue);
+          toggleSong(song);
+          emitSelectedValue();
+        }
+      }
+    });
+
+    onUnmounted(() => {
+      clearTimeout(emitTimeout);
+    });
+
     return {
+      showAudio,
       allSongs,
       picked,
       currentSong,
@@ -156,6 +203,7 @@ export default {
       getAllSongs,
       isSongPlaying,
       toggleSong,
+      emitSelectedValue,
     };
   },
 };
@@ -188,7 +236,6 @@ img {
   width: 75%;
   display: flex;
   height: 3.5rem;
-  /* justify-content: space-between; */
   align-items: center;
 }
 
