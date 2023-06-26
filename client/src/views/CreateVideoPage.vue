@@ -1,7 +1,7 @@
 <template>
   <div class="relative w-full h-full">
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
-    <p class="recording" v-if="recording">Recording... {{ timeRemaining }}</p>
+    <p class="recording" v-if="recording">{{ timeRemaining }}</p>
     <div v-if="!selectedValue" class="audio-btn">
       <button @click="handleShowAudio">
         <i class="fa-solid fa-music text-xs text-gray-300"></i>
@@ -10,10 +10,10 @@
     </div>
     <div v-if="selectedValue" class="audio-btn">
       <p class="text-primary-100 text-xs font-bold">
-        Sound: {{ selectedValue }}
+        Sound: {{ selectedValue.slice(0, 8) + "..." }}
       </p>
     </div>
-    <div v-if="!isPosting" class="time-container">
+    <div v-if="!selectedValue" class="time-container">
       <button class="time-btn" @click="selectedTime = 30">
         30 Sec
         <span v-if="selectedTime === 30" class="under-line"></span>
@@ -138,27 +138,28 @@ export default {
     const getSelectedSongUrl = toRef(null);
 
     const toggleCamera = async () => {
-      try {
-        videoStream.value = await navigator.mediaDevices.getUserMedia({
-          audio: false,
-          video: true,
-        });
-        document.getElementById("video").srcObject = videoStream.value;
-        cameraEnabled.value = true;
-      } catch (err) {
-        console.error("Error accessing user media:", err);
-        cameraEnabled.value = false;
+      if (selectedValue.value !== null && selectedValue.value !== "") {
+        try {
+          videoStream.value = await navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: true,
+          });
+          document.getElementById("video").srcObject = videoStream.value;
+          cameraEnabled.value = true;
+        } catch (err) {
+          console.error("Error accessing user media:", err);
+          cameraEnabled.value = false;
+        }
       }
     };
 
     onMounted(() => {
-      toggleCamera();
       store.methods.load();
     });
 
     const updateSelectedValue = (value) => {
       selectedValue.value = value;
-      console.log("selectedValue.value", selectedValue.value);
+      toggleCamera();
     };
 
     const handleShowAudio = () => {
@@ -167,7 +168,6 @@ export default {
 
     const updategetSelectedSongUrl = (url) => {
       getSelectedSongUrl.value = url;
-      console.log("getSelectedSongUrl.value", getSelectedSongUrl.value);
     };
 
     const handleCloseAudio = () => {
@@ -468,10 +468,17 @@ video {
 }
 .recording {
   position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translate(-50%);
-  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 12px;
+  right: 12px;
+  border: 2px solid #ba2f74;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 700;
   color: #ba2f74;
   z-index: 1;
 }
