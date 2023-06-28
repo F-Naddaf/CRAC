@@ -43,6 +43,11 @@
       ref="myVideo"
       autoplay
     ></video>
+    <div v-if="recording">
+      <audio autoplay>
+        <source :src="getSelectedSongUrl" type="audio/mpeg" />
+      </audio>
+    </div>
     <button
       type="button"
       id="startRecord"
