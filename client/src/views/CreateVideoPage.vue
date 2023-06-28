@@ -91,6 +91,7 @@
         :userId="userId"
         :userImage="userImage"
         :username="username"
+        @closeUpload="closeUpload"
       />
     </div>
     <MediaTitle
@@ -314,6 +315,10 @@ export default {
       showModel.value = false;
     };
 
+    const closeUpload = () => {
+      showUploadVideo.value = false;
+    };
+
     const postNow = () => {
       showModel.value = true;
       toPost.value = true;
@@ -388,6 +393,7 @@ export default {
       handleCloseAudio,
       taggleUploadVideo,
       showUploadVideo,
+      closeUpload,
     };
   },
 };

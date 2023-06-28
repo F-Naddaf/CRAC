@@ -1,7 +1,6 @@
 <template>
   <div class="relative w-full h-full flex flex-col items-center justify-center">
-    <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
-    <div class="card">
+    <div class="card mt-16">
       <h1 class="text-2xl font-semibold text-secondary-200">Upload Video</h1>
       <p class="text-gray-300 text-xs my-6">
         Please Select a video under 10 minutes.
@@ -38,17 +37,24 @@
             </label>
           </div>
         </section>
-        <section v-if="picked === 'now'">
-          <div>
-            <p class="text-primary-100">
-              Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore
-              molestias at magni, voluptates quo exercitationem accusantium,
-              porro nam ad molestiae, quae nisi quas aspernatur? Fugit eaque
-              debitis architecto porro cumque.
-            </p>
-          </div>
+        <section v-if="picked === 'now'" class="w-full">
+          <FormInput
+            v-for="(input, index) in inputs"
+            :key="index"
+            :label="input.label"
+            :type="input.type"
+            v-model="input.value"
+            @update:value="input.value = $event"
+          />
         </section>
-        <div class="self-end mt-4">
+        <div>
+          <p class="succes-message">{{ success }}</p>
+          <p class="faild-message">{{ faild }}</p>
+        </div>
+        <div class="w-full flex mt-4 justify-between">
+          <button @click="$emit('closeUpload')" class="cancelButton">
+            Cancel
+          </button>
           <button @click="handleSubmit" class="continueButton">Continue</button>
         </div>
       </div>
@@ -57,21 +63,24 @@
 </template>
 
 <script>
+import { ref as varRef } from "vue";
+import FormInput from "../FormInput.vue";
+import { useRouter } from "vue-router";
 import "firebase/storage";
-import { storage } from "../../firebase.js";
-import { ref as varRef, onMounted, nextTick, watch } from "vue";
 import {
   ref,
   uploadBytes,
   getDownloadURL,
   listAll,
   getStorage,
-  getMetadata,
 } from "firebase/storage";
 
 export default {
   name: "UploadVideoCard",
 
+  components: {
+    FormInput,
+  },
   props: {
     userId: String,
     userImage: String,
@@ -79,12 +88,22 @@ export default {
   },
 
   setup(props) {
+    const router = useRouter();
+    const inputs = varRef({
+      media: {
+        label: "Title",
+        value: "",
+        type: "text",
+      },
+    });
     const displayVideo = varRef("");
     const videoName = varRef("");
     const picked = varRef("later");
     const url = varRef("");
     const toPost = varRef(false);
     const fileInput = varRef(null);
+    const success = varRef("");
+    const faild = varRef("");
 
     const handleFileName = (e) => {
       const inputVideo = e.target.files[0];
@@ -121,7 +140,6 @@ export default {
       const storageRef = ref(storage);
       const videosRef = ref(storageRef, "videos/");
       const videoFile = fileInput.value.files[0];
-      console.log("videoFile", videoFile);
       const { items } = await listAll(videosRef);
       let highestNumber = 0;
       let newFileName;
@@ -136,12 +154,9 @@ export default {
       } else {
         newFileName = "video-1";
       }
-      //   if (items.length === 0) {
       const newVideosRef = ref(storageRef, "videos/" + newFileName);
-      console.log("newVideosRef", newVideosRef);
       const snapShot = await uploadBytes(newVideosRef, videoFile, metadata);
       url.value = await getDownloadURL(snapShot.ref);
-      //   }
     };
 
     const handleSubmit = async () => {
@@ -168,11 +183,54 @@ export default {
           );
           const json = await response.json();
           if (json.success) {
-            console.log("json", json);
-            // router.push({
-            //   name: "Profile",
-            //   params: { id: userId.value },
-            // });
+            success.value = json.message;
+            setTimeout(() => {
+              router.push({
+                name: "Profile",
+                params: { id: props.userId },
+              });
+            }, 1500);
+          } else {
+            faild.value = json.message;
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      } else if (picked.value === "now") {
+        toPost.value = true;
+        const token = localStorage.getItem("accessToken");
+        try {
+          const response = await fetch(
+            "http://localhost:6500/api/videos/postVideo",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                userId: props.userId,
+                userImage: props.userImage,
+                username: props.username,
+                media: {
+                  title: inputs.value.media.value,
+                  url: url.value,
+                  posted: toPost.value,
+                },
+              }),
+            }
+          );
+          const json = await response.json();
+          if (json.success) {
+            success.value = json.message;
+            setTimeout(() => {
+              router.push({
+                name: "Profile",
+                params: { id: props.userId },
+              });
+            }, 1500);
+          } else {
+            faild.value = json.message;
           }
         } catch (error) {
           console.error(error);
@@ -180,18 +238,24 @@ export default {
       }
     };
 
+    const handleclose = () => {};
+
     return {
+      router,
+      inputs,
       displayVideo,
       videoName,
       picked,
+      success,
+      faild,
       url,
       fileInput,
       toPost,
-      //   blob,
       handleFileName,
       findVideoWithHighestNumber,
       storeVideo,
       handleSubmit,
+      handleclose,
     };
   },
 };
@@ -205,11 +269,9 @@ export default {
   width: 100%;
   margin-top: 15px;
 }
-
 #image-input {
   display: none;
 }
-
 .video-container > label {
   font-size: 14px;
   cursor: pointer;
@@ -219,11 +281,9 @@ export default {
   padding: 5px 10px;
   border-radius: 6px;
 }
-
 input {
   accent-color: #ba2f74;
 }
-
 #videoName {
   display: flex;
   align-items: center;
@@ -232,16 +292,13 @@ input {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
-
 #videoName::-webkit-scrollbar {
   width: 0;
 }
-
 #videoName p {
   font-size: 14px;
   color: #e67cb1;
 }
-
 #display-image {
   width: 240px;
   height: 240px;
@@ -252,15 +309,21 @@ input {
   justify-content: center;
   align-items: center;
 }
-
 .cropper-container {
   width: 100%;
   height: 100%;
 }
-
 .uploaded-image {
   width: 100%;
   height: 100%;
   object-fit: contain;
+}
+.succes-message {
+  font-size: 14px;
+  color: #00cb5a;
+}
+.faild-message {
+  font-size: 14px;
+  color: red;
 }
 </style>
