@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import { ref, onUnmounted, nextTick, watch, onMounted } from "vue";
+import { ref, onUnmounted, nextTick, watch } from "vue";
 import Cropper from "cropperjs";
 import {
   getStorage,
