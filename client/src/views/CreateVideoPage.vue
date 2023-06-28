@@ -79,6 +79,7 @@
       </div>
     </div>
     <button
+      v-if="!cameraIsOpen"
       class="absolute bottom-6 right-10 flex flex-col items-center"
       @click="taggleUploadVideo"
     >
@@ -86,7 +87,11 @@
       <p class="text-secondary-200 text-xs font-bold">Upload</p>
     </button>
     <div class="video-container" v-if="showUploadVideo">
-      <UploadVideoCard />
+      <UploadVideoCard
+        :userId="userId"
+        :userImage="userImage"
+        :username="username"
+      />
     </div>
     <MediaTitle
       v-if="showModel"
@@ -110,7 +115,7 @@ import {
   deleteObject,
 } from "firebase/storage";
 import { storage } from "../firebase.js";
-import { onMounted, ref as toRef, inject, computed } from "vue";
+import { onMounted, ref as toRef, inject, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import "firebase/storage";
 import MediaTitle from "../components/MediaTitle.vue";
@@ -149,6 +154,7 @@ export default {
     const showAudioCard = toRef(false);
     const showUploadVideo = toRef(false);
     const getSelectedSongUrl = toRef(null);
+    const cameraIsOpen = toRef(false);
 
     const toggleCamera = async () => {
       if (selectedValue.value !== null && selectedValue.value !== "") {
@@ -159,6 +165,7 @@ export default {
           });
           document.getElementById("video").srcObject = videoStream.value;
           cameraEnabled.value = true;
+          cameraIsOpen.value = true;
         } catch (err) {
           console.error("Error accessing user media:", err);
           cameraEnabled.value = false;
@@ -172,6 +179,7 @@ export default {
 
     const updateSelectedValue = (value) => {
       selectedValue.value = value;
+      console.log("dsas", selectedValue.value);
       toggleCamera();
     };
 
@@ -362,6 +370,7 @@ export default {
       isRecordStop,
       isPosting,
       showModel,
+      cameraIsOpen,
       selectedValue,
       store,
       goBack,

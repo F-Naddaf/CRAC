@@ -2,9 +2,10 @@
   <div class="relative w-full h-full flex flex-col items-center justify-center">
     <i class="fa-solid fa-circle-xmark" @click="goBack"></i>
     <div class="card">
-      <h1 class="mb-10 text-2xl font-semibold text-secondary-200">
-        Upload Video
-      </h1>
+      <h1 class="text-2xl font-semibold text-secondary-200">Upload Video</h1>
+      <p class="text-gray-300 text-xs my-6">
+        Please Select a video under 10 minutes.
+      </p>
       <div class="w-full flex flex-col items-center">
         <section class="video-container">
           <label class="select-video-label" for="image-input"
@@ -13,8 +14,9 @@
             <input
               type="file"
               id="image-input"
-              accept="image/png, image/jpg"
+              accept="video/*"
               class="bg-secondary-100"
+              ref="fileInput"
               @change="handleFileName"
             />
           </label>
@@ -47,7 +49,7 @@
           </div>
         </section>
         <div class="self-end mt-4">
-          <button class="continueButton">Continue</button>
+          <button @click="handleSubmit" class="continueButton">Continue</button>
         </div>
       </div>
     </div>
@@ -55,37 +57,141 @@
 </template>
 
 <script>
-import { ref, onUnmounted, nextTick, watch } from "vue";
+import "firebase/storage";
+import { storage } from "../../firebase.js";
+import { ref as varRef, onMounted, nextTick, watch } from "vue";
 import {
-  getStorage,
-  ref as storageRef,
+  ref,
   uploadBytes,
   getDownloadURL,
+  listAll,
+  getStorage,
+  getMetadata,
 } from "firebase/storage";
 
 export default {
   name: "UploadVideoCard",
 
-  setup() {
-    const displayVideo = ref("");
-    const videoName = ref("");
-    const picked = ref("later");
+  props: {
+    userId: String,
+    userImage: String,
+    username: String,
+  },
+
+  setup(props) {
+    const displayVideo = varRef("");
+    const videoName = varRef("");
+    const picked = varRef("later");
+    const url = varRef("");
+    const toPost = varRef(false);
+    const fileInput = varRef(null);
 
     const handleFileName = (e) => {
       const inputVideo = e.target.files[0];
-      videoName.value = inputVideo.name;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        displayVideo.value = reader.result;
+      const maxDuration = 600;
+      const videoElement = document.createElement("video");
+      videoElement.src = URL.createObjectURL(inputVideo);
+
+      videoElement.addEventListener("loadedmetadata", () => {
+        const duration = videoElement.duration;
+        if (duration > maxDuration) {
+          videoName.value = "The video is to larg";
+        } else {
+          videoName.value = inputVideo.name;
+        }
+      });
+    };
+
+    const findVideoWithHighestNumber = (items) => {
+      const numbers = items.map((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      });
+      const highestNumber = Math.max(...numbers);
+      const fileToDelete = items.find((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        const number = match ? parseInt(match[1]) : 0;
+        return number === highestNumber;
+      });
+      return { highestNumber, fileToDelete };
+    };
+
+    const storeVideo = async () => {
+      const storage = getStorage();
+      const storageRef = ref(storage);
+      const videosRef = ref(storageRef, "videos/");
+      const videoFile = fileInput.value.files[0];
+      console.log("videoFile", videoFile);
+      const { items } = await listAll(videosRef);
+      let highestNumber = 0;
+      let newFileName;
+      const metadata = {
+        contentType: "video/mp4",
       };
-      reader.readAsDataURL(inputVideo);
+
+      if (items.length > 0) {
+        const { highestNumber: maxNumber } = findVideoWithHighestNumber(items);
+        highestNumber = maxNumber;
+        newFileName = `video-${highestNumber + 1}`;
+      } else {
+        newFileName = "video-1";
+      }
+      //   if (items.length === 0) {
+      const newVideosRef = ref(storageRef, "videos/" + newFileName);
+      console.log("newVideosRef", newVideosRef);
+      const snapShot = await uploadBytes(newVideosRef, videoFile, metadata);
+      url.value = await getDownloadURL(snapShot.ref);
+      //   }
+    };
+
+    const handleSubmit = async () => {
+      await storeVideo();
+      if (picked.value === "later") {
+        toPost.value = false;
+        const token = localStorage.getItem("accessToken");
+        try {
+          const response = await fetch(
+            "http://localhost:6500/api/videos/postLater",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({
+                userId: props.userId,
+                userImage: props.userImage,
+                username: props.username,
+                media: { title: "", url: url.value, posted: toPost.value },
+              }),
+            }
+          );
+          const json = await response.json();
+          if (json.success) {
+            console.log("json", json);
+            // router.push({
+            //   name: "Profile",
+            //   params: { id: userId.value },
+            // });
+          }
+        } catch (error) {
+          console.error(error);
+        }
+      }
     };
 
     return {
       displayVideo,
       videoName,
       picked,
+      url,
+      fileInput,
+      toPost,
+      //   blob,
       handleFileName,
+      findVideoWithHighestNumber,
+      storeVideo,
+      handleSubmit,
     };
   },
 };
