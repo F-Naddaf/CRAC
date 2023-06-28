@@ -47,7 +47,10 @@
             @update:value="input.value = $event"
           />
         </section>
-        <div>
+        <div v-if="uploading">
+          <p class="text-secondary-200 text-xs">Please wait...</p>
+        </div>
+        <div v-else>
           <p class="succes-message">{{ success }}</p>
           <p class="faild-message">{{ faild }}</p>
         </div>
@@ -104,6 +107,7 @@ export default {
     const fileInput = varRef(null);
     const success = varRef("");
     const faild = varRef("");
+    const uploading = varRef(false);
 
     const handleFileName = (e) => {
       const inputVideo = e.target.files[0];
@@ -160,6 +164,7 @@ export default {
     };
 
     const handleSubmit = async () => {
+      uploading.value = true;
       await storeVideo();
       if (picked.value === "later") {
         toPost.value = false;
@@ -183,6 +188,7 @@ export default {
           );
           const json = await response.json();
           if (json.success) {
+            uploading.value = false;
             success.value = json.message;
             setTimeout(() => {
               router.push({
@@ -191,6 +197,7 @@ export default {
               });
             }, 1500);
           } else {
+            uploading.value = false;
             faild.value = json.message;
           }
         } catch (error) {
@@ -222,6 +229,7 @@ export default {
           );
           const json = await response.json();
           if (json.success) {
+            uploading.value = false;
             success.value = json.message;
             setTimeout(() => {
               router.push({
@@ -230,6 +238,7 @@ export default {
               });
             }, 1500);
           } else {
+            uploading.value = false;
             faild.value = json.message;
           }
         } catch (error) {
@@ -248,6 +257,7 @@ export default {
       picked,
       success,
       faild,
+      uploading,
       url,
       fileInput,
       toPost,
@@ -319,11 +329,11 @@ input {
   object-fit: contain;
 }
 .succes-message {
-  font-size: 14px;
+  font-size: 12px;
   color: #00cb5a;
 }
 .faild-message {
-  font-size: 14px;
+  font-size: 12px;
   color: red;
 }
 </style>
