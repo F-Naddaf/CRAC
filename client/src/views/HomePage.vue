@@ -154,12 +154,4 @@ export default {
   background-color: rgba(0, 0, 0, 0.7);
   z-index: 150;
 }
-/* .close-active-users {
-  position: absolute;
-  top: 5%;
-  left: 10%;
-  color: #ba2f74;
-  cursor: pointer;
-  z-index: 200;
-} */
 </style>

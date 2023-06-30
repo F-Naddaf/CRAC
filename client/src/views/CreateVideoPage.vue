@@ -165,10 +165,22 @@ export default {
     const toggleCamera = async () => {
       if (selectedValue.value !== null && selectedValue.value !== "") {
         try {
-          videoStream.value = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: true,
-          });
+          if (selectedValue.value === "Mute") {
+            videoStream.value = await navigator.mediaDevices.getUserMedia({
+              audio: false,
+              video: true,
+            });
+          } else if (selectedValue.value === "Original") {
+            videoStream.value = await navigator.mediaDevices.getUserMedia({
+              audio: true,
+              video: true,
+            });
+          } else {
+            videoStream.value = await navigator.mediaDevices.getUserMedia({
+              audio: selectedValue.value,
+              video: true,
+            });
+          }
           document.getElementById("video").srcObject = videoStream.value;
           cameraEnabled.value = true;
           cameraIsOpen.value = true;

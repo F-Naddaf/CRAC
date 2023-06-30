@@ -1,5 +1,8 @@
 <template>
-  <div class="w-full h-full flex flex-col items-center">
+  <div v-if="isLoading" class="mt-20 flex justify-center">
+    <img src="../../../public//img//spinner.svg" alt="loading" />
+  </div>
+  <div v-else class="w-full h-full flex flex-col items-center">
     <section class="flex relative w-full h-10">
       <div class="header-container">
         <h1 class="user-name">{{ userFullName }}</h1>
@@ -26,7 +29,12 @@
         v-else
         class="w-28 h-28 flex items-center justify-center rounded-full bg-background overflow-hidden border border-primary-100"
       >
-        <img id="user-image" :src="userImage" />
+        <img
+          id="user-image"
+          :src="userImage"
+          @load="handleImageLoad"
+          @error="handleImageError"
+        />
       </div>
       <div class="px-4">
         <p class="userDetails">#{{ username }}</p>
@@ -62,7 +70,7 @@ export default {
     FollowerList,
   },
   name: "UserInfo",
-  setup() {
+  setup(props, { emit }) {
     const store = inject("store");
     const id = ref("");
     const videoId = ref("");
@@ -73,6 +81,7 @@ export default {
     const followers = ref([]);
     const numberOfFollowers = ref(0);
     const showList = ref(false);
+    const isLoading = ref(true);
 
     onMounted(async () => {
       await store.methods.load();
@@ -87,6 +96,7 @@ export default {
       userImage.value = store.state.userData?.userImage;
       followers.value = store.state.userData?.followers;
       numberOfFollowers.value = followers.value.length;
+      isLoading.value = false;
     });
 
     const showFollowerList = () => {
@@ -95,6 +105,14 @@ export default {
 
     const closeFollowerList = () => {
       showList.value = false;
+    };
+
+    const handleImageLoad = () => {
+      isLoading.value = false;
+    };
+
+    const handleImageError = () => {
+      isLoading.value = false;
     };
 
     return {
@@ -108,8 +126,11 @@ export default {
       followers,
       numberOfFollowers,
       showList,
+      isLoading,
       showFollowerList,
       closeFollowerList,
+      handleImageLoad,
+      handleImageError,
     };
   },
 };
