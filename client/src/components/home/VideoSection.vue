@@ -97,10 +97,13 @@ export default {
       (newSlide, oldSlide) => {
         currentVideoIndex.value = newSlide - 1;
         if (videoRefs.value[newSlide - 1]) {
+          if (videoRefs.value[oldSlide - 1]) {
+            const previousVideo = videoRefs.value[oldSlide - 1].$refs.video;
+            if (previousVideo) {
+              previousVideo.pause();
+            }
+          }
           videoRefs.value[newSlide - 1].play();
-        }
-        if (videoRefs.value[oldSlide - 1]) {
-          videoRefs.value[oldSlide - 1].pause();
         }
       },
       {
