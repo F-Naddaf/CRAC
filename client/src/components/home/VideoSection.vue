@@ -28,13 +28,14 @@
       @shareClicked="toggleSocialMedia"
       @commentClicked="toggleComment"
       :commentAmount="commentAmount"
+      @vidRef="videoRef"
     >
     </Video>
   </div>
 </template>
 
 <script>
-import { ref, reactive, watch, computed, onBeforeUpdate } from "vue";
+import { ref, reactive, watch, computed, onBeforeUpdate, onMounted } from "vue";
 import SocialMedia from "./SocialMedia.vue";
 import swipe from "../directives/swipe.js";
 import Video from "./Video.vue";
@@ -58,6 +59,7 @@ export default {
     const videoRefs = ref([]);
     const currentVideoRef = ref(null);
     const currentVideoIndex = ref(0);
+    const videoRefrance = ref(null);
 
     const state = reactive({
       currentSlide: 1,
@@ -67,6 +69,14 @@ export default {
           () => `translate3d(0, ${-(state.currentSlide - 1) * 100}%, 0)`
         ),
       },
+    });
+
+    const videoRef = (value) => {
+      videoRefrance.value = value;
+    };
+
+    onMounted(() => {
+      console.log("videoRefrance", videoRefrance.value);
     });
 
     const enableSwipe = computed(() => videos.value.length > 0);
@@ -129,6 +139,8 @@ export default {
       enableSwipe,
       toggleSocialMedia,
       toggleComment,
+      videoRefrance,
+      videoRef,
     };
   },
 };

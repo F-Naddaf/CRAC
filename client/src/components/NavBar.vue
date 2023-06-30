@@ -83,10 +83,9 @@ export default {
 
 <style scoped>
 .navigation {
-  border-top-width: 2px;
   max-width: 28rem;
   height: 50px;
-  margin-bottom: 0.5rem;
+  margin-bottom: 8px;
   position: absolute;
   bottom: 0;
   width: 100%;

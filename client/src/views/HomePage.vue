@@ -140,7 +140,7 @@ export default {
 
 <style scoped>
 .video-wrapper {
-  height: 86vh;
+  height: 94vh;
 }
 .card-container {
   position: absolute;
