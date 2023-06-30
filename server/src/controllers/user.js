@@ -180,6 +180,7 @@ export const getUserById = async (req, res) => {
           username: user.username,
           email: user.email,
           userImage: user.userImage,
+          followers: user.followers,
         },
         videos: videos,
       });

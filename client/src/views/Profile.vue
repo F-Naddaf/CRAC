@@ -7,7 +7,7 @@
         </template>
       </UserInfo>
     </section>
-    <section class="w-full h-2/3 overflow-y-auto pt-6">
+    <section class="w-full h-2/3 overflow-y-auto pt-6 -mt-4">
       <Tabs :activeCategory="activeCategory" />
     </section>
     <div class="bg-black">
@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { ref } from "vue";
 import Tabs from "../components/profile/Tabs.vue";
 import UserInfo from "../components/profile/UserInfo.vue";
 import NavBar from "../components/NavBar.vue";
@@ -27,9 +28,11 @@ export default {
     Tabs,
     NavBar,
   },
-  data() {
+  setup() {
+    const activeCategory = ref("Unposted");
+
     return {
-      activeCategory: "Unposted",
+      activeCategory,
     };
   },
 };

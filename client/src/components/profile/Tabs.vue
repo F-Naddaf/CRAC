@@ -46,6 +46,9 @@
         </button>
       </li>
     </ul>
+    <div v-if="videoIsLoad" class="mt-20 flex justify-center">
+      <img src="../../../public//img//spinner.svg" alt="loading" />
+    </div>
     <Videos :videos="filteredVideos" :userCate="userCate"></Videos>
   </div>
 </template>
@@ -69,6 +72,7 @@ export default {
     const favorite = ref([]);
     const userId = ref("");
     const userCate = ref(false);
+    const videoIsLoad = ref(null);
     const activeCategory = ref("Unposted");
 
     const selectCategory = (category) => {
@@ -100,6 +104,7 @@ export default {
     });
 
     const loadVideos = async () => {
+      videoIsLoad.value = true;
       userId.value = router.currentRoute.value.params.id;
       const token = localStorage.getItem("accessToken");
       try {
@@ -130,6 +135,7 @@ export default {
         unPosted.value.push(...getUnPostedVideos);
         saved.value.push(...userSavedVideos);
         favorite.value.push(...userFavorite);
+        videoIsLoad.value = false;
       } catch (error) {
         console.error(error);
       }
@@ -148,6 +154,7 @@ export default {
       userCate,
       saved,
       favorite,
+      videoIsLoad,
       selectCategory,
       isActiveCategory,
       activeCategory,

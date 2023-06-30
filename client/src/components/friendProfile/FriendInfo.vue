@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full h-full flex flex-col items-center">
+  <div class="w-full h-full flex flex-col items-center relative">
     <section class="flex relative w-full h-10">
       <div class="header-container">
         <h1 class="user-name">{{ userFullName }}</h1>
@@ -24,17 +24,29 @@
         <div v-if="userFullName" class="edit-image"></div>
       </div>
     </section>
+    <div>
+      <div class="flex items-center">
+        <p class="text-sm font-light text-primary-200 pr-2">
+          Followers
+        </p>
+        <p class="font-semibold text-primary-200">{{ numberOfFollowers }}</p>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import { ref, onMounted } from "vue";
+
 export default {
   name: "FriendInfo",
+
   props: {
     userFullName: String,
     username: String,
     email: String,
     userImage: String,
+    numberOfFollowers: Number,
   },
 };
 </script>

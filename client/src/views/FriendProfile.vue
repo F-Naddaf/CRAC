@@ -1,14 +1,18 @@
 <template>
-  <div class="w-full h-full flex flex-col">
+  <div v-if="isLoading" class="mt-20 flex justify-center">
+    <img src="../../public//img//spinner.svg" alt="loading" />
+  </div>
+  <div v-else class="w-full h-full flex flex-col relative">
     <section class="w-full h-1/3">
       <FriendInfo
         :userFullName="userFullName"
         :username="username"
         :email="email"
         :userImage="userImage"
+        :numberOfFollowers="numberOfFollowers"
       />
     </section>
-    <section class="w-full h-2/3 overflow-y-auto pt-6">
+    <section class="w-full h-2/3 overflow-y-auto -mt-8">
       <span id="friend-video-line"></span>
       <Videos :videos="videos" />
     </section>
@@ -22,6 +26,7 @@
 import FriendInfo from "../components/friendProfile/FriendInfo.vue";
 import Videos from "../components/profile/Videos.vue";
 import NavBar from "../components/NavBar.vue";
+import FollowerList from "@/components/profile/FollowerList.vue";
 import { ref, onMounted, watch } from "vue";
 import { useRoute } from "vue-router";
 
@@ -31,14 +36,18 @@ export default {
     FriendInfo,
     Videos,
     NavBar,
+    FollowerList,
   },
   setup() {
-    const id = ref(null);
+    const id = ref("");
     const userFullName = ref("");
     const username = ref("");
     const email = ref("");
     const userImage = ref("");
+    const numberOfFollowers = ref("");
     const videos = ref([]);
+    const isLoading = ref(true);
+    const followers = ref([]);
 
     const route = useRoute();
 
@@ -51,6 +60,7 @@ export default {
     });
 
     const getFriendDetails = async () => {
+      isLoading.value = true;
       try {
         const token = localStorage.getItem("accessToken");
         const userResponse = await fetch(
@@ -72,7 +82,10 @@ export default {
           username.value = result.user?.username;
           email.value = result.user?.email;
           userImage.value = result.user?.userImage;
+          followers.value = result.user?.followers;
+          numberOfFollowers.value = result.user?.followers.length;
           videos.value = result.videos;
+          isLoading.value = false;
         } else {
           throw new Error("Failed to retrieve user data");
         }
@@ -86,7 +99,11 @@ export default {
       username,
       email,
       userImage,
+      followers,
       videos,
+      id,
+      isLoading,
+      numberOfFollowers,
       getFriendDetails,
     };
   },
