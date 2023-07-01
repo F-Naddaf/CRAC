@@ -121,6 +121,7 @@ export default {
       () => props.videoFavorite,
       (newVal) => {
         updatedAmountOfFavorite.value = newVal;
+        console.log("new", newVal);
       }
     );
 
@@ -230,10 +231,13 @@ export default {
         );
         const json = await response.json();
         store.methods.updateUser(json.result);
+
         if (!json.success) {
           const error = json.message;
           emit("error-message", error);
+          return;
         }
+
         if (json.message === "Video is removed from favorites successfully") {
           updatedAmountOfFavorite.value -= 1;
         } else if (
@@ -244,6 +248,7 @@ export default {
         } else {
           updatedAmountOfFavorite.value = props.amountOfFavorite;
         }
+        
       } catch (error) {
         console.error(error);
       }

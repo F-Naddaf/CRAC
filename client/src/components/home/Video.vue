@@ -14,6 +14,17 @@
         v-show="!state.playing"
       />
     </video>
+    <input
+      class="seek"
+      id="seekSlid"
+      type="range"
+      min="0"
+      max="100"
+      value="0"
+      step="1"
+      ref="seekSliderRef"
+      @change="vidSeek"
+    />
     <div class="absolute bottom-20 left-4 w-full">
       <p
         class="text-base text-primary-200"
@@ -87,6 +98,9 @@ export default {
     const currentVideoId = ref(props.video._id);
     const videoFavorite = ref(props.video.favorite);
     const showFullTitle = ref(false);
+    const seekSliderRef = ref(null);
+
+    emit("vidRef", vidRef.value);
 
     watchEffect(() => {
       videoFavorite.value = props.video.favorite;
@@ -95,6 +109,32 @@ export default {
     const state = reactive({
       playing: false,
     });
+
+    // const vidSeek = () => {
+    //   const seekSlider = document.getElementById("seekSlid");
+    //   const seekTo = vidRef.value.duration * (seekSlider.value / 100);
+    //   vidRef.value.currentTime = seekTo;
+    //   const newTime = vidRef.value.currentTime * (100 / vidRef.value.duration);
+    //   seekSlider.value = newTime;
+    //   console.log("seekSlider.value", seekSlider.value);
+    // };
+
+    const vidSeek = () => {
+      const seekSlider = seekSliderRef.value;
+      const seekTo = vidRef.value.duration * (seekSlider.value / 100);
+      vidRef.value.currentTime = seekTo;
+    };
+
+    watch(vidRef, (newVal) => {
+      newVal.addEventListener("timeupdate", updateSeekSlider);
+    });
+
+    const updateSeekSlider = () => {
+      const seekSlider = seekSliderRef.value;
+      const currentTime = vidRef.value.currentTime;
+      const duration = vidRef.value.duration;
+      seekSlider.value = (currentTime / duration) * 100;
+    };
 
     const play = () => {
       vidRef.value.play();
@@ -187,9 +227,11 @@ export default {
       state,
       showError,
       previousVisibality,
+      vidSeek,
       play,
       pause,
       videoFavorite,
+      seekSliderRef,
       currentVideoId,
       handleVideoId,
       togglePlay,
@@ -209,6 +251,13 @@ export default {
 .video {
   width: 100%;
   height: 100%;
+}
+.seek {
+  position: absolute;
+  bottom: 57px;
+  height: 2px;
+  width: 100%;
+  z-index: 200;
 }
 .error-container {
   display: grid;
@@ -235,5 +284,22 @@ export default {
 }
 #long-title::-webkit-scrollbar-track {
   background: rgba(187, 174, 174, 0.2);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  cursor: pointer;
+}
+input[type="range"]:hover::-webkit-slider-thumb {
+  background-color: white;
+  height: 12px;
+  width: 12px;
+  border-radius: 12px;
+  opacity: 1;
+}
+input[type="range"]::-webkit-slider-thumb {
+  opacity: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
 }
 </style>
