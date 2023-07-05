@@ -20,6 +20,7 @@
         @update:selectedValue="updateSelectedValue"
         @closeClicked="handleCloseAudio"
         @update:selectedSongUrl="updategetSelectedSongUrl"
+        @selectedSongImage="updateSelectedSongImage"
       />
     </div>
     <div v-if="!selectedValue" class="time-container">
@@ -108,6 +109,8 @@
       :userImage="userImage"
       :username="username"
       :closeCamera="closeCamera"
+      :getSelectedSongUrl="getSelectedSongUrl"
+      :getSongImage="getSongImage"
     />
   </div>
 </template>
@@ -159,25 +162,21 @@ export default {
     const selectedValue = toRef(null);
     const showAudioCard = toRef(false);
     const showUploadVideo = toRef(false);
-    const getSelectedSongUrl = toRef(null);
+    const getSelectedSongUrl = toRef("");
+    const getSongImage = toRef("");
     const cameraIsOpen = toRef(false);
 
     const toggleCamera = async () => {
       if (selectedValue.value !== null && selectedValue.value !== "") {
         try {
-          if (selectedValue.value === "Mute") {
-            videoStream.value = await navigator.mediaDevices.getUserMedia({
-              audio: false,
-              video: true,
-            });
-          } else if (selectedValue.value === "Original") {
+          if (selectedValue.value === "Original") {
             videoStream.value = await navigator.mediaDevices.getUserMedia({
               audio: true,
               video: true,
             });
           } else {
             videoStream.value = await navigator.mediaDevices.getUserMedia({
-              audio: selectedValue.value,
+              audio: false,
               video: true,
             });
           }
@@ -197,7 +196,6 @@ export default {
 
     const updateSelectedValue = (value) => {
       selectedValue.value = value;
-      console.log("dsas", selectedValue.value);
       toggleCamera();
     };
 
@@ -211,6 +209,10 @@ export default {
 
     const updategetSelectedSongUrl = (url) => {
       getSelectedSongUrl.value = url;
+    };
+
+    const updateSelectedSongImage = (url) => {
+      getSongImage.value = url;
     };
 
     const handleCloseAudio = () => {
@@ -317,6 +319,7 @@ export default {
         const snapShot = await uploadBytes(newVideosRef, blob.value, metadata);
         url.value = await getDownloadURL(snapShot.ref);
         recording.value = false;
+        isPosting.value = true;
       }
     };
 
@@ -358,10 +361,13 @@ export default {
               userImage: userImage.value,
               username: username.value,
               media: { title: "", url: url.value, posted: toPost.value },
+              audio: getSelectedSongUrl.value,
+              songImage: getSongImage.value,
             }),
           }
         );
         const json = await response.json();
+        console.log("json", json);
         if (json.success) {
           closeCamera();
           router.push({
@@ -405,12 +411,14 @@ export default {
       close,
       updateSelectedValue,
       updategetSelectedSongUrl,
+      updateSelectedSongImage,
       getSelectedSongUrl,
       handleShowAudio,
       handleCloseAudio,
       taggleUploadVideo,
       showUploadVideo,
       closeUpload,
+      getSongImage,
     };
   },
 };

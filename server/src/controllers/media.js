@@ -28,7 +28,7 @@ export const getUserMedia = async (req, res) => {
 };
 
 export const postVideo = async (req, res) => {
-  const { media, userId, userImage, username } = req.body;
+  const { media, userId, userImage, username, audio, songImage } = req.body;
   try {
     let newVideo;
     const existingVideo = await Videos.findOne({ url: media.url });
@@ -47,6 +47,8 @@ export const postVideo = async (req, res) => {
             userId: userId,
             userImage: userImage,
             username: username,
+            audio: audio,
+            songImage: songImage,
           },
         });
       }
@@ -63,6 +65,8 @@ export const postVideo = async (req, res) => {
         userId: userId,
         userImage: userImage,
         username: username,
+        audio: audio,
+        songImage: songImage,
       });
     }
     res.status(200).json({
@@ -99,7 +103,7 @@ export const deleteVideo = async (req, res) => {
 };
 
 export const postLater = async (req, res) => {
-  const { media, userId, userImage, username } = req.body;
+  const { media, userId, userImage, username, audio, songImage } = req.body;
   try {
     const newVideo = await Videos.create({
       url: media.url,
@@ -107,6 +111,8 @@ export const postLater = async (req, res) => {
       userId: userId,
       userImage: userImage,
       username: username,
+      audio: audio,
+      songImage: songImage,
     });
     res.status(200).json({
       success: true,

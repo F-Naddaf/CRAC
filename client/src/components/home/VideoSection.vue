@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch, computed, onBeforeUpdate, onMounted } from "vue";
+import { ref, reactive, watch, computed, onBeforeUpdate } from "vue";
 import SocialMedia from "./SocialMedia.vue";
 import swipe from "../directives/swipe.js";
 import Video from "./Video.vue";
@@ -74,10 +74,6 @@ export default {
     const videoRef = (value) => {
       videoRefrance.value = value;
     };
-
-    onMounted(() => {
-      console.log("videoRefrance", videoRefrance.value);
-    });
 
     const enableSwipe = computed(() => videos.value.length > 0);
 

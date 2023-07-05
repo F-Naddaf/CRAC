@@ -5,12 +5,11 @@
         {{ error }}
       </p>
     </div>
-    <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
+    <video class="video" ref="vidRef" @click="togglePlay" @ended="stopAudio">
       <source
         class="source"
         :src="video.url"
         type="video/mp4"
-        @click="togglePlay"
         v-show="!state.playing"
       />
     </video>
@@ -25,6 +24,9 @@
       ref="seekSliderRef"
       @change="vidSeek"
     />
+    <audio v-if="video.audio !== ''" ref="audioRef">
+      <source :src="video.audio" type="audio/mpeg" />
+    </audio>
     <div class="absolute bottom-20 left-4 w-full">
       <p
         class="text-base text-primary-200"
@@ -75,7 +77,15 @@
   </div>
 </template>
 <script>
-import { ref, reactive, onMounted, watch, computed, watchEffect } from "vue";
+import {
+  ref,
+  reactive,
+  onMounted,
+  watch,
+  computed,
+  watchEffect,
+  nextTick,
+} from "vue";
 import SideNav from "@/components/home/SideNav.vue";
 import { useRouter } from "vue-router";
 
@@ -99,8 +109,7 @@ export default {
     const videoFavorite = ref(props.video.favorite);
     const showFullTitle = ref(false);
     const seekSliderRef = ref(null);
-
-    emit("vidRef", vidRef.value);
+    const audioRef = ref(null);
 
     watchEffect(() => {
       videoFavorite.value = props.video.favorite;
@@ -110,23 +119,20 @@ export default {
       playing: false,
     });
 
-    // const vidSeek = () => {
-    //   const seekSlider = document.getElementById("seekSlid");
-    //   const seekTo = vidRef.value.duration * (seekSlider.value / 100);
-    //   vidRef.value.currentTime = seekTo;
-    //   const newTime = vidRef.value.currentTime * (100 / vidRef.value.duration);
-    //   seekSlider.value = newTime;
-    //   console.log("seekSlider.value", seekSlider.value);
-    // };
-
     const vidSeek = () => {
       const seekSlider = seekSliderRef.value;
-      const seekTo = vidRef.value.duration * (seekSlider.value / 100);
-      vidRef.value.currentTime = seekTo;
+      if (vidRef.value && audioRef.value) {
+        const seekTo = vidRef.value.duration * (seekSlider.value / 100);
+        vidRef.value.currentTime = seekTo;
+        audioRef.value.currentTime = seekTo;
+      }
     };
 
     watch(vidRef, (newVal) => {
-      newVal.addEventListener("timeupdate", updateSeekSlider);
+      nextTick(() => {
+        newVal.addEventListener("timeupdate", updateSeekSlider);
+        newVal.addEventListener("timeupdate", updateAudioSeek);
+      });
     });
 
     const updateSeekSlider = () => {
@@ -136,13 +142,35 @@ export default {
       seekSlider.value = (currentTime / duration) * 100;
     };
 
+    const updateAudioSeek = () => {
+      const currentTime = vidRef.value.currentTime;
+      audioRef.value.currentTime = currentTime;
+    };
+
+    const stopAudio = () => {
+      if (audioRef.value !== null) {
+        audioRef.value.pause();
+        audioRef.value.currentTime = 0;
+      }
+    };
+
     const play = () => {
-      vidRef.value.play();
+      if (vidRef.value !== null) {
+        vidRef.value.play();
+      }
+      if (audioRef.value !== null) {
+        audioRef.value.play();
+      }
       state.playing = true;
     };
 
     const pause = () => {
-      vidRef.value.pause();
+      if (vidRef.value !== null) {
+        vidRef.value.pause();
+      }
+      if (audioRef.value !== null) {
+        audioRef.value.pause();
+      }
       state.playing = false;
     };
 
@@ -233,6 +261,7 @@ export default {
       videoFavorite,
       seekSliderRef,
       currentVideoId,
+      audioRef,
       handleVideoId,
       togglePlay,
       handleErrorMessage,
@@ -242,6 +271,7 @@ export default {
       showFullTitle,
       shortTitle,
       toggleFullTitle,
+      stopAudio,
     };
   },
 };
