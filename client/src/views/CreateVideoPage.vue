@@ -165,6 +165,7 @@ export default {
     const getSelectedSongUrl = toRef("");
     const getSongImage = toRef("");
     const cameraIsOpen = toRef(false);
+    const existVideo = toRef(false);
 
     const toggleCamera = async () => {
       if (selectedValue.value !== null && selectedValue.value !== "") {
@@ -224,28 +225,27 @@ export default {
         await stopRecording();
       }
       try {
-        const storageRef = ref(storage);
-        const videosRef = ref(storageRef, "videos/");
+        if (existVideo) {
+          const storageRef = ref(storage);
+          const videosRef = ref(storageRef, "videos/");
 
-        const { items } = await listAll(videosRef);
+          const { items } = await listAll(videosRef);
 
-        if (items.length > 0) {
-          const { highestNumber, fileToDelete } =
-            findVideoWithHighestNumber(items);
+          if (items.length > 0) {
+            const { highestNumber, fileToDelete } =
+              findVideoWithHighestNumber(items);
 
-          if (fileToDelete) {
-            const fileRef = ref(storageRef, fileToDelete.fullPath);
-            await deleteObject(fileRef);
-            console.log("Last recorded video deleted successfully");
-          } else {
-            console.log("No videos found with the highest number");
+            if (fileToDelete) {
+              const fileRef = ref(storageRef, fileToDelete.fullPath);
+              await deleteObject(fileRef);
+            }
           }
+          closeCamera();
+          router.go(-1);
         } else {
-          console.log("No videos found in storage");
+          closeCamera();
+          router.go(-1);
         }
-
-        closeCamera();
-        router.go(-1);
       } catch (error) {
         console.error("Error deleting video:", error);
       }
@@ -320,6 +320,7 @@ export default {
         url.value = await getDownloadURL(snapShot.ref);
         recording.value = false;
         isPosting.value = true;
+        existVideo.value = true;
       }
     };
 
@@ -399,6 +400,7 @@ export default {
       showModel,
       cameraIsOpen,
       selectedValue,
+      existVideo,
       store,
       goBack,
       toggleCamera,
