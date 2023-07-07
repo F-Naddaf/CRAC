@@ -3,9 +3,6 @@
     <div v-if="isLoading" class="mt-20 flex justify-center">
       <img src="../../../public/img/spinner.svg" alt="loading" />
     </div>
-    <!-- <h1 class="text-red-500 absolute top-20 left-20 z-500">
-      {{ comments.length }}
-    </h1> -->
     <div class="relative w-full h-full flex flex-col items-center">
       <section class="comment-header">
         <h3 class="comment-title">Comments</h3>

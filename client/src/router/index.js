@@ -69,7 +69,7 @@ const routes = [
     component: Friends,
   },
   {
-    path: "/view-video/:video/:id",
+    path: "/view-video/:id/:userId",
     name: "ViewVideo",
     component: ViewVideo,
   },

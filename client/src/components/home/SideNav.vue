@@ -121,7 +121,6 @@ export default {
       () => props.videoFavorite,
       (newVal) => {
         updatedAmountOfFavorite.value = newVal;
-        console.log("new", newVal);
       }
     );
 

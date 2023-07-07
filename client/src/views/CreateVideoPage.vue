@@ -367,7 +367,6 @@ export default {
           }
         );
         const json = await response.json();
-        console.log("json", json);
         if (json.success) {
           closeCamera();
           router.push({
