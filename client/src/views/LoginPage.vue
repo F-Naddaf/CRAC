@@ -159,6 +159,7 @@ export default {
             );
             const result = await response.json();
             if (result.success) {
+              localStorage.setItem("accessToken", result.accessToken);
               setTimeout(() => {
                 router.push("/phone");
               }, 3000);
