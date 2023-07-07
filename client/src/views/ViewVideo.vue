@@ -138,6 +138,12 @@
           :username="username"
         />
       </div>
+      <Comment
+        v-if="showComment"
+        :show="showComment"
+        @closeClicked="closeComment"
+        @commentsAmount="commentsLength"
+      />
     </div>
   </div>
 </template>
@@ -149,6 +155,7 @@ import NavBar from "@/components/NavBar.vue";
 import MediaTitle from "@/components/MediaTitle.vue";
 import SideNav from "@/components/home/SideNav.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
+import Comment from "@/components/home/Comment.vue";
 
 export default {
   name: "ViewVideo",
@@ -157,6 +164,7 @@ export default {
     SideNav,
     MediaTitle,
     SocialMedia,
+    Comment,
   },
   props: {
     id: String,
@@ -171,6 +179,8 @@ export default {
     const showModel = ref(false);
     const videoId = ref(null);
     const showMessage = ref(false);
+    const error = ref("");
+    const showError = ref(false);
     const message = ref("");
     const url = ref(null);
     const userId = ref(null);
@@ -180,6 +190,9 @@ export default {
     const username = ref(null);
     const videoTitle = ref("");
     const showFullTitle = ref(false);
+    const showComment = ref(false);
+    const videoFavorite = ref(0);
+    const commentAmount = ref(0);
 
     const state = reactive({
       playing: false,
@@ -187,10 +200,9 @@ export default {
 
     onMounted(async () => {
       await store.methods.load();
-      videoId.value = route.params.video;
-      paramsId.value = route.params.id;
+      videoId.value = route.params.id;
+      paramsId.value = route.params.userId;
       currentUserId.value = store.state.userData?._id;
-      console.log("userId", paramsId.value);
       getVideo();
     });
 
@@ -206,6 +218,26 @@ export default {
         return videoTitle.value.slice(0, maxCharacters) + "...";
       }
     });
+
+    const toggleComment = () => {
+      showComment.value = !showComment.value;
+    };
+
+    const handleErrorMessage = (value) => {
+      error.value = value;
+      showError.value = true;
+      setTimeout(() => {
+        showError.value = false;
+      }, 2000);
+    };
+
+    const closeComment = () => {
+      showComment.value = false;
+    };
+
+    const commentsLength = (amount) => {
+      commentAmount.value = amount;
+    };
 
     const getVideo = async () => {
       const token = localStorage.getItem("accessToken");
@@ -225,6 +257,7 @@ export default {
         url.value = video.url;
         userId.value = video.userId;
         userImage.value = video.userImage;
+        videoFavorite.value = video.favorite;
         username.value = video.username;
         videoTitle.value = video.title;
         videos.value.push(video);
@@ -253,7 +286,7 @@ export default {
           setTimeout(() => {
             router.push({
               name: "Profile",
-              params: { id: paramsId.value },
+              params: { userId: paramsId.value },
             });
           }, 2000);
         }
@@ -263,7 +296,7 @@ export default {
     };
 
     watch(
-      () => route.params.id,
+      () => route.params.userId,
       (newVideoId) => {
         videoId.value = newVideoId;
         getVideo();
@@ -312,6 +345,7 @@ export default {
       username,
       videoId,
       showModel,
+      videoFavorite,
       toggleFullTitle,
       toggleSocialMedia,
       closeSocialMedia,
@@ -320,6 +354,14 @@ export default {
       deleteVideo,
       postNow,
       close,
+      toggleComment,
+      closeComment,
+      commentAmount,
+      commentsLength,
+      showComment,
+      error,
+      showError,
+      handleErrorMessage,
     };
   },
 };

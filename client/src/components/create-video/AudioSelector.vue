@@ -22,6 +22,7 @@
           type="radio"
           :id="song._id"
           :value="song.title"
+          :image="song.image"
           :url="song.url"
           v-model="picked"
           class="-ml-1"
@@ -122,9 +123,6 @@ export default {
           audioPlayer.value.pause();
         }
         audioPlayer.value = new Audio(song.url);
-        audioPlayer.value.addEventListener("loadeddata", () => {
-          audioPlayer.value.play();
-        });
       }
     };
 
@@ -140,6 +138,7 @@ export default {
       }
       emit("update:selectedValue", picked.value);
       emit("update:selectedSongUrl", getSelectedSongUrl());
+      emit("selectedSongImage", getSelectedSongImage());
       emitTimeout = setTimeout(() => {
         emit("close-clicked");
       }, 1500);
@@ -148,6 +147,12 @@ export default {
     const getSelectedSongUrl = () => {
       const song = allSongs.value.find((s) => s.title === picked.value);
       return song ? song.url : null;
+    };
+
+    const getSelectedSongImage = () => {
+      const song = allSongs.value.find((s) => s.title === picked.value);
+      const image = song ? song.image : null;
+      return image;
     };
 
     watchEffect(() => {
@@ -204,6 +209,7 @@ export default {
       isSongPlaying,
       toggleSong,
       emitSelectedValue,
+      getSelectedSongImage,
     };
   },
 };

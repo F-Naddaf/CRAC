@@ -66,6 +66,12 @@ export default {
     mediaId: {
       type: String,
     },
+    getSongImage: {
+      type: String,
+    },
+    getSelectedSongUrl: {
+      type: String,
+    },
     closeCamera: {
       type: Function,
     },
@@ -103,6 +109,8 @@ export default {
               userId: props.userId,
               userImage: props.userImage,
               username: props.username,
+              songImage: props.getSongImage,
+              audio: props.getSelectedSongUrl,
               media: {
                 title: inputs.value.media.value,
                 url: props.url,
