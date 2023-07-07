@@ -60,6 +60,15 @@ export const register = async (req, res) => {
   }
 };
 
+// Generating access token
+function generateAccessToken(user) {
+  const accessToken = jwt.sign(
+    { email: user.email, id: user._id },
+    process.env.ACCESS_TOKEN_SECRET
+  );
+  return accessToken;
+}
+
 // Login with registed user
 export const login = async (req, res) => {
   const { email, password } = req.body;
@@ -87,10 +96,8 @@ export const login = async (req, res) => {
     existingUser.isActivate = true;
     await existingUser.save();
 
-    const accessToken = jwt.sign(
-      { email: existingUser.email, id: existingUser._id },
-      process.env.ACCESS_TOKEN_SECRET
-    );
+    const accessToken = generateAccessToken(existingUser);
+
     await User.findOne({ email: existingUser.email });
     res.status(200).json({
       message: "Login successful!",
@@ -112,6 +119,7 @@ export const loginWithGoogle = async (req, res) => {
     const user = await User.findOne({
       email: req.body.email,
     });
+
     if (!user) {
       const newUser = await User.create({
         email: req.body.email,
@@ -120,12 +128,23 @@ export const loginWithGoogle = async (req, res) => {
         username: req.body.username,
       });
       await newUser.save();
+
+      const accessToken = generateAccessToken(newUser);
+      res.status(200).json({
+        message: "Login successful!",
+        success: true,
+        user: newUser,
+        accessToken: accessToken,
+      });
+    } else {
+      const accessToken = generateAccessToken(user);
+      res.status(200).json({
+        message: "Login successful!",
+        success: true,
+        user: user,
+        accessToken: accessToken,
+      });
     }
-    res.status(200).json({
-      message: "Login successful!",
-      success: true,
-      user: user,
-    });
   } catch (err) {
     console.error(err);
     res.status(500).json({
