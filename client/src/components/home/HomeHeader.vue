@@ -38,7 +38,7 @@ export default {
     DanceAnimation,
   },
 
-  setup(props, { emit }) {
+  setup() {
     const searchTitle = ref("");
     const router = useRouter();
 
@@ -48,21 +48,6 @@ export default {
         router.push(`/search-result/${title}`);
       }
     };
-
-    // const searchVideos = async (event) => {
-    //   event.target.value;
-    //   try {
-    //     const response = await fetch(
-    //       `http://localhost:6500/api/videos/search/${searchTitle.value}`
-    //     );
-    //     const result = await response.json();
-    //     const videoId = result.videos[0]._id;
-    //     router.push(`/search-result/${videoId}`);
-    //     emit("video-id", videoId);
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // };
     const clearSearchText = () => {
       searchTitle.value = "";
     };

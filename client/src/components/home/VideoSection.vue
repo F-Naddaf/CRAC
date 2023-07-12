@@ -27,10 +27,11 @@
       "
       @shareClicked="toggleSocialMedia"
       @commentClicked="toggleComment"
-      :commentAmount="commentAmount"
       @vidRef="videoRef"
+      :commentsAmount="commentsAmount"
     >
     </Video>
+   
   </div>
 </template>
 
@@ -52,7 +53,7 @@ export default {
   emits: ["video-id"],
   props: {
     videos: Array,
-    commentAmount: Number,
+    commentsAmount: Number,
   },
   setup(props, { emit }) {
     const videos = ref(props.videos);
