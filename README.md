@@ -1,4 +1,3 @@
-<!-- <h1 class="heading">CRAC</h1> -->
 <img src="./client/public/img/readme-logo.png" alt="vue" width="200" />
 
 <br>
