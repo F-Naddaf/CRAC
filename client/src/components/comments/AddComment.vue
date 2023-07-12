@@ -4,6 +4,7 @@
       class="flex items-center justify-center bg-gray-700 mr-2 rounded-full w-10 h-10 justify-center border-2 border-gray-200 overflow-hidden"
     >
       <img v-if="userImage" :src="userImage" class="h-12 object-cover" />
+      <i v-else class="fa-solid fa-user text-gray-200 text-xl"></i>
     </div>
     <input
       class="comment-input"

@@ -149,7 +149,16 @@
 </template>
 
 <script>
-import { ref, inject, reactive, onMounted, watch, computed } from "vue";
+import {
+  ref as toRef,
+  inject,
+  reactive,
+  onMounted,
+  watch,
+  computed,
+} from "vue";
+import { ref, listAll, deleteObject } from "firebase/storage";
+import { storage } from "../firebase.js";
 import { useRoute, useRouter } from "vue-router";
 import NavBar from "@/components/NavBar.vue";
 import MediaTitle from "@/components/MediaTitle.vue";
@@ -174,25 +183,25 @@ export default {
     const route = useRoute();
     const router = useRouter();
     const store = inject("store");
-    const showSocialMedia = ref(false);
-    const videos = ref([]);
-    const showModel = ref(false);
-    const videoId = ref(null);
-    const showMessage = ref(false);
-    const error = ref("");
-    const showError = ref(false);
-    const message = ref("");
-    const url = ref(null);
-    const userId = ref(null);
-    const paramsId = ref("");
-    const currentUserId = ref("");
-    const userImage = ref(null);
-    const username = ref(null);
-    const videoTitle = ref("");
-    const showFullTitle = ref(false);
-    const showComment = ref(false);
-    const videoFavorite = ref(0);
-    const commentAmount = ref(0);
+    const showSocialMedia = toRef(false);
+    const videos = toRef([]);
+    const showModel = toRef(false);
+    const videoId = toRef(null);
+    const showMessage = toRef(false);
+    const error = toRef("");
+    const showError = toRef(false);
+    const message = toRef("");
+    const url = toRef(null);
+    const userId = toRef(null);
+    const paramsId = toRef("");
+    const currentUserId = toRef("");
+    const userImage = toRef(null);
+    const username = toRef(null);
+    const videoTitle = toRef("");
+    const showFullTitle = toRef(false);
+    const showComment = toRef(false);
+    const videoFavorite = toRef(0);
+    const commentAmount = toRef(0);
 
     const state = reactive({
       playing: false,
@@ -266,7 +275,35 @@ export default {
       }
     };
 
+    const findVideoWithHighestNumber = (items) => {
+      const numbers = items.map((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        return match ? parseInt(match[1]) : 0;
+      });
+      const highestNumber = Math.max(...numbers);
+      const fileToDelete = items.find((item) => {
+        const match = item.name.match(/video-(\d+)/);
+        const number = match ? parseInt(match[1]) : 0;
+        return number === highestNumber;
+      });
+      return { highestNumber, fileToDelete };
+    };
+
     const deleteVideo = async () => {
+      const storageRef = ref(storage);
+      const videosRef = ref(storageRef, "videos/");
+
+      const { items } = await listAll(videosRef);
+
+      if (items.length > 0) {
+        const { highestNumber, fileToDelete } =
+          findVideoWithHighestNumber(items);
+
+        if (fileToDelete) {
+          const fileRef = ref(storageRef, fileToDelete.fullPath);
+          await deleteObject(fileRef);
+        }
+      }
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
