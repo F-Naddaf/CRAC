@@ -69,9 +69,10 @@
         :videoUrl="video.url"
         :videoId="video._id"
         :videoFavorite="videoFavorite"
-        :amountOfComments="video.amountOfComments"
-        :commentAmount="commentAmount"
+        :currentAmountOfComments="video.amountOfComments"
+        :commentsAmount="commentsAmount"
         :saved="video.saved"
+        :video="video"
       ></SideNav>
     </div>
   </div>
@@ -94,7 +95,7 @@ export default {
   props: {
     video: Object,
     index: Number,
-    commentAmount: Number,
+    commentsAmount: Number,
   },
   components: {
     SideNav,

@@ -7,7 +7,7 @@
           @shareClicked="toggleSocialMedia"
           @commentClicked="toggleComment"
           :videos="videos"
-          :commentAmount="commentAmount"
+          :commentsAmount="commentsAmount"
         />
       </template>
       <template v-else>
@@ -64,7 +64,7 @@ export default {
     const showSocialMedia = ref(false);
     const showComment = ref(false);
     const videos = ref([]);
-    const commentAmount = ref(0);
+    const commentsAmount = ref(0);
     const videoId = route.params.id;
     const showActiveUsersCard = ref(false);
 
@@ -107,7 +107,7 @@ export default {
     };
 
     const commentsLength = (amount) => {
-      commentAmount.value = amount;
+      commentsAmount.value = amount;
     };
 
     const handleCloseActiveUsers = () => {
@@ -129,7 +129,7 @@ export default {
       closeSocialMedia,
       closeComment,
       getAllVideos,
-      commentAmount,
+      commentsAmount,
       commentsLength,
       handleShowActiveUsers,
       handleCloseActiveUsers,

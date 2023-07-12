@@ -71,27 +71,21 @@ import { useRouter } from "vue-router";
 
 export default {
   props: {
-    videoId: {
-      type: String,
-    },
-    userId: {
-      type: String,
-    },
-    userImage: {
-      type: String,
-    },
-    videoUrl: {
-      type: String,
-    },
+    videoId: String,
+    userId: String,
+    userImage: String,
+    videoUrl: String,
+    video: Object,
+
     videoFavorite: {
       type: Number,
       default: 0,
     },
-    amountOfComments: {
+    currentAmountOfComments: {
       type: Number,
       default: 0,
     },
-    commentAmount: {
+    commentsAmount: {
       type: Number,
       default: 0,
     },
@@ -111,8 +105,8 @@ export default {
     const userId = ref("");
     const showAdd = ref(false);
     const updatedAmountOfFavorite = ref(props.videoFavorite);
-    const currentAmountOfComments = ref(props.amountOfComments);
-    const updatedAmountOfComments = ref(props.commentAmount);
+    const currentAmountOfComments = ref(props.currentAmountOfComments);
+    const updatedAmountOfComments = ref(props.commentsAmount);
     const updatedAmountOfSaved = ref(props.saved);
 
     const router = useRouter();
@@ -125,7 +119,7 @@ export default {
     );
 
     watch(
-      () => props.commentAmount,
+      () => props.commentsAmount,
       (newCommentAmount) => {
         updatedAmountOfComments.value = newCommentAmount;
         currentAmountOfComments.value = updatedAmountOfComments.value;
@@ -139,6 +133,17 @@ export default {
       updatedAmountOfFavorite.value = props.videoFavorite;
       userId.value = props.userId;
       showAddToFriends();
+
+      watch(
+        () => props.videoId,
+        (newVideoId) => {
+          if (newVideoId !== props.videoId) {
+            props.videoId = newVideoId;
+            currentAmountOfComments.value = props.amountOfComments;
+            currentAmountOfComments.value = currentAmountOfComments.value;
+          }
+        }
+      );
     });
 
     const showAddToFriends = () => {
@@ -247,7 +252,6 @@ export default {
         } else {
           updatedAmountOfFavorite.value = props.amountOfFavorite;
         }
-        
       } catch (error) {
         console.error(error);
       }
