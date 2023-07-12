@@ -73,13 +73,6 @@ const routes = [
     name: "ViewVideo",
     component: ViewVideo,
   },
-
-  // {
-  //   path: '/home',
-  //   name: 'HomePage',
-  //   component: HomePage,
-  //   meta: { requiresAuth: true },
-  // },
 ];
 
 const router = createRouter({
