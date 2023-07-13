@@ -37,6 +37,8 @@
 </template>
 
 <script>
+import { ref, watch, computed } from "vue";
+
 export default {
   name: "FormInput",
   props: {
@@ -57,40 +59,57 @@ export default {
       default: "",
     },
   },
-  data() {
-    return {
-      invalid: false,
-      touched: false,
-      inputValue: "",
-      showPassword: false,
+  setup(props, { emit }) {
+    const invalid = ref(false);
+    const touched = ref(false);
+    const inputValue = ref("");
+    const showPassword = ref(false);
+
+    const inputType = computed(() => {
+      if (props.type === "password" && showPassword.value) {
+        return props.type === "text";
+      } else {
+        return props.type;
+      }
+    });
+
+    const validate = () => {
+      const regex = new RegExp(props.pattern);
+      touched.value = true;
+
+      if (!regex.test(inputValue.value)) {
+        invalid.value = true;
+      } else {
+        invalid.value = false;
+      }
+
+      emit("update:value", inputValue.value);
+
+      if (props.name === "confirmPassword") {
+        const passwordInput = inputs.password;
+        if (
+          inputValue.value === passwordInput.value ||
+          passwordInput.value === ""
+        ) {
+          invalid.value = false;
+        } else {
+          invalid.value = true;
+        }
+      }
     };
-  },
-  emits: ["update:value"],
-  computed: {
-    inputType() {
-      if (this.type === "password" && this.showPassword) {
-        return this.type === "text";
-      } else {
-        return "password";
-      }
-    },
-  },
-  methods: {
-    validate() {
-      const regex = new RegExp(this.pattern);
-      this.touched = true;
-      if (!regex.test(this.inputValue)) {
-        this.invalid = true;
-      } else {
-        this.invalid = false;
-      }
-      this.$emit("update:value", this.inputValue);
-    },
-  },
-  watch: {
-    inputValue(newValue) {
-      this.$emit("update:value", newValue);
-    },
+
+    watch(inputValue, (newValue) => {
+      emit("update:value", newValue);
+    });
+
+    return {
+      invalid,
+      touched,
+      inputValue,
+      showPassword,
+      inputType,
+      validate,
+    };
   },
 };
 </script>
