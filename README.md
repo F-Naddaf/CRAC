@@ -64,6 +64,7 @@ Project link is available at [CRAC App](https://fashion-client.onrender.com/)
 
 ## 5. Built with
 
+<p align="left">
 <img  src="./client/public/img/vue.jpg" alt="vue" width="150" />
 <img  src="./client/public/img/Node.jpg" alt="vue" width="150" />
 
@@ -75,6 +76,7 @@ Project link is available at [CRAC App](https://fashion-client.onrender.com/)
 
 <img  src="./client/public/img/Tailwind.jpg" alt="vue" width="150" />
 <img  src="./client/public/img/CSS3.jpg" alt="vue" width="150" />
+</p>
 
 <br>
 <br>
