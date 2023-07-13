@@ -317,7 +317,6 @@ export default {
   background: rgba(187, 174, 174, 0.2);
 }
 input[type="range"] {
-  -webkit-appearance: none;
   width: 100%;
   cursor: pointer;
 }

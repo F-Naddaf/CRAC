@@ -30,13 +30,9 @@
 <script>
 import { ref } from "vue";
 import { useRouter } from "vue-router";
-import DanceAnimation from "@/components/home/DanceAnimation.vue";
 
 export default {
   name: "HomeHeader",
-  components: {
-    DanceAnimation,
-  },
 
   setup() {
     const searchTitle = ref("");
