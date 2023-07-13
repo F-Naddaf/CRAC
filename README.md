@@ -2,7 +2,7 @@
 
 <br>
 
-<h2 class="sections">1. Overview</h2>
+## 1. Overview
 
 CRAC is an alternative to TikTok, providing a platform for users to create and share short video clips.
 
@@ -15,7 +15,7 @@ The name `CRAC` stands for:
 
 <br>
 
-<h2 class="sections">2. Description</h2>
+## 2. Description
 
 CRAC aims to offer users a user-friendly and entertaining experience for creating and sharing short video content. Users can record videos, add effects, edit their clips, comment on other users' videos, follow users, save or favorite other users' videos, and share them with the CRAC community.
 
@@ -48,7 +48,7 @@ Users can receive notifications about interactions on their videos, such as like
 
 <br>
 
-<h2 class="sections">3. Link and Preview</h2>
+## 3. Link and Preview
 
 ![App view](./client/public/img/Laptop-and-mobile.jpg)
 
@@ -56,30 +56,30 @@ Project link is available at [CRAC App](https://fashion-client.onrender.com/)
 
 <br>
 
-<h2 class="sections">4. Color guide</h2>
+## 4. Color guide
 
 ![App color guide](./client/public/img/color-guide.jpg)
 
 <br>
 
-<h2 class="sections">5. Built with</h2>
+## 5. Built with
 
-<img class="logo" src="./client/public/img/vue.jpg" alt="vue" width="150" />
-<img class="logo" src="./client/public/img/Node.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/vue.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/Node.jpg" alt="vue" width="150" />
 
-<img class="logo" src="./client/public/img/MongoDB.jpg" alt="vue" width="150" />
-<img class="logo" src="./client/public/img/Google.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/MongoDB.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/Google.jpg" alt="vue" width="150" />
 
-<img class="logo" src="./client/public/img/Firebase.jpg" alt="vue" width="150" />
-<img class="logo" src="./client/public/img/Twilio.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/Firebase.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/Twilio.jpg" alt="vue" width="150" />
 
-<img class="logo" src="./client/public/img/Tailwind.jpg" alt="vue" width="150" />
-<img class="logo" src="./client/public/img/CSS3.jpg" alt="vue" width="150" />
-
+<img  src="./client/public/img/Tailwind.jpg" alt="vue" width="150" />
+<img  src="./client/public/img/CSS3.jpg" alt="vue" width="150" />
 
 <br>
+<br>
 
-<h2 class="sections">6. Project Setup</h2>
+## 6. Project Setup
 
 To set up the CRAC project, follow these steps:
 
@@ -99,7 +99,7 @@ Please note that additional configuration steps and requirements may exist. Refe
 
 <br>
 
-<h2 class="sections">7. Code structure</h2>
+## 7. Code structure
 
 ```
 client
@@ -166,7 +166,7 @@ client
     └── App.vue
     └── firebase.js
     └── main.js
-    tailwind.config    
+    tailwind.config
 
 server
 └── src
@@ -192,24 +192,3 @@ server
     index.js
 README.md
 ```
-
-<style>
-.heading {
-  color: #BA2F74;
-  font-weight: 900;
-  font-size: 30px
-}
-
-.sections {
-  color: #167199;
-  font-weight: 700;
-  font-size: 24px;
-}
-
-.logo {
-  padding-right: 120px;
-  padding-left: 30px;
-  padding-bottom: 10px;
-}
-
-</style>
