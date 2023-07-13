@@ -21,6 +21,7 @@
         @closeClicked="handleCloseAudio"
         @update:selectedSongUrl="updategetSelectedSongUrl"
         @selectedSongImage="updateSelectedSongImage"
+        :selectedTime="selectedTime"
       />
     </div>
     <div v-if="!selectedValue" class="time-container">
