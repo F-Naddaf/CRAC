@@ -22,6 +22,13 @@
       >
         {{ signUpStatus }}
       </p>
+      <p
+        class="text-sm font-semibold"
+        style="color: rgb(221, 2, 2)"
+        v-if="faild"
+      >
+        {{ faild }}
+      </p>
       <button
         type="submit"
         class="LoginButton rounded-lg text-white font-semibold mt-4"
@@ -42,7 +49,7 @@
   </div>
 </template>
 <script>
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import FormInput from "../components/FormInput.vue";
 import { useRouter } from "vue-router";
 
@@ -105,24 +112,12 @@ export default {
         label: "Confirm Password",
         value: "",
         error: "Password is not match!",
-        // validate() {
-        //   const passwordInput = inputs.value.password;
-        //   if (
-        //     this.value === passwordInput.value ||
-        //     passwordInput.value === ""
-        //   ) {
-        //     this.valid = true;
-        //     this.error = null;
-        //   } else {
-        //     this.valid = false;
-        //     this.error = "Password does not match!";
-        //   }
-        // },
       },
     });
 
     const router = useRouter();
     const signUpStatus = ref("");
+    const faild = ref("");
 
     const handelSubmit = async () => {
       try {
@@ -144,23 +139,24 @@ export default {
           }
         );
         const result = await response.json();
-        signUpStatus.value = result.message;
+        faild.value = result.message;
         if (result.success) {
           setTimeout(() => {
             router.push("/login");
           }, 3000);
           signUpStatus.value = "You have created an account successfully";
         } else {
-          signUpStatus.value = result.message;
+          faild.value = result.message;
         }
       } catch (error) {
-        signUpStatus.push("Sorry something went wrong");
+        faild.push("Sorry something went wrong");
       }
     };
 
     return {
       inputs,
       router,
+      faild,
       signUpStatus,
       handelSubmit,
     };
