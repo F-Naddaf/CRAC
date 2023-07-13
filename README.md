@@ -21,7 +21,7 @@ CRAC aims to offer users a user-friendly and entertaining experience for creatin
 
 <br>
 The project provides the following features:
-
+<br>
 <br>
 
 `1. User Registration and Authentication:`
