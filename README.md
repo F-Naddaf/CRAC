@@ -6,7 +6,7 @@
 
 CRAC is an alternative to TikTok, providing a platform for users to create and share short video clips.
 
-The name `CRAC` stands for:
+The name _CRAC_ stands for:
 
 - C : Camera <br>
 - R : Roll <br>
@@ -24,25 +24,25 @@ The project provides the following features:
 <br>
 <br>
 
-`1. User Registration and Authentication:`
+**<p style="color: #c9ab67">1. User Registration and Authentication:</p>**
 
 Users can create accounts and log into the platform using traditional registration or Google authentication. Additionally, verifying user phone number by receiving a verification code via SMS. These processes enable users to personalize their experience, engage with other users, and access various platform features.
 
 <br>
 
-`2. Video Creation and Editing:`
+**<p style="color: #c9ab67">2. Video Creation and Editing:</p>**
 
 CRAC provides a camera interface for users to record videos. Users can add sound effects or uploading a short videos.
 
 <br>
 
-`3. Social Interactions:`
+**<p style="color: #c9ab67">3. Social Interactions:</p>**
 
 Users can follow other users, like videos, leave comments, share a video via social media and engage in discussions. This fosters a sense of community and encourages collaboration among users.
 
 <br>
 
-`4. Notifications:`
+**<p style="color: #c9ab67">4. Notifications:</p>**
 
 Users can receive notifications about interactions on their videos, such as likes, followers, and comments. Additionally, they have the ability to view the online status of other users.
 
