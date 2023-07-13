@@ -57,6 +57,12 @@
         >
           {{ showFullTitle ? "Hide" : "More..." }}
         </button>
+        <div
+          v-if="video.songImage"
+          class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 absolute -right-14 bottom-0"
+        >
+          <img :src="video.songImage" class="h-10 object-cover spin" />
+        </div>
       </div>
     </div>
     <div class="absolute bottom-24 right-4 z-30">
@@ -331,5 +337,17 @@ input[type="range"]::-webkit-slider-thumb {
   opacity: 0;
   cursor: pointer;
   -webkit-appearance: none;
+}
+.spin {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

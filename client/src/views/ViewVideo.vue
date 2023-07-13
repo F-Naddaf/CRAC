@@ -62,9 +62,10 @@
             >
               <button class="relative" @click="handleProfile">
                 <div
+                  v-if="video.songImage"
                   class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
                 >
-                  <img :src="video.userImage" class="h-10 object-cover spin" />
+                  <img :src="video.songImage" class="h-10 object-cover spin" />
                 </div>
               </button>
             </aside>
