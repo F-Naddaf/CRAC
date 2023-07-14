@@ -20,6 +20,9 @@
             v-show="!state.playing"
           />
         </video>
+        <audio v-if="video.audio !== ''" ref="audioRef">
+          <source :src="video.audio" type="audio/mpeg" />
+        </audio>
         <section
           class="absolute bottom-20 left-0 w-full items-center flex justify-between"
         >
@@ -56,18 +59,12 @@
                 </button>
               </div>
             </aside>
-            <aside
-              class="absolute -bottom-1 right-20"
-              v-if="currentUserId !== paramsId"
-            >
-              <button class="relative" @click="handleProfile">
-                <div
-                  v-if="video.songImage"
-                  class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
-                >
-                  <img :src="video.songImage" class="h-10 object-cover spin" />
-                </div>
-              </button>
+            <aside class="absolute -bottom-1 right-20" v-if="video.songImage">
+              <div
+                class="w-10 h-10 rounded-full overflow-hidden border border-gray-200"
+              >
+                <img :src="video.songImage" class="h-10 object-cover spin" />
+              </div>
             </aside>
           </div>
         </section>
@@ -203,6 +200,7 @@ export default {
     const showComment = toRef(false);
     const videoFavorite = toRef(0);
     const commentAmount = toRef(0);
+    const vidRef = ref(null);
 
     const state = reactive({
       playing: false,
@@ -341,14 +339,6 @@ export default {
       }
     );
 
-    const handleProfile = () => {
-      if (paramsId.value !== currentUserId.value) {
-        router.push(`/friend/profile/${paramsId.value}`);
-      } else {
-        router.push(`/profile/${currentUserId.value}`);
-      }
-    };
-
     const toggleSocialMedia = () => {
       showSocialMedia.value = !showSocialMedia.value;
     };
@@ -363,6 +353,35 @@ export default {
 
     const postNow = () => {
       showModel.value = true;
+    };
+
+    const play = () => {
+      if (vidRef.value !== null) {
+        vidRef.value.play();
+      }
+      if (audioRef.value !== null) {
+        audioRef.value.play();
+      }
+      state.playing = true;
+    };
+
+    const pause = () => {
+      if (vidRef.value !== null) {
+        vidRef.value.pause();
+      }
+      if (audioRef.value !== null) {
+        audioRef.value.pause();
+      }
+      state.playing = false;
+    };
+
+    const togglePlay = () => {
+      if (state.playing) {
+        pause();
+      } else {
+        play();
+      }
+      props.video.playing = !props.video.playing;
     };
 
     return {
@@ -384,11 +403,14 @@ export default {
       videoId,
       showModel,
       videoFavorite,
+      vidRef,
       toggleFullTitle,
       toggleSocialMedia,
       closeSocialMedia,
       getVideo,
-      handleProfile,
+      play,
+      pause,
+      togglePlay,
       deleteVideo,
       postNow,
       close,

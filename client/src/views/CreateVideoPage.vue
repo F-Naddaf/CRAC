@@ -224,31 +224,32 @@ export default {
     const goBack = async () => {
       if (isRecordStop.value === true) {
         await stopRecording();
-      }
-      try {
-        if (existVideo) {
-          const storageRef = ref(storage);
-          const videosRef = ref(storageRef, "videos/");
+      } else {
+        try {
+          if (existVideo.value) {
+            const storageRef = ref(storage);
+            const videosRef = ref(storageRef, "videos/");
 
-          const { items } = await listAll(videosRef);
+            const { items } = await listAll(videosRef);
 
-          if (items.length > 0) {
-            const { highestNumber, fileToDelete } =
-              findVideoWithHighestNumber(items);
+            if (items.length > 0) {
+              const { highestNumber, fileToDelete } =
+                findVideoWithHighestNumber(items);
 
-            if (fileToDelete) {
-              const fileRef = ref(storageRef, fileToDelete.fullPath);
-              await deleteObject(fileRef);
+              if (fileToDelete) {
+                const fileRef = ref(storageRef, fileToDelete.fullPath);
+                await deleteObject(fileRef);
+              }
             }
+            closeCamera();
+            router.go(-1);
+          } else {
+            closeCamera();
+            router.go(-1);
           }
-          closeCamera();
-          router.go(-1);
-        } else {
-          closeCamera();
-          router.go(-1);
+        } catch (error) {
+          console.error("Error deleting video:", error);
         }
-      } catch (error) {
-        console.error("Error deleting video:", error);
       }
     };
 

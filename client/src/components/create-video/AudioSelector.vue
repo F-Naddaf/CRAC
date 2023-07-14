@@ -1,6 +1,6 @@
 <template>
   <div class="music-wrapper">
-    <button class="absolute top-2 left-3 z-100" @click="$emit('closeClicked')">
+    <button class="absolute top-2 left-3 z-100" @click="closePopup">
       <i class="fa-solid fa-circle-xmark"></i>
     </button>
     <h1 class="mb-2 text-xl font-semibold text-secondary-200">
@@ -127,6 +127,14 @@ export default {
       }
     };
 
+    const closePopup = () => {
+      if (currentSong.value) {
+        audioPlayer.value.pause();
+        currentSong.value = null;
+      }
+      emit("closeClicked");
+    };
+
     const toggleSong = (song) => {
       if (isSongPlaying(song)) {
         audioPlayer.value.pause();
@@ -227,6 +235,7 @@ export default {
       toggleSong,
       emitSelectedValue,
       getSelectedSongImage,
+      closePopup,
     };
   },
 };
