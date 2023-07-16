@@ -53,7 +53,7 @@ Users can receive notifications about interactions on their videos, such as like
 
 ![App view](./client/public/img/Laptop-and-mobile.jpg)
 
-Project link is available at [CRAC App](https://fashion-client.onrender.com/)
+Project link is available at [CRAC App](https://google.com/)
 
 <br>
 
