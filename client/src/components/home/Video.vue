@@ -34,7 +34,7 @@
       >
         #{{ video.username }}
       </p>
-      <div class="w-8/12 relative">
+      <div v-if="video.title" class="w-8/12 relative">
         <div
           v-if="!showFullTitle"
           class="-mt-1 ml-2 relative w-full"
@@ -94,7 +94,7 @@ import {
   nextTick,
 } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 export default {
   name: "Video",
@@ -108,6 +108,7 @@ export default {
   },
   setup(props, { emit }) {
     const router = useRouter();
+    const route = useRoute();
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
@@ -215,10 +216,12 @@ export default {
 
     const shortTitle = computed(() => {
       const maxCharacters = 35;
-      if (props.video.title.length <= maxCharacters) {
-        return props.video.title;
-      } else {
-        return props.video.title.slice(0, maxCharacters) + "...";
+      if (props.video.title) {
+        if (props.video.title.length <= maxCharacters) {
+          return props.video.title;
+        } else {
+          return props.video.title.slice(0, maxCharacters) + "...";
+        }
       }
     });
 
@@ -235,7 +238,10 @@ export default {
       const observer = new IntersectionObserver(
         (enteries) => {
           enteries.forEach((entry) => {
-            if (entry.intersectionRatio > previousVisibality.value) {
+            if (
+              entry.intersectionRatio > previousVisibality.value &&
+              route.name === "HomePage"
+            ) {
               handleVideoId();
             }
             previousVisibality.value = entry.intersectionRatio;
