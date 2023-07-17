@@ -1,9 +1,11 @@
 <template>
   <div class="music-wrapper">
+    <button class="absolute top-2 left-3 z-100" @click="closePopup">
+      <i class="fa-solid fa-circle-xmark"></i>
+    </button>
     <h1 class="mb-2 text-xl font-semibold text-secondary-200">
       Choose your audio type
     </h1>
-
     <section class="flex w-5/6 h-22 justify-between my-3">
       <div>
         <input type="radio" id="original" value="Original" v-model="picked" />
@@ -16,61 +18,75 @@
         <label for="mute" class="text-primary-200 pl-1 relative"> Mute </label>
       </div>
     </section>
-    <section class="w-full">
-      <div v-for="song in allSongs" :key="song._id" class="music-card">
-        <input
-          type="radio"
-          :id="song._id"
-          :value="song.title"
-          :image="song.image"
-          :url="song.url"
-          v-model="picked"
-          class="-ml-1"
-        />
-        <div
-          class="absolute flex h-16 w-16 left-8 items-center justify-start border-2 border-gray-200 rounded-full overflow-hidden"
-        >
-          <img :src="song.image" />
-        </div>
-        <div class="music-details">
-          <div
-            class="flex flex-col justify-center w-32 h-full overflow-hidden ml-2 mr-2"
+    <section class="flex flex-col w-full h-22 justify-between my-3">
+      <div v-for="duration in [30, 60, 90]" :key="duration">
+        <div class="flex justify-center m-2">
+          <p
+            v-if="selectedDuration === duration"
+            class="text-md text-secondary-200"
           >
-            <p class="text-gray-300 text-xs">Title</p>
-            <p
-              v-if="song.title.length > 12"
-              class="text-primary-200 text-sm font-semibold"
+            {{ duration }} sec songs
+          </p>
+          <p v-else class="text-md text-gray-400">{{ duration }} sec songs</p>
+        </div>
+        <div v-for="song in allSongs" :key="song._id" class="w-full">
+          <div v-if="song.duration === duration" class="music-card">
+            <input
+              :type="selectedDuration === song.duration ? 'radio' : 'radio'"
+              :id="song._id"
+              :value="song.title"
+              :image="song.image"
+              :url="song.url"
+              v-model="picked"
+              class="-ml-1"
+              :disabled="selectedDuration !== song.duration"
+            />
+            <div
+              class="absolute flex h-16 w-16 left-8 items-center justify-start border-2 border-gray-200 rounded-full overflow-hidden"
             >
-              {{ song.title.slice(0, 12) + "..." }}
-            </p>
-            <p v-else class="text-primary-200 text-sm font-semibold">
-              {{ song.title }}
-            </p>
+              <img :src="song.image" />
+            </div>
+            <div class="music-details">
+              <div
+                class="flex flex-col justify-center w-32 h-full overflow-hidden ml-2 mr-2"
+              >
+                <p class="text-gray-300 text-xs">Title</p>
+                <p
+                  v-if="song.title.length > 12"
+                  class="text-primary-200 text-sm font-semibold"
+                >
+                  {{ song.title.slice(0, 12) + "..." }}
+                </p>
+                <p v-else class="text-primary-200 text-sm font-semibold">
+                  {{ song.title }}
+                </p>
+              </div>
+              <div class="flex flex-col justify-center h-full overflow-hidden">
+                <p class="text-gray-300 text-xs">Singer</p>
+                <p
+                  v-if="song.singerName.length > 13"
+                  class="text-primary-200 text-sm font-semibold"
+                >
+                  {{ song.singerName.slice(0, 12) + "..." }}
+                </p>
+                <p v-else class="text-primary-200 text-sm font-semibold">
+                  {{ song.singerName }}
+                </p>
+              </div>
+              <button @click="toggleSong(song)" class="absolute right-2">
+                <i
+                  :class="[
+                    'fa-solid fa-circle-play',
+                    { 'fa-solid fa-circle-stop': isSongPlaying(song) },
+                  ]"
+                ></i>
+              </button>
+              <audio
+                :src="currentSong ? currentSong.url : ''"
+                ref="audioPlayer"
+              ></audio>
+            </div>
           </div>
-          <div class="flex flex-col justify-center h-full overflow-hidden">
-            <p class="text-gray-300 text-xs">Singer</p>
-            <p
-              v-if="song.singerName.length > 13"
-              class="text-primary-200 text-sm font-semibold"
-            >
-              {{ song.singerName.slice(0, 12) + "..." }}
-            </p>
-            <p v-else class="text-primary-200 text-sm font-semibold">
-              {{ song.singerName }}
-            </p>
-          </div>
-          <button @click="toggleSong(song)" class="absolute right-2">
-            <i
-              :class="[
-                'fa-solid fa-circle-play',
-                { 'fa-solid fa-circle-stop': isSongPlaying(song) },
-              ]"
-            ></i>
-          </button>
-          <audio
-            :src="currentSong ? currentSong.url : ''"
-            ref="audioPlayer"
-          ></audio>
         </div>
       </div>
     </section>
@@ -84,13 +100,14 @@ export default {
   name: "AudioSelector",
   props: {
     showAudioCard: Boolean,
+    selectedTime: Number,
   },
   setup(props, { emit }) {
     const allSongs = ref([]);
-    const showAudio = ref(props.showAudioCard);
     const picked = ref(null);
     const currentSong = ref(null);
     const audioPlayer = ref(null);
+    const selectedDuration = ref(props.selectedTime);
     let emitTimeout = null;
 
     onMounted(async () => {
@@ -108,6 +125,14 @@ export default {
       } catch (error) {
         console.log(error);
       }
+    };
+
+    const closePopup = () => {
+      if (currentSong.value) {
+        audioPlayer.value.pause();
+        currentSong.value = null;
+      }
+      emit("closeClicked");
     };
 
     const toggleSong = (song) => {
@@ -200,16 +225,17 @@ export default {
     });
 
     return {
-      showAudio,
       allSongs,
       picked,
       currentSong,
       audioPlayer,
       getAllSongs,
+      selectedDuration,
       isSongPlaying,
       toggleSong,
       emitSelectedValue,
       getSelectedSongImage,
+      closePopup,
     };
   },
 };
@@ -222,7 +248,7 @@ export default {
   align-items: center;
   width: 90%;
   height: auto;
-  max-height: 100%;
+  max-height: 93%;
   padding-top: 8px;
   overflow: auto;
   border: 1px solid #d1d5db;
@@ -265,5 +291,8 @@ button i.text-white {
   background-color: #ba2f74;
   border: 1px solid #ba2f74;
   border-radius: 50%;
+}
+.fa-circle-xmark {
+  color: #e67cb1;
 }
 </style>

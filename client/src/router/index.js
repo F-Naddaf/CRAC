@@ -11,6 +11,7 @@ import Friends from "../views/Friends.vue";
 import EditProfile from "../views/EditProfile.vue";
 import SearchResultPage from "../views/SearchResultPage.vue";
 import ViewVideo from "../views/ViewVideo.vue";
+// import TestVideo from "../views/TestVideo.vue";
 
 const routes = [
   {
@@ -73,6 +74,11 @@ const routes = [
     name: "ViewVideo",
     component: ViewVideo,
   },
+  // {
+  //   path: "/view-video/:id/:userId",
+  //   name: "TestVideo",
+  //   component: TestVideo,
+  // },
 ];
 
 const router = createRouter({

@@ -1,231 +1,115 @@
 <template>
   <div class="w-full h-screen relative">
-    <div class="video-wrapper">
-      <div class="message-container">
-        <p v-if="showMessage" class="text-sm text-gray-200">
-          {{ message }}
-        </p>
-      </div>
-      <div
-        class="relative w-full h-full flex justify-center"
-        v-for="video in videos"
-        :key="video._id"
-      >
-        <video loop autoplay class="video" ref="vidRef" @click="togglePlay">
-          <source
-            class="source"
-            :src="video.url"
-            type="video/mp4"
-            @click="togglePlay"
-            v-show="!state.playing"
-          />
-        </video>
-        <section
-          class="absolute bottom-20 left-0 w-full items-center flex justify-between"
-        >
-          <div class="relative w-full">
-            <aside class="ml-4 w-full">
-              <p
-                class="text-base text-primary-200"
-                style="text-shadow: 0.5px 0.5px #262626"
-              >
-                #{{ video.username }}
-              </p>
-              <div v-if="video.title" class="w-8/12 relative">
-                <div
-                  v-if="!showFullTitle"
-                  class="-mt-1 ml-2 relative w-full"
-                  style="text-shadow: 0.5px 0.5px #262626"
-                >
-                  <p class="text-sm text-label">{{ shortTitle }}</p>
-                </div>
-                <div
-                  v-else
-                  class="-mt-1 ml-2 relative w-4/5 h-20 overflow-auto"
-                  id="long-title"
-                  style="text-shadow: 0.5px 0.5px #262626"
-                >
-                  <p class="text-sm text-label w-full">{{ video.title }}</p>
-                </div>
-                <button
-                  v-if="videoTitle.length > 35"
-                  @click="toggleFullTitle"
-                  class="absolute right-0 -bottom-2 text-xs ml-2 text-primary-200"
-                >
-                  {{ showFullTitle ? "Hide" : "More..." }}
-                </button>
-              </div>
-            </aside>
-            <aside
-              class="absolute -bottom-1 right-20"
-              v-if="currentUserId !== paramsId"
-            >
-              <button class="relative" @click="handleProfile">
-                <div
-                  class="flex items-center justify-center bg-gray-700 rounded-full w-10 h-10 justify-center border border-gray-200 overflow-hidden"
-                >
-                  <img :src="video.userImage" class="h-10 object-cover spin" />
-                </div>
-              </button>
-            </aside>
-          </div>
-        </section>
-        <div class="absolute right-4 z-30" style="bottom: 86px">
-          <SideNav
-            @shareClicked="toggleSocialMedia"
-            @commentClicked="toggleComment"
-            @error-message="handleErrorMessage"
-            :userId="video.userId"
-            :userImage="video.userImage"
-            :videoUrl="video.url"
-            :videoId="video._id"
-            :videoFavorite="videoFavorite"
-            :amountOfComments="video.amountOfComments"
-            :commentAmount="commentAmount"
-            :saved="video.saved"
-          ></SideNav>
-        </div>
-        <div
-          v-if="currentUserId === paramsId"
-          class="absolute right-2 top-4 flex w-28 items-center justify-between"
-        >
-          <button
-            v-if="!video.posted"
-            class="text-sm text-gray-100 -mb-1 w-12 h-6 bg-secondary-100 rounded"
-            id="post-btn"
-            style="text-shadow: 0.5px 0.5px #262626"
-            @click="postNow"
-          >
-            Post
-          </button>
-          <button
-            v-else
-            class="text-sm text-gray-100 -mb-1 w-12 h-6 bg-secondary-100 rounded"
-            id="edit-btn"
-            style="text-shadow: 0.5px 0.5px #262626"
-            @click="postNow"
-          >
-            Edit
-          </button>
-          <button
-            class="text-sm text-gray-100 -mb-1 w-12 h-6 bg-primary-100 rounded"
-            id="delete-btn"
-            style="text-shadow: 0.5px 0.5px #262626"
-            @click="deleteVideo"
-          >
-            Delete
-          </button>
-        </div>
-      </div>
-      <NavBar />
-      <div v-if="showSocialMedia">
-        <SocialMedia
-          :show="showSocialMedia"
-          :videoId="videoId"
-          @closeClicked="closeSocialMedia"
-        />
-      </div>
-      <div
-        class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-70"
-        v-if="showModel"
-      >
-        <MediaTitle
-          @close="close"
-          :close="close"
-          :url="url"
-          :userId="userId"
-          :userImage="userImage"
-          :username="username"
-        />
-      </div>
-      <Comment
-        v-if="showComment"
-        :show="showComment"
-        @closeClicked="closeComment"
-        @commentsAmount="commentsLength"
+    <div class="message-container">
+      <p v-if="showMessage" class="text-sm text-gray-200">
+        {{ message }}
+      </p>
+    </div>
+    <div v-if="currentUserId === paramsId" class="absolute right-2 top-4 z-10">
+      <EditDeleteVideo
+        :posted="posted"
+        @showModel="handleShowModel"
+        @toggleShowMessage="handleShowMesssage"
+        @toggleMessage="handleMessage"
+        :videoId="videoId"
+        :paramsId="paramsId"
+      />
+    </div>
+    <Video
+      v-for="(video, index) in videos"
+      :key="video._id"
+      :id="video._id"
+      :video="video"
+      :index="index"
+      @shareClicked="toggleSocialMedia"
+      @commentClicked="toggleComment"
+      :commentsAmount="commentsAmount"
+    >
+    </Video>
+    <NavBar />
+    <div v-if="showSocialMedia">
+      <SocialMedia
+        :show="showSocialMedia"
+        :videoId="videoId"
+        @closeClicked="closeSocialMedia"
+      />
+    </div>
+    <Comment
+      v-if="showComment"
+      :show="showComment"
+      :videoId="videoId"
+      @closeClicked="closeComment"
+      @commentsAmount="commentsLength"
+    />
+    <div
+      class="absolute w-full h-full top-0 left-0 bg-black bg-opacity-70"
+      v-if="showModel"
+    >
+      <MediaTitle
+        @close="close"
+        :close="close"
+        :url="url"
+        :userId="userId"
+        :userImage="userImage"
+        :username="username"
       />
     </div>
   </div>
 </template>
 
 <script>
-import {
-  ref as toRef,
-  inject,
-  reactive,
-  onMounted,
-  watch,
-  computed,
-} from "vue";
-import { ref, listAll, deleteObject } from "firebase/storage";
-import { storage } from "../firebase.js";
-import { useRoute, useRouter } from "vue-router";
+import { ref, inject, onMounted, watch } from "vue";
+import { useRoute } from "vue-router";
 import NavBar from "@/components/NavBar.vue";
 import MediaTitle from "@/components/MediaTitle.vue";
-import SideNav from "@/components/home/SideNav.vue";
 import SocialMedia from "@/components/home/SocialMedia.vue";
 import Comment from "@/components/home/Comment.vue";
+import Video from "@/components/home/Video.vue";
+import EditDeleteVideo from "@/components/view-video/EditDeleteVideo.vue";
 
 export default {
   name: "ViewVideo",
   components: {
+    Video,
     NavBar,
-    SideNav,
     MediaTitle,
     SocialMedia,
     Comment,
+    EditDeleteVideo,
   },
   props: {
     id: String,
+    commentsAmount: Number,
   },
 
   setup(props) {
     const route = useRoute();
-    const router = useRouter();
     const store = inject("store");
-    const showSocialMedia = toRef(false);
-    const videos = toRef([]);
-    const showModel = toRef(false);
-    const videoId = toRef(null);
-    const showMessage = toRef(false);
-    const error = toRef("");
-    const showError = toRef(false);
-    const message = toRef("");
-    const url = toRef(null);
-    const userId = toRef(null);
-    const paramsId = toRef("");
-    const currentUserId = toRef("");
-    const userImage = toRef(null);
-    const username = toRef(null);
-    const videoTitle = toRef("");
-    const showFullTitle = toRef(false);
-    const showComment = toRef(false);
-    const videoFavorite = toRef(0);
-    const commentAmount = toRef(0);
-
-    const state = reactive({
-      playing: false,
-    });
+    const showSocialMedia = ref(false);
+    const videos = ref([]);
+    const showModel = ref(false);
+    const videoId = ref(null);
+    const showMessage = ref(false);
+    const error = ref("");
+    const showError = ref(false);
+    const message = ref("");
+    const url = ref(null);
+    const userId = ref(null);
+    const paramsId = ref("");
+    const currentUserId = ref("");
+    const userImage = ref(null);
+    const username = ref(null);
+    const posted = ref(null);
+    const showComment = ref(false);
+    const videoFavorite = ref(0);
+    const commentAmount = ref(0);
 
     onMounted(async () => {
       await store.methods.load();
       videoId.value = route.params.id;
       paramsId.value = route.params.userId;
       currentUserId.value = store.state.userData?._id;
-      getVideo();
-    });
-
-    const toggleFullTitle = () => {
-      showFullTitle.value = !showFullTitle.value;
-    };
-
-    const shortTitle = computed(() => {
-      const maxCharacters = 35;
-      if (videoTitle.value.length <= maxCharacters) {
-        return videoTitle.value;
-      } else {
-        return videoTitle.value.slice(0, maxCharacters) + "...";
-      }
+      await getVideo();
     });
 
     const toggleComment = () => {
@@ -242,6 +126,14 @@ export default {
 
     const closeComment = () => {
       showComment.value = false;
+    };
+
+    const handleShowMesssage = (value) => {
+      showMessage.value = value;
+    };
+
+    const handleMessage = (value) => {
+      message.value = value;
     };
 
     const commentsLength = (amount) => {
@@ -266,67 +158,9 @@ export default {
         url.value = video.url;
         userId.value = video.userId;
         userImage.value = video.userImage;
-        videoFavorite.value = video.favorite;
         username.value = video.username;
-        videoTitle.value = video.title;
+        posted.value = video.posted;
         videos.value.push(video);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    const findVideoWithHighestNumber = (items) => {
-      const numbers = items.map((item) => {
-        const match = item.name.match(/video-(\d+)/);
-        return match ? parseInt(match[1]) : 0;
-      });
-      const highestNumber = Math.max(...numbers);
-      const fileToDelete = items.find((item) => {
-        const match = item.name.match(/video-(\d+)/);
-        const number = match ? parseInt(match[1]) : 0;
-        return number === highestNumber;
-      });
-      return { highestNumber, fileToDelete };
-    };
-
-    const deleteVideo = async () => {
-      const storageRef = ref(storage);
-      const videosRef = ref(storageRef, "videos/");
-
-      const { items } = await listAll(videosRef);
-
-      if (items.length > 0) {
-        const { highestNumber, fileToDelete } =
-          findVideoWithHighestNumber(items);
-
-        if (fileToDelete) {
-          const fileRef = ref(storageRef, fileToDelete.fullPath);
-          await deleteObject(fileRef);
-        }
-      }
-      const token = localStorage.getItem("accessToken");
-      try {
-        const response = await fetch(
-          `http://localhost:6500/api/videos/deleteVideo/${videoId.value}`,
-          {
-            method: "DELETE",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        const json = await response.json();
-        if (json.success) {
-          showMessage.value = true;
-          message.value = json.message;
-          setTimeout(() => {
-            router.push({
-              name: "Profile",
-              params: { userId: paramsId.value },
-            });
-          }, 2000);
-        }
       } catch (error) {
         console.error(error);
       }
@@ -340,14 +174,6 @@ export default {
       }
     );
 
-    const handleProfile = () => {
-      if (paramsId.value !== currentUserId.value) {
-        router.push(`/friend/profile/${paramsId.value}`);
-      } else {
-        router.push(`/profile/${currentUserId.value}`);
-      }
-    };
-
     const toggleSocialMedia = () => {
       showSocialMedia.value = !showSocialMedia.value;
     };
@@ -360,36 +186,29 @@ export default {
       showModel.value = false;
     };
 
-    const postNow = () => {
-      showModel.value = true;
+    const handleShowModel = (val) => {
+      showModel.value = val;
     };
 
     return {
       store,
       showSocialMedia,
-      state,
       videos,
       message,
       showMessage,
       url,
+      posted,
       userId,
-      videoTitle,
       paramsId,
       currentUserId,
-      showFullTitle,
-      shortTitle,
       userImage,
       username,
       videoId,
       showModel,
       videoFavorite,
-      toggleFullTitle,
       toggleSocialMedia,
       closeSocialMedia,
       getVideo,
-      handleProfile,
-      deleteVideo,
-      postNow,
       close,
       toggleComment,
       closeComment,
@@ -399,6 +218,9 @@ export default {
       error,
       showError,
       handleErrorMessage,
+      handleShowModel,
+      handleShowMesssage,
+      handleMessage,
     };
   },
 };
@@ -406,7 +228,7 @@ export default {
 
 <style scoped>
 .video-wrapper {
-  height: 100vh;
+  height: 94vh;
 }
 .message-container {
   display: grid;
@@ -423,41 +245,5 @@ export default {
   z-index: 20;
   white-space: nowrap;
   overflow: hidden;
-}
-
-.spin {
-  animation: spin 3s linear infinite;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-#post-btn:hover {
-  background-color: #034663;
-  color: rgb(206, 206, 206);
-}
-#edit-btn:hover {
-  background-color: #034663;
-  color: rgb(206, 206, 206);
-}
-#delete-btn:hover {
-  background-color: #820342;
-  color: rgb(206, 206, 206);
-}
-#long-title::-webkit-scrollbar {
-  width: 5px;
-}
-#long-title::-webkit-scrollbar-thumb {
-  background: #ba2f74;
-  border-radius: 2px;
-}
-#long-title::-webkit-scrollbar-track {
-  background: rgba(187, 174, 174, 0.2);
 }
 </style>

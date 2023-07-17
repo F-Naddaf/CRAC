@@ -34,7 +34,7 @@
       >
         #{{ video.username }}
       </p>
-      <div class="w-8/12 relative">
+      <div v-if="video.title" class="w-8/12 relative">
         <div
           v-if="!showFullTitle"
           class="-mt-1 ml-2 relative w-full"
@@ -57,6 +57,12 @@
         >
           {{ showFullTitle ? "Hide" : "More..." }}
         </button>
+        <div
+          v-if="video.songImage"
+          class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 absolute -right-14 bottom-0"
+        >
+          <img :src="video.songImage" class="h-10 object-cover spin" />
+        </div>
       </div>
     </div>
     <div class="absolute bottom-24 right-4 z-30">
@@ -88,7 +94,7 @@ import {
   nextTick,
 } from "vue";
 import SideNav from "@/components/home/SideNav.vue";
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 
 export default {
   name: "Video",
@@ -102,6 +108,7 @@ export default {
   },
   setup(props, { emit }) {
     const router = useRouter();
+    const route = useRoute();
     const error = ref("");
     const vidRef = ref(null);
     const showError = ref(false);
@@ -209,10 +216,12 @@ export default {
 
     const shortTitle = computed(() => {
       const maxCharacters = 35;
-      if (props.video.title.length <= maxCharacters) {
-        return props.video.title;
-      } else {
-        return props.video.title.slice(0, maxCharacters) + "...";
+      if (props.video.title) {
+        if (props.video.title.length <= maxCharacters) {
+          return props.video.title;
+        } else {
+          return props.video.title.slice(0, maxCharacters) + "...";
+        }
       }
     });
 
@@ -229,7 +238,10 @@ export default {
       const observer = new IntersectionObserver(
         (enteries) => {
           enteries.forEach((entry) => {
-            if (entry.intersectionRatio > previousVisibality.value) {
+            if (
+              entry.intersectionRatio > previousVisibality.value &&
+              route.name === "HomePage"
+            ) {
               handleVideoId();
             }
             previousVisibality.value = entry.intersectionRatio;
@@ -331,5 +343,17 @@ input[type="range"]::-webkit-slider-thumb {
   opacity: 0;
   cursor: pointer;
   -webkit-appearance: none;
+}
+.spin {
+  animation: spin 3s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>

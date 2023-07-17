@@ -60,6 +60,7 @@ export default {
     const openVideo = (videoId, userId) => {
       router.push({
         name: "ViewVideo",
+        // name: "TestVideo",
         params: { id: videoId, userId: userId },
       });
     };

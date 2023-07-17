@@ -5,6 +5,7 @@ export const musicSchema = new mongoose.Schema({
   url: String,
   singerName: String,
   image: String,
+  duration: Number,
 });
 
 export const Music = mongoose.model("Music", musicSchema);

@@ -31,7 +31,6 @@
       :commentsAmount="commentsAmount"
     >
     </Video>
-   
   </div>
 </template>
 

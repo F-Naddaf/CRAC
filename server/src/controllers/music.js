@@ -13,12 +13,13 @@ export const getAllMusica = async (req, res) => {
 
 export const addMusic = async (req, res) => {
   try {
-    const { title, url, singerName, image } = req.body;
+    const { title, url, singerName, image, duration } = req.body;
     const music = new Music({
       title,
       url,
       singerName,
       image,
+      duration,
     });
     const savedMusic = await music.save();
 
