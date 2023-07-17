@@ -144,6 +144,8 @@ client
             └── Videos.vue
         └── search-video
             └── VideoCard.vue
+        └── view-video
+            └── EditDeleteVideo.vue
         └── FormInput.vue
         └── MediaTitle.vue
         └── NavBar.vue
