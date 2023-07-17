@@ -9,7 +9,7 @@ const methods = {
     const token = localStorage.getItem("accessToken");
     if (token) {
       try {
-        const userResponse = await fetch("http://localhost:6500/api/users", {
+        const userResponse = await fetch("https://crac-server.onrender.com/api/users", {
           method: "GET",
           headers: {
             "content-type": "application/json",
@@ -33,7 +33,7 @@ const methods = {
     const id = state.userData._id;
     try {
       const response = await fetch(
-        `http://localhost:6500/api/users/${id}/logout`,
+        `https://crac-server.onrender.com/api/users/${id}/logout`,
         {
           method: "PATCH",
           headers: {

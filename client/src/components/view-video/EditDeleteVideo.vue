@@ -94,7 +94,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/deleteVideo/${props.videoId}`,
+          `https://crac-server.onrender.com/api/videos/deleteVideo/${props.videoId}`,
           {
             method: "DELETE",
             headers: {

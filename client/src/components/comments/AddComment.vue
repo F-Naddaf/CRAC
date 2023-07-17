@@ -50,7 +50,7 @@ export default {
       try {
         const currentTime = new Date();
         const response = await fetch(
-          `http://localhost:6500/api/videos/comment`,
+          `https://crac-server.onrender.com/api/videos/comment`,
           {
             method: "POST",
             headers: {

@@ -157,7 +157,7 @@ export default {
       if (!send.value) {
         try {
           const response = await fetch(
-            "http://localhost:6500/api/users/phone",
+            "https://crac-server.onrender.com/api/users/phone",
             {
               method: "POST",
               headers: {
@@ -188,7 +188,7 @@ export default {
       const serviceId = localStorage.getItem("serviceId");
       try {
         const response = await fetch(
-          "http://localhost:6500/api/users/phone/verify",
+          "https://crac-server.onrender.com/api/users/phone/verify",
           {
             method: "POST",
             headers: {

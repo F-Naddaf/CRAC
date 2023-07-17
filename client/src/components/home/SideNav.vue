@@ -191,7 +191,7 @@ export default {
       if (currentUserId.value) {
         try {
           const response = await fetch(
-            `http://localhost:6500/api/users/${currentUserId.value}/addFriend`,
+            `https://crac-server.onrender.com/api/users/${currentUserId.value}/addFriend`,
             {
               method: "POST",
               headers: {
@@ -218,7 +218,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/${props.videoId}/favorite`,
+          `https://crac-server.onrender.com/api/users/${props.videoId}/favorite`,
           {
             method: "POST",
             headers: {
@@ -262,7 +262,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/${props.videoId}/save`,
+          `https://crac-server.onrender.com/api/users/${props.videoId}/save`,
           {
             method: "POST",
             headers: {

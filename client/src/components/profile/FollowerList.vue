@@ -75,7 +75,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/followersDetail/${props.id}`,
+          `https://crac-server.onrender.com/api/users/followersDetail/${props.id}`,
           {
             method: "GET",
             headers: {

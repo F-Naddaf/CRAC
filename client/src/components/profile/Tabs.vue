@@ -109,7 +109,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/getMedia/${userId.value}`,
+          `https://crac-server.onrender.com/api/videos/getMedia/${userId.value}`,
           {
             method: "GET",
             headers: {

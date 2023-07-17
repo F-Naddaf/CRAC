@@ -149,7 +149,7 @@ export default {
           comment.comment = editedComment;
           try {
             const response = await fetch(
-              `http://localhost:6500/api/videos/comment/${comment._id}`,
+              `https://crac-server.onrender.com/api/videos/comment/${comment._id}`,
               {
                 method: "PATCH",
                 headers: {
@@ -173,7 +173,7 @@ export default {
       if (comment) {
         try {
           const response = await fetch(
-            `http://localhost:6500/api/videos/comment/${comment._id}`,
+            `https://crac-server.onrender.com/api/videos/comment/${comment._id}`,
             {
               method: "DELETE",
               headers: {

@@ -44,7 +44,7 @@ export default {
     const getSearchedVideo = async () => {
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/search/${title.value}`
+          `https://crac-server.onrender.com/api/videos/search/${title.value}`
         );
         const json = await response.json();
         videos.value = json.videos;

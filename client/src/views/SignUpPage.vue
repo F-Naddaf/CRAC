@@ -122,7 +122,7 @@ export default {
     const handelSubmit = async () => {
       try {
         const response = await fetch(
-          "http://localhost:6500/api/users/register",
+          "https://crac-server.onrender.com/api/users/register",
           {
             method: "POST",
             headers: {

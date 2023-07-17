@@ -116,7 +116,7 @@ export default {
 
     const getAllSongs = async () => {
       try {
-        const response = await fetch(`http://localhost:6500/api/music`);
+        const response = await fetch(`https://crac-server.onrender.com/api/music`);
         const json = await response.json();
         allSongs.value = json.songs.map((song) => ({
           ...song,

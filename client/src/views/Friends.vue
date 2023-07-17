@@ -76,7 +76,7 @@ export default {
       const token = localStorage.getItem("accessToken");
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/friendDetails/${userId.value}`,
+          `https://crac-server.onrender.com/api/users/friendDetails/${userId.value}`,
           {
             method: "GET",
             headers: {
@@ -98,7 +98,7 @@ export default {
 
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/${userId.value}/friends/${friendId}`,
+          `https://crac-server.onrender.com/api/users/${userId.value}/friends/${friendId}`,
           {
             method: "DELETE",
             headers: {

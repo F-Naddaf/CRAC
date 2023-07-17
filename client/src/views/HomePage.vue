@@ -71,7 +71,7 @@ export default {
     const getAllVideos = async () => {
       const token = localStorage.getItem("accessToken");
       try {
-        const response = await fetch("http://localhost:6500/api/videos", {
+        const response = await fetch("https://crac-server.onrender.com/api/videos", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

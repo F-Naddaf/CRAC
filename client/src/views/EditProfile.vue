@@ -96,7 +96,7 @@ export default {
     const handelSubmit = async () => {
       try {
         const response = await fetch(
-          `http://localhost:6500/api/users/${id.value}/updateUser`,
+          `https://crac-server.onrender.com/api/users/${id.value}/updateUser`,
           {
             method: "PATCH",
             headers: {

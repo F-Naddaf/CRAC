@@ -65,7 +65,7 @@ export default {
     const handleLike = async () => {
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/like/${props.commentId}`,
+          `https://crac-server.onrender.com/api/videos/like/${props.commentId}`,
           {
             method: "POST",
             headers: {
@@ -92,7 +92,7 @@ export default {
     const handleUnlike = async () => {
       try {
         const response = await fetch(
-          `http://localhost:6500/api/videos/unlike/${props.commentId}`,
+          `https://crac-server.onrender.com/api/videos/unlike/${props.commentId}`,
           {
             method: "POST",
             headers: {

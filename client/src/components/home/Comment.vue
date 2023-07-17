@@ -73,7 +73,7 @@ export default {
       try {
         isLoading.value = true;
         const response = await fetch(
-          `http://localhost:6500/api/videos/show-comments/${currentVideoId.value}`
+          `https://crac-server.onrender.com/api/videos/show-comments/${currentVideoId.value}`
         );
         const result = await response.json();
         comments.value = result.comments;

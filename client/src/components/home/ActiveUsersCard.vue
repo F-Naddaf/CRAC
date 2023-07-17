@@ -82,7 +82,7 @@ export default {
 
     const activeUsers = async () => {
       try {
-        const response = await fetch(`http://localhost:6500/api/users/active`);
+        const response = await fetch(`https://crac-server.onrender.com/api/users/active`);
         const result = await response.json();
         users.value = result;
       } catch (error) {

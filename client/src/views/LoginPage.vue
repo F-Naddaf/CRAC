@@ -102,7 +102,7 @@ export default {
 
     const handleLogIn = async () => {
       try {
-        const response = await fetch(`http://localhost:6500/api/users/login`, {
+        const response = await fetch(`https://crac-server.onrender.com/api/users/login`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export default {
             const userName = `${userFirstName.charAt(0)}${userLastName}`;
 
             const response = await fetch(
-              `http://localhost:6500/api/users/login/google`,
+              `https://crac-server.onrender.com/api/users/login/google`,
               {
                 method: "POST",
                 headers: {
