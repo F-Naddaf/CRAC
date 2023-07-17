@@ -30,7 +30,6 @@ Users can create accounts and log into the platform using traditional registrati
 
 <br>
 
-
 **2. Video Creation and Editing:**
 
 CRAC provides a camera interface for users to record videos. Users can add sound effects or uploading a short videos.
@@ -53,7 +52,7 @@ Users can receive notifications about interactions on their videos, such as like
 
 ![App view](./client/public/img/Laptop-and-mobile.jpg)
 
-Project link is available at [CRAC App](https://google.com/)
+Project link is available at [CRAC App](https://crac-client.onrender.com/)
 
 <br>
 
